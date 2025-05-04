@@ -1,6 +1,6 @@
-// src/pages/AdminLogin.js
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import ikon
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -14,15 +14,14 @@ const AdminLogin = () => {
 
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center bg-white">
-      <div className="d-flex shadow rounded overflow-hidden" style={{ width: '800px', height: '400px' }}>
-        {/* Kiri - Logo */}
+      <div className="d-flex shadow rounded overflow-hidden" style={{ width: '600px', height: '500px' }}>
         <div className="d-flex flex-column justify-content-center align-items-center px-4" style={{ backgroundColor: '#283618', width: '40%', borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px' }}>
           <img src="/thrivemeal.png" alt="Thrive Meal Logo" style={{ width: '250px', marginBottom: '10px' }} />
         </div>
 
-        {/* Kanan - Form */}
+   
         <div className="p-5 w-100" style={{ backgroundColor: '#E7F1DB' }}>
-          <h3 className="mb-4 text-dark fw-bold">Login</h3>
+          <h3 className="mb-4 text-dark fw-bold" style={{ marginTop: '60px' }} >Login</h3>
           <form onSubmit={handleLogin}>
             <div className="mb-3">
               <input
@@ -46,13 +45,13 @@ const AdminLogin = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="btn btn-outline-secondary position-absolute top-0 end-0 mt-1 me-2"
+                className="btn btn-outline-secondary position-absolute top-0 end-0 mt-0 me-0"
                 style={{ height: '38px' }}
               >
-                {showPassword ? '🙈' : '👁️'}
+                {showPassword ? <FaEyeSlash size={23} /> : <FaEye size={23} />}
               </button>
             </div>
-            <button type="submit" className="btn w-100 text-white" style={{ backgroundColor: '#283618' }}>
+            <button type="submit" className="btn w-50 text-white" style={{ backgroundColor: '#283618', marginTop: '40px',display: 'block', marginRight: 'auto', marginLeft: 'auto'  }}>
               Log In
             </button>
           </form>
