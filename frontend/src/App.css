@@ -1,38 +1,292 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #ffffff;
+  color: #000;
+  line-height: 1.5;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.logo {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
   color: white;
+  font-size: 22px;
+  font-weight: 600;
 }
 
-.App-link {
-  color: #61dafb;
+.logo-image {
+  width: 36px;
+  height: auto;
+  margin-bottom: 4px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Navbar */
+.navbar {
+  background-color: #6d8653;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  color: white;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 28px;
+}
+
+.navbar ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 60px 80px;
+  gap: 50px;
+  flex-wrap: wrap;
+  background-color: #ffffff;
+}
+
+.hero-text {
+  max-width: 450px;
+}
+
+.hero-text h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.fat-loss {
+  color: #6d8653;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.icons {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.icons span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 13px;
+  width: 80px;
+}
+
+.icons img {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 8px;
+}
+
+.cta {
+  background-color: #6d8653;
+  color: white;
+  border-radius: 32px;
+  padding: 14px 28px;
+  font-weight: 600;
+  display: inline-block;
+  text-decoration: none;
+  margin-top: 16px;
+}
+
+.hero-image img {
+  width: 100%;
+  max-width: 460px;
+  border-radius: 18px;
+}
+
+/* Slogan */
+.slogan {
+  background-color: #6d8653;
+  color: white;
+  padding: 14px 0;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Programs */
+.programs {
+  background-color: #f7f7f7;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.programs h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 40px;
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: white;
+  width: 280px;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.card h3 {
+  margin: 16px 0 8px;
+  font-size: 18px;
+}
+
+.card p {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Why Thrive */
+.why-thrive {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.why-thrive h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 32px;
+}
+
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 32px;
+  padding: 0 40px;
+}
+
+.benefit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.benefit img {
+  width: 40px;
+  margin-bottom: 10px;
+  height: 40px;
+}
+
+.benefit p {
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Footer */
+.footer {
+  background-color: #f1f1f1;
+  padding: 60px 20px 30px;
+  text-align: center;
+}
+
+.footer .find-us {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.footer .social-icons a img {
+  width: 22px;
+  margin: 0 6px;
+}
+
+.footer-links {
+  margin-top: 14px;
+  font-size: 13px;
+}
+
+.footer-links a {
+  margin: 0 6px;
+  color: black;
+  text-decoration: none;
+}
+
+/* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25D366;
+  color: white;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.whatsapp-float img {
+  width: 26px;
+  height: 26px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    padding: 40px 20px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .benefits {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-text h1 {
+    font-size: 22px;
+  }
+
+  .programs h2,
+  .why-thrive h2 {
+    font-size: 20px;
   }
 }
