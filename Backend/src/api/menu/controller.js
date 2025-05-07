@@ -1,5 +1,5 @@
 const { errorResponder, errorTypes } = require('../../core/errors');
-const { getPackage, postMenu, updateMenu, getMenuById} = require('./repository');
+const { getPackage, postMenu, updateMenu, getMenuById, deleteMenu} = require('./repository');
 const path = require('path');
 const fs = require('fs');
 
@@ -74,8 +74,34 @@ const updateMenuCtrl = async (req, res) => {
     }
   };
 
+// Delete Menu
+const deleteMenuCtrl = async (req, res) => {
+    try {
+        const { menuId } = req.params;  
+
+        // cek menu
+        const cekMenu = await getMenuById(menuId);
+        if (!cekMenu) {
+            throw errorResponder(errorTypes.NOT_FOUND, 'Menu not found');
+        }
+
+        const result = await deleteMenu(menuId);
+
+        res.status(200).json({ message: 'Menu deleted successfully', result });
+    } catch (error) {
+        const status = error.status || 500;
+        res.status(status).json({
+            statusCode: status,
+            error: error.code || 'UNKNOWN_ERROR',
+            description: error.description || 'Unknown error',
+            message: error.message || 'An error occurred',
+        });
+    }
+}
+
 module.exports = {
     getPackageCtrl,
     postMenuCtrl,
     updateMenuCtrl,
+    deleteMenuCtrl
 };
