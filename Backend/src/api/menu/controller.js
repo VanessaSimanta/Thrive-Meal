@@ -1,5 +1,5 @@
 const { errorResponder, errorTypes } = require('../../core/errors');
-const { getPackage, postMenu, updateMenu, getMenuById, deleteMenu} = require('./repository');
+const { getPackage, postMenu, updateMenu, getMenuById, deleteMenu, getAllMenuByPackageId} = require('./repository');
 const path = require('path');
 const fs = require('fs');
 
@@ -22,8 +22,10 @@ const postMenuCtrl = async (req, res) => {
       const menu = await postMenu({ packageId, menu_name, menu_type, detail_menu, imageURL });
       res.status(200).json({ message: "Inputed Successfully", menu });
   
-    } catch (error) {}
-      return res.status(500).json(errorResponder(errorTypes.BAD_REQUEST, error.message));
+    } catch (error) {
+        return res.status(500).json(errorResponder(errorTypes.BAD_REQUEST));
+    }
+      
     };
 
 // Update Menu 
@@ -99,9 +101,20 @@ const deleteMenuCtrl = async (req, res) => {
     }
 }
 
+const getAllMenuByPackageIdCtrl = async (req, res) => {
+    try {
+        const { packageId } = req.params;  
+        const result = await getAllMenuByPackageId(packageId);
+        res.status(200).json(result);
+    } catch (error) {
+        return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
+    }
+}
+
 module.exports = {
     getPackageCtrl,
     postMenuCtrl,
     updateMenuCtrl,
-    deleteMenuCtrl
+    deleteMenuCtrl,
+    getAllMenuByPackageIdCtrl
 };

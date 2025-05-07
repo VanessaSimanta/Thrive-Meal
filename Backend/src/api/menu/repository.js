@@ -1,6 +1,7 @@
 const e = require('express');
 const db = require('../../core/db');
 
+
 // get package
 const getPackage = async () => {
   const packageData = await db('package').select('packageId','package_type');
@@ -45,8 +46,17 @@ const deleteMenu = async (menuId) => {
     }
     catch(error) {
         throw new error('Failed to delete menu: ' + error.message);
+    }  
+}
+
+//get All menu by packageId
+const getAllMenuByPackageId = async (packageId) => {
+    try {
+        return db('menu').where({ packageId: packageId });
     }
-    
+    catch(error) {
+        throw new error('Failed to get menu: ' + error.message);
+    }  
 }
 
 module.exports = {
@@ -54,5 +64,6 @@ module.exports = {
   postMenu,
   updateMenu,
   getMenuById,
-  deleteMenu
+  deleteMenu,
+  getAllMenuByPackageId
 };
