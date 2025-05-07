@@ -5,10 +5,8 @@
 
 // default data for package
 exports.seed = async function(knex) {
-  // Menghapus data lama (optional, jika ingin reset)
   await knex('package').del();
 
-  // Insert data baru
   await knex('package').insert([
     {
       package_type: 'Weight Loss Program',
