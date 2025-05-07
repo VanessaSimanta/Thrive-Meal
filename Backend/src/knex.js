@@ -1,4 +1,4 @@
-const config = require('./config');
+const config = require('./core/config');
 
 module.exports = {
   development: {
@@ -11,7 +11,7 @@ module.exports = {
       database: config.database.name,
     },
     migrations: {
-      directory: '../migrations',
+      directory: './migrations',
     },
   },
 };
