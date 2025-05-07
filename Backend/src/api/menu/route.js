@@ -1,6 +1,6 @@
 const express = require ('express');
 const router = express.Router();
-const { getPackageCtrl, postMenuCtrl } = require('./controller');
+const { getPackageCtrl, postMenuCtrl, updateMenuCtrl } = require('./controller');
 const upload = require('../../core/multer_config');
 
 
@@ -9,5 +9,6 @@ module.exports = (app) => {
 
     router.get('/package', getPackageCtrl);
     router.post('/menu', upload.single('imageURL'), postMenuCtrl);
+    router.put('/menu/:menuId', upload.single('imageURL'), updateMenuCtrl);
     
 }

@@ -6,7 +6,7 @@ const getPackage = async () => {
   return packageData;
 };
 
-// post menu
+// add menu
 const postMenu = async (menuData) => {
     try {
       const result = await db('menu').insert(menuData).returning('*');
@@ -17,7 +17,29 @@ const postMenu = async (menuData) => {
     }
 };
 
+// edit menu
+const updateMenu = async (menuId, menuData) => {
+    try {
+      await db('menu')
+        .where({ menuId }) 
+        .update({
+          ...menuData,
+          updateAt: db.fn.now(), //timestamp 
+        });
+  
+      return { message: 'Menu updated successfully' };
+    } catch (error) {
+      throw new Error('Failed to update menu: ' + error.message);
+    }
+  };
+
+const getMenuById = async (menuId) => {
+return db('menu').where({ menuId: menuId }).first();
+};
+
 module.exports = {
   getPackage,
   postMenu,
+  updateMenu,
+  getMenuById,
 };
