@@ -4,10 +4,11 @@ const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
 const config = require('./config');
-//const routes = require('../api/routes');
+const routes = require('../api/routes');
 const { errorResponder, errorTypes } = require('./errors');
 
 const app = express();
+const path = require('path');
 
 // Middleware
 app.enable('trust proxy');
@@ -15,9 +16,10 @@ app.use(cors());
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/uploads', express.static(path.join(__dirname, 'image_upload')));
 
 // Routes
-//app.use(config.api.prefix, routes());
+app.use(config.api.prefix, routes());
 
 // 404 Handler
 app.use((req, res, next) => {
