@@ -7,7 +7,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const isAdmin = localStorage.getItem('isAdmin');
     if (isAdmin !== 'true') {
-      navigate('/admin/login');
+      navigate('/');
     }
   }, [navigate]);
 

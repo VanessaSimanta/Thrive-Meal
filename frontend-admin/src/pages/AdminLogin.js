@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import axios from 'axios';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -10,38 +11,46 @@ const AdminLogin = () => {
   const [passwordError, setPasswordError] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    
-    setEmailError('');
-    setPasswordError('');
-    setLoginError('');
 
-    const adminEmail = 'imadmin@thrivemeal.com';
-    const adminPassword = 'admin123';
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const handleLogin = async (e) => {
+      e.preventDefault();
+      
+      setEmailError('');
+      setPasswordError('');
+      setLoginError('');
 
-    let isValid = true;
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      let isValid = true;
 
-    if (!emailPattern.test(email)) {
-      setEmailError('Please enter a valid email address');
-      isValid = false;
-    }
+      if (!emailPattern.test(email)) {
+        setEmailError('Please enter a valid email address');
+        isValid = false;
+      }
 
-    if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
-      isValid = false;
-    }
+      if (password.length < 6) {
+        setPasswordError('Password must be at least 6 characters');
+        isValid = false;
+      }
 
-    if (!isValid) return;
+      if (!isValid) return;
 
-    if (email === adminEmail && password === adminPassword) {
-      localStorage.setItem('isAdmin', 'true');
-      window.location.href = '/admin/dashboard';
-    } else {
-      setLoginError('Incorrect email or password. Please try again.');
-    }
-  };
+      try {
+        const response = await axios.post('http://localhost:8000/api/admin/login', {
+          email,
+          password,
+        });
+
+        // Jika berhasil login
+        localStorage.setItem('isAdmin', 'true');
+        window.location.href = '/dashboard';
+      } catch (err) {
+        if (err.response && err.response.data && err.response.data.message) {
+          setLoginError(err.response.data.message);
+        } else {
+          setLoginError('Something went wrong. Please try again.');
+        }
+      }
+    };
 
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center bg-white">
