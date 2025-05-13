@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import logoImage from './public/images/logo.png';
 import foodImage1 from './public/images/food1.jpg';
@@ -17,27 +18,28 @@ import whatsappIcon from './public/icons/whatsapp.png';
 import instagramIcon from './public/icons/instagram.png';
 import facebookIcon from './public/icons/facebook.png';
 
-
-function App() {
+function Navbar() {
   return (
-    <div className="App">
-      {/* Navbar */}
-      <nav className="navbar">
-  <div className="logo">
-    <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
-    <span>thrive meal</span>
-  </div>
-  <ul>
-    <li><a href="#home">Home</a></li>
-    <li><a href="#menu">Menu</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#faq">FAQ</a></li>
-    <li><a href="#article">Article</a></li>
-  </ul>
-</nav>
+    <nav className="navbar">
+      <div className="logo">
+        <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
+        <span>thrive meal</span>
+      </div>
+      <ul>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/menu">Menu</Link></li>
+        <li><Link to="/about">About</Link></li>
+        <li><Link to="/faq">FAQ</Link></li>
+        <li><Link to="/article">Article</Link></li>
+      </ul>
+    </nav>
+  );
+}
 
-
-      {/* Hero Section */}
+function HomePage() {
+  return (
+    <>
+      {/* Home Section */}
       <section className="hero" id="home">
         <div className="hero-text">
           <h1>Makan Sehat, Hidup Lebih Fit</h1>
@@ -60,7 +62,7 @@ function App() {
       </div>
 
       {/* Diet Programs */}
-      <section className="programs" id="menu">
+      <section className="programs">
         <h2>Our Diet Programs</h2>
         <div className="cards">
           <div className="card">
@@ -82,7 +84,7 @@ function App() {
       </section>
 
       {/* Why Thrive Meal */}
-      <section className="why-thrive" id="about">
+      <section className="why-thrive">
         <h2>Kenapa Harus Thrive Meal?</h2>
         <div className="benefits">
           <div className="benefit"><img src={consultIcon} alt="Gratis Konsultasi" /><p>Gratis Konsultasi Gizi</p></div>
@@ -93,29 +95,92 @@ function App() {
           <div className="benefit"><img src={scheduleIcon} alt="Fleksibel Waktu" /><p>Fleksibel Atur Waktu Berlangganan</p></div>
         </div>
       </section>
+    </>
+  );
+}
 
-      {/* Footer */}
-      <footer className="footer">
-        <p>© 2025 Thrive Meal. All Rights Reserved.</p>
-        <p className="find-us">FIND US !</p>
-        <div className="social-icons">
-          <a href="#"><img src={instagramIcon} alt="Instagram" /></a>
-          <a href="#"><img src={facebookIcon} alt="Facebook" /></a>
-        </div>
-        <div className="footer-links">
-          <a href="#home">Home</a> |
-          <a href="#menu">Menu</a> |
-          <a href="#about">About</a> |
-          <a href="#faq">FAQ</a> |
-          <a href="#article">Article</a>
-        </div>
-      </footer>
+function MenuPage() {
+  return (
+    <section className="menu-section">
+      <h2>Our Menu</h2>
+      <ul>
+        <li>Ayam Panggang + Nasi Merah + Sayur Kukus</li>
+        <li>Salmon Salad + Quinoa</li>
+        <li>Oatmeal + Buah Segar</li>
+        <li>Tempe Orek + Tumis Sayur + Nasi Jagung</li>
+      </ul>
+    </section>
+  );
+}
 
-      {/* Floating WhatsApp Button */}
-      <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="whatsapp-float">
-        <img src={whatsappIcon} alt="WhatsApp" />
-      </a>
-    </div>
+function AboutPage() {
+  return (
+    <section className="about-section">
+      <h2>About Us</h2>
+      <p>Thrive Meal adalah layanan katering sehat...</p>
+    </section>
+  );
+}
+
+function FaqPage() {
+  return (
+    <section className="faq-section">
+      <h2>FAQ</h2>
+      <p><strong>Q:</strong> Apakah bisa custom menu?</p>
+      <p><strong>A:</strong> Bisa, kami menyediakan opsi menu fleksibel.</p>
+    </section>
+  );
+}
+
+function ArticlePage() {
+  return (
+    <section className="article-section">
+      <h2>Article</h2>
+      <p>Baca berbagai artikel seputar hidup sehat dan diet.</p>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="footer">
+      <p>© 2025 Thrive Meal. All Rights Reserved.</p>
+      <p className="find-us">FIND US !</p>
+      <div className="social-icons">
+        <a href="#"><img src={instagramIcon} alt="Instagram" /></a>
+        <a href="#"><img src={facebookIcon} alt="Facebook" /></a>
+      </div>
+      <div className="footer-links">
+        <Link to="/">Home</Link> |
+        <Link to="/menu">Menu</Link> |
+        <Link to="/about">About</Link> |
+        <Link to="/faq">FAQ</Link> |
+        <Link to="/article">Article</Link>
+      </div>
+    </footer>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <div className="App">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/menu" element={<MenuPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/article" element={<ArticlePage />} />
+        </Routes>
+        <Footer />
+
+        {/* Floating WhatsApp Button */}
+        <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="whatsapp-float">
+          <img src={whatsappIcon} alt="WhatsApp" />
+        </a>
+      </div>
+    </Router>
   );
 }
 

@@ -228,6 +228,76 @@ body {
   font-weight: 500;
 }
 
+/* menu section */
+.menu-page {
+  padding: 2rem;
+  text-align: center;
+}
+
+.menu-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.menu-tags {
+  margin-bottom: 2rem;
+}
+
+.menu-tags button {
+  background-color: #8a9c6c;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  margin: 0 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.menu-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.menu-card {
+  background-color: #f9f9f9;
+  padding: 1rem;
+  width: 250px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.menu-card img {
+  width: 100%;
+  border-radius: 10px;
+  height: 180px;
+  object-fit: cover;
+}
+
+.menu-card h4 {
+  margin: 0.8rem 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.menu-card p {
+  margin: 0;
+  color: #555;
+}
+
+.menu-cta {
+  margin-top: 2rem;
+}
+
+.menu-cta .cta {
+  background-color: #8a9c6c;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
 /* Footer Section */
 .footer {
   background-color: #f1f1f1;

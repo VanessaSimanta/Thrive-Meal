@@ -1,0 +1,21 @@
+[
+    {
+      "id": 1,
+      "title": "Weight Loss Program",
+      "description": "Menurunkan berat badan dengan asupan bergizi dan porsi yang sesuai.",
+      "image": "/images/food1.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Balanced Wellness",
+      "description": "Menu seimbang untuk menjaga energi dan kesehatan sepanjang hari.",
+      "image": "/images/food2.jpg"
+    },
+    {
+      "id": 3,
+      "title": "Muscle Gain",
+      "description": "Meningkatkan massa otot dengan porsi protein dan karbohidrat yang cukup.",
+      "image": "/images/food3.jpg"
+    }
+  ]
+  
