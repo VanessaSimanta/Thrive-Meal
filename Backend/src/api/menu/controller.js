@@ -17,7 +17,7 @@ const getPackageCtrl = async (req, res) => {
 const postMenuCtrl = async (req, res) => {
     try {
       const { packageId, menu_name, menu_type, detail_menu } = req.body;
-      const imageURL = `/image-upload/${req.file.filename}`;
+      const imageURL = `/image_upload/${req.file.filename}`;
   
       const menu = await postMenu({ packageId, menu_name, menu_type, detail_menu, imageURL });
       res.status(200).json({ message: "Inputed Successfully", menu });
@@ -37,11 +37,9 @@ const updateMenuCtrl = async (req, res) => {
   
       // Ambil data lama
       const oldMenu = await getMenuById(menuId);
-      console.log("test")
       if (!oldMenu) {
         throw errorResponder(errorTypes.NOT_FOUND, 'Menu not found');
       }
-      console.log("test2")
       if (packageId) menuData.packageId = packageId;
       if (menu_name) menuData.menu_name = menu_name;
       if (menu_type) menuData.menu_type = menu_type;
@@ -51,7 +49,9 @@ const updateMenuCtrl = async (req, res) => {
       if (req.file) {
         if (oldMenu.imageURL) {
           const oldImagePath = path.join(__dirname, '../../../', oldMenu.imageURL);
+          console.log(oldImagePath);
           if (fs.existsSync(oldImagePath)) {
+            console.log('file ada');
             fs.unlinkSync(oldImagePath); 
           }
         }
@@ -82,9 +82,18 @@ const deleteMenuCtrl = async (req, res) => {
         const { menuId } = req.params;  
 
         // cek menu
-        const cekMenu = await getMenuById(menuId);
-        if (!cekMenu) {
-            throw errorResponder(errorTypes.NOT_FOUND, 'Menu not found');
+        const oldMenu = await getMenuById(menuId);
+        if (!oldMenu) {
+          throw errorResponder(errorTypes.NOT_FOUND, 'Menu not found');
+        }
+
+        if (oldMenu.imageURL) {
+          const oldImagePath = path.join(__dirname, '../../../', oldMenu.imageURL);
+          console.log(oldImagePath);
+          if (fs.existsSync(oldImagePath)) {
+            console.log('file ada');
+            fs.unlinkSync(oldImagePath); 
+          }
         }
 
         const result = await deleteMenu(menuId);
