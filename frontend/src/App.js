@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
+import FormOrder from './public/component/FormOrder';
 import logoImage from './public/images/logo.png';
 import foodImage1 from './public/images/food1.jpg';
 import foodImage2 from './public/images/food2.jpg';
@@ -19,23 +20,25 @@ import facebookIcon from './public/icons/facebook.png';
 
 
 function App() {
+  const [showModal, setShowModal] = useState(false);
+  const handleOpen = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
+
   return (
     <div className="App">
       {/* Navbar */}
       <nav className="navbar">
-  <div className="logo">
-    <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
-    <span>thrive meal</span>
-  </div>
-  <ul>
-    <li><a href="#home">Home</a></li>
-    <li><a href="#menu">Menu</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#faq">FAQ</a></li>
-    <li><a href="#article">Article</a></li>
-  </ul>
-</nav>
-
+        <div className="logo">
+          <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
+        </div>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#article">Article</a></li>
+        </ul>
+      </nav>
 
       {/* Hero Section */}
       <section className="hero" id="home">
@@ -47,12 +50,15 @@ function App() {
             <span><img src={dietPlanIcon} alt="Smart Diet Plan" />Smart Diet Plan</span>
             <span><img src={happyIcon} alt="Healthy & Happy" />Healthy & Happy</span>
           </div>
-          <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="cta">Order Now</a>
+          <button className="cta" onClick={handleOpen}>Order Now</button>
         </div>
         <div className="hero-image">
           <img src={foodImage1} alt="Meal Plan" />
         </div>
       </section>
+
+      {/* Order Modal */}
+      <FormOrder show={showModal} handleClose={handleClose} />
 
       {/* Slogan */}
       <div className="slogan">

@@ -21,20 +21,22 @@ body {
   font-weight: 600;
 }
 
-.logo-image {
-  width: 36px;
-  height: auto;
-  margin-bottom: 4px;
-}
-
-/* Navbar */
 .navbar {
-  background-color: #6d8653;
-  padding: 20px 40px;
+  background-color: #283618;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 30px;
+  height: 100px;
+  overflow: hidden;
 }
+
+.logo-image {
+  height: 100px;
+  width: auto;
+  object-fit: contain;
+}
+
 
 .logo {
   color: white;
@@ -45,13 +47,14 @@ body {
 .navbar ul {
   list-style: none;
   display: flex;
-  gap: 28px;
+  gap: 30px;
 }
 
 .navbar ul li a {
   color: white;
   text-decoration: none;
   font-weight: 500;
+  font-size: 20px;
 }
 
 /* Hero */
