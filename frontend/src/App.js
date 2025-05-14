@@ -1,6 +1,7 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import './App.css';
+import FormOrder from './public/component/FormOrder';
 import logoImage from './public/images/logo.png';
 import foodImage1 from './public/images/food1.jpg';
 import foodImage2 from './public/images/food2.jpg';
@@ -18,28 +19,29 @@ import whatsappIcon from './public/icons/whatsapp.png';
 import instagramIcon from './public/icons/instagram.png';
 import facebookIcon from './public/icons/facebook.png';
 
-function Navbar() {
-  return (
-    <nav className="navbar">
-      <div className="logo">
-        <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
-        <span>thrive meal</span>
-      </div>
-      <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/menu">Menu</Link></li>
-        <li><Link to="/about">About</Link></li>
-        <li><Link to="/faq">FAQ</Link></li>
-        <li><Link to="/article">Article</Link></li>
-      </ul>
-    </nav>
-  );
-}
 
-function HomePage() {
+function App() {
+  const [showModal, setShowModal] = useState(false);
+  const handleOpen = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
+
   return (
-    <>
-      {/* Home Section */}
+    <div className="App">
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="logo">
+          <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
+        </div>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#article">Article</a></li>
+        </ul>
+      </nav>
+
+      {/* Hero Section */}
       <section className="hero" id="home">
         <div className="hero-text">
           <h1>Makan Sehat, Hidup Lebih Fit</h1>
@@ -49,12 +51,15 @@ function HomePage() {
             <span><img src={dietPlanIcon} alt="Smart Diet Plan" />Smart Diet Plan</span>
             <span><img src={happyIcon} alt="Healthy & Happy" />Healthy & Happy</span>
           </div>
-          <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="cta">Order Now</a>
+          <button className="cta" onClick={handleOpen}>Order Now</button>
         </div>
         <div className="hero-image">
           <img src={foodImage1} alt="Meal Plan" />
         </div>
       </section>
+
+      {/* Order Modal */}
+      <FormOrder show={showModal} handleClose={handleClose} />
 
       {/* Slogan */}
       <div className="slogan">
