@@ -1,39 +1,55 @@
-const { getAdminByEmail } = require('./repository');
 const bcrypt = require('bcrypt');
-const { errorResponder, errorTypes } = require('../../core/errors');
+const { getAdminByEmail, updatePassword } = require('./repository');
 
 const loginAdmin = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
-
-    // Validasi input
-    if (!email || !password) {
-      throw errorResponder(errorTypes.INVALID_REQUEST, 'Email and password are required');
-    }
-
-    // Cari admin di database
     const admin = await getAdminByEmail(email);
     if (!admin) {
-      throw errorResponder(errorTypes.UNAUTHORIZED, 'Invalid email or password');
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Cek password
-    const validPassword = await bcrypt.compare(password, admin.password);
-    if (!validPassword) {
-      throw errorResponder(errorTypes.UNAUTHORIZED, 'Invalid email or password');
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Berhasil login
-    res.status(200).json({ message: 'Login successful' });
+    return res.status(200).json({ message: 'Login successful' });
   } catch (error) {
-    const status = error.status || 401;
-    res.status(status).json({
-      error: error.code || 'LOGIN_FAILED',
-      message: error.message || 'Invalid credentials',
-    });
+    console.error('Login error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const changePassword = async (req, res) => {
+  const { email, oldPassword, newPassword, confirmPassword } = req.body;
+
+  try {
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: 'New password and confirmation do not match' });
+    }
+
+    const admin = await getAdminByEmail(email);
+    if (!admin) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Old password is incorrect' });
+    }
+
+    await updatePassword(email, newPassword);
+    return res.status(200).json({ message: 'Password changed successfully' });
+
+  } catch (error) {
+    console.error('Change password error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 module.exports = {
   loginAdmin,
+  changePassword
 };
