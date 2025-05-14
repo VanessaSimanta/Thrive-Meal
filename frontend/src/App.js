@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import FormOrder from './public/component/FormOrder';
 import logoImage from './public/images/logo.png';
@@ -18,29 +18,38 @@ import scheduleIcon from './public/icons/schedule.jpg';
 import whatsappIcon from './public/icons/whatsapp.png';
 import instagramIcon from './public/icons/instagram.png';
 import facebookIcon from './public/icons/facebook.png';
+import grilledChicken from './public/images/grilled-chicken.jpg';
+import veganDetox from './public/images/vegan-detox.jpg';
+import wholeWheatPasta from './public/images/wholewheat-pasta.jpg';
+import tofuSalad from './public/images/tofu-salad.jpg';
+import glowOats from './public/images/morning-glow-oats.jpg';
+import salmonAvocado from './public/images/salmon-avocado.jpg';
 
+// ---------- COMPONENTS ----------
+function Navbar() {
+  return (
+    <nav className="navbar">
+      <div className="logo">
+        <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
+      </div>
+      <ul>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/menu">Menu</Link></li>
+        <li><Link to="/about">About</Link></li>
+        <li><Link to="/faq">FAQ</Link></li>
+        <li><Link to="/article">Article</Link></li>
+      </ul>
+    </nav>
+  );
+}
 
-function App() {
+function HomePage() {
   const [showModal, setShowModal] = useState(false);
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
   return (
-    <div className="App">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="logo">
-          <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
-        </div>
-        <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#menu">Menu</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="#article">Article</a></li>
-        </ul>
-      </nav>
-
+    <>
       {/* Hero Section */}
       <section className="hero" id="home">
         <div className="hero-text">
@@ -58,7 +67,7 @@ function App() {
         </div>
       </section>
 
-      {/* Order Modal */}
+      {/* Modal Order Form */}
       <FormOrder show={showModal} handleClose={handleClose} />
 
       {/* Slogan */}
@@ -106,15 +115,56 @@ function App() {
 
 function MenuPage() {
   return (
-    <section className="menu-section">
-      <h2>Our Menu</h2>
-      <ul>
-        <li>Ayam Panggang + Nasi Merah + Sayur Kukus</li>
-        <li>Salmon Salad + Quinoa</li>
-        <li>Oatmeal + Buah Segar</li>
-        <li>Tempe Orek + Tumis Sayur + Nasi Jagung</li>
-      </ul>
-    </section>
+    <div className="menu-page">
+      <div className="menu-banner">
+        <div className="menu-banner-overlay">
+          <h1 className="menu-title">OUR MENU</h1>
+        </div>
+      </div>
+
+      <div className="menu-categories">
+        <button className="category-button">Weight Lost</button>
+        <button className="category-button">Balanced Wellness</button>
+        <button className="category-button">Muscle Gain</button>
+      </div>
+
+      <div className="menu-grid">
+        <div className="menu-card">
+          <img src={grilledChicken} alt="Grilled Chicken Bowl" />
+          <h4>Grilled Chicken Bowl</h4>
+          <p>Kalori: ±500 kkal</p>
+        </div>
+        <div className="menu-card">
+          <img src={veganDetox} alt="Vegan Green Detox" />
+          <h4>Vegan Green Detox</h4>
+          <p>Kalori: ±350 kkal</p>
+        </div>
+        <div className="menu-card">
+          <img src={wholeWheatPasta} alt="Whole Wheat Pasta Bowl" />
+          <h4><em>Whole Wheat Pasta Bowl</em></h4>
+          <p>Kalori: ±480 kkal</p>
+        </div>
+        <div className="menu-card">
+          <img src={tofuSalad} alt="Asian Sesame Tofu Salad" />
+          <h4>Asian Sesame Tofu Salad</h4>
+          <p>Kalori: ±390 kkal</p>
+        </div>
+        <div className="menu-card">
+          <img src={glowOats} alt="Morning Glow Oats" />
+          <h4>Morning Glow Oats</h4>
+          <p>Kalori: ±420 kkal</p>
+        </div>
+        <div className="menu-card">
+          <img src={salmonAvocado} alt="Salmon Avocado Delight" />
+          <h4>Salmon Avocado Delight</h4>
+          <p>Kalori: ±530 kkal</p>
+        </div>
+      </div>
+
+      <div className="order-now-button">
+        <button>Order Now</button>
+      </div>
+    </div>
   );
 }
 
@@ -122,7 +172,7 @@ function AboutPage() {
   return (
     <section className="about-section">
       <h2>About Us</h2>
-      <p>Thrive Meal adalah layanan katering sehat...</p>
+      <p>Thrive Meal adalah layanan katering sehat yang memberikan solusi makan praktis dan bernutrisi untuk gaya hidup aktif dan sehat.</p>
     </section>
   );
 }
@@ -156,16 +206,13 @@ function Footer() {
         <a href="#"><img src={facebookIcon} alt="Facebook" /></a>
       </div>
       <div className="footer-links">
-        <Link to="/">Home</Link> |
-        <Link to="/menu">Menu</Link> |
-        <Link to="/about">About</Link> |
-        <Link to="/faq">FAQ</Link> |
-        <Link to="/article">Article</Link>
+        <Link to="/">Home</Link> | <Link to="/menu">Menu</Link> | <Link to="/about">About</Link> | <Link to="/faq">FAQ</Link> | <Link to="/article">Article</Link>
       </div>
     </footer>
   );
 }
 
+// ---------- MAIN APP ----------
 function App() {
   return (
     <Router>
