@@ -44,7 +44,7 @@ function MenuPage() {
       {loading && <p>Loading menu...</p>}
 
       {/* Tampilkan menu hanya jika sudah pilih paket */}
-      {!loading && packageId !== undefined && Array.isArray(menuItems) && menuItems.length > 0 (
+      {!loading && packageId !== undefined && Array.isArray(menuItems) && menuItems.length > 0 && (
         <div className="menu-grid">
           {menuItems.map((item) => (
             <div key={item.menuId} className="menu-card">
