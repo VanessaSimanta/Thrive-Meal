@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
+import MenuPage from './public/component/MenuPage';
 import FormOrder from './public/component/FormOrder';
 import logoImage from './public/images/logo.png';
 import foodImage1 from './public/images/food1.jpg';
@@ -18,12 +19,6 @@ import scheduleIcon from './public/icons/schedule.jpg';
 import whatsappIcon from './public/icons/whatsapp.png';
 import instagramIcon from './public/icons/instagram.png';
 import facebookIcon from './public/icons/facebook.png';
-import grilledChicken from './public/images/grilled-chicken.jpg';
-import veganDetox from './public/images/vegan-detox.jpg';
-import wholeWheatPasta from './public/images/wholewheat-pasta.jpg';
-import tofuSalad from './public/images/tofu-salad.jpg';
-import glowOats from './public/images/morning-glow-oats.jpg';
-import salmonAvocado from './public/images/salmon-avocado.jpg';
 
 // ---------- COMPONENTS ----------
 function Navbar() {
@@ -110,61 +105,6 @@ function HomePage() {
         </div>
       </section>
     </>
-  );
-}
-
-function MenuPage() {
-  return (
-    <div className="menu-page">
-      <div className="menu-banner">
-        <div className="menu-banner-overlay">
-          <h1 className="menu-title">OUR MENU</h1>
-        </div>
-      </div>
-
-
-      <div className="menu-grid">
-       
-        <div className="category-button">Weight Lost</div>
-        <div className="category-button">Balanced Wellness</div>
-        <div className="category-button">Muscle Gain</div>
-
-        <div className="menu-card">
-          <img src={grilledChicken} alt="Grilled Chicken Bowl" />
-          <h4>Grilled Chicken Bowl</h4>
-          <p>Kalori: ±500 kkal</p>
-        </div>
-        <div className="menu-card">
-          <img src={veganDetox} alt="Vegan Green Detox" />
-          <h4>Vegan Green Detox</h4>
-          <p>Kalori: ±350 kkal</p>
-        </div>
-        <div className="menu-card">
-          <img src={wholeWheatPasta} alt="Whole Wheat Pasta Bowl" />
-          <h4><em>Whole Wheat Pasta Bowl</em></h4>
-          <p>Kalori: ±480 kkal</p>
-        </div>
-        <div className="menu-card">
-          <img src={tofuSalad} alt="Asian Sesame Tofu Salad" />
-          <h4>Asian Sesame Tofu Salad</h4>
-          <p>Kalori: ±390 kkal</p>
-        </div>
-        <div className="menu-card">
-          <img src={glowOats} alt="Morning Glow Oats" />
-          <h4>Morning Glow Oats</h4>
-          <p>Kalori: ±420 kkal</p>
-        </div>
-        <div className="menu-card">
-          <img src={salmonAvocado} alt="Salmon Avocado Delight" />
-          <h4>Salmon Avocado Delight</h4>
-          <p>Kalori: ±530 kkal</p>
-        </div>
-      </div>
-
-      <div className="order-now-button">
-        <button>Order Now</button>
-      </div>
-    </div>
   );
 }
 
