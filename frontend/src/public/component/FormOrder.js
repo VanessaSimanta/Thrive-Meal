@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
+import Payment from './Payment';
 
 function FormOrder({ show, handleClose }) {
   const [formData, setFormData] = useState({
@@ -34,9 +35,16 @@ function FormOrder({ show, handleClose }) {
       setError('Sorry, we only serve the DKI Jakarta area');
       return;
     }
-  }
 
-  useEffect(() => {
+    setError('');
+    setShowPayment(true); // Show payment modal
+  };
+
+  const closePaymentModal = () => {
+    setShowPayment(false);
+  };
+
+ useEffect(() => {
   if (show) {
     // Reset form data saat modal dibuka
     setFormData({
@@ -134,6 +142,9 @@ function FormOrder({ show, handleClose }) {
           </Form>
         </Modal.Body>
       </Modal>
+
+      {/* Payment Modal */}
+      <Payment show={showPayment} handleClose={closePaymentModal} />
     </>
   );
 }

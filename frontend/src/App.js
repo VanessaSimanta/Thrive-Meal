@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import { Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import './App.css';
 import MenuPage from './public/component/MenuPage';
 import FormOrder from './public/component/FormOrder';
@@ -28,11 +29,13 @@ function Navbar() {
         <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
       </div>
       <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/menu">Menu</Link></li>
-        <li><Link to="/about">About</Link></li>
-        <li><Link to="/faq">FAQ</Link></li>
-        <li><Link to="/article">Article</Link></li>
+        <ul>
+        <li><NavLink to="/" className={({ isActive }) => isActive ? 'active-link' : ''}>Home</NavLink></li>
+        <li><NavLink to="/menu" className={({ isActive }) => isActive ? 'active-link' : ''}>Menu</NavLink></li>
+        <li><NavLink to="/about" className={({ isActive }) => isActive ? 'active-link' : ''}>About</NavLink></li>
+        <li><NavLink to="/faq" className={({ isActive }) => isActive ? 'active-link' : ''}>FAQ</NavLink></li>
+        <li><NavLink to="/article" className={({ isActive }) => isActive ? 'active-link' : ''}>Article</NavLink></li>
+      </ul>
       </ul>
     </nav>
   );
