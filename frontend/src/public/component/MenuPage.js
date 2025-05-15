@@ -3,21 +3,27 @@ import axios from 'axios';
 
 function MenuPage() {
   const [menuItems, setMenuItems] = useState([]);
-  const [packageId, setPackageId] = useState(1); // Default packageId
+  const [packageId, setPackageId] = useState(undefined);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    axios.get(`http://localhost:8000/menu/${packageId}`) // Ganti dengan base URL backend kamu
-      .then((response) => {
-        setMenuItems(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Gagal ambil data menu:', error);
-        setLoading(false);
-      });
+    if (packageId !== undefined) {
+      setLoading(true);
+      axios.get(`http://localhost:8000/api/menu/${packageId}`)
+        .then((response) => {
+          console.log("🔥 Full response data:", response.data);
+          
+          setMenuItems(Array.isArray(response.data) ? response.data : []);
+          setLoading(false);
+        })
+
+        .catch((error) => {
+          console.error('❌ Gagal ambil data menu:', error);
+          setLoading(false);
+        });
+    }
   }, [packageId]);
+
 
   return (
     <div className="menu-page">
@@ -29,27 +35,33 @@ function MenuPage() {
 
       <div className="menu-grid">
         {/* Tombol kategori */}
-        <div className="category-button" onClick={() => setPackageId(7)}>Weight Loss</div>
-        <div className="category-button" onClick={() => setPackageId(8)}>Balanced Wellness</div>
-        <div className="category-button" onClick={() => setPackageId(9)}>Muscle Gain</div>
+         {/* Package Id sesuain dulu nanti reset db biar mulai dari 1 kalo udh final  */}
+        <div className="category-button" onClick={() => setPackageId(19)}>Weight Loss</div>
+  
+      </div>
 
-        {/* Loading State */}
-        {loading ? (
-          <p>Loading menu...</p>
-        ) : (
-          menuItems.map((item) => (
-            <div key={item.id} className="menu-card">
-              <img src={`http://localhost:8000${item.imageURL}`} alt={item.menu_name} />
+      {/* Loading state */}
+      {loading && <p>Loading menu...</p>}
+
+      {/* Tampilkan menu hanya jika sudah pilih paket */}
+      {!loading && packageId !== undefined && Array.isArray(menuItems) && menuItems.length > 0 && (
+        <div className="menu-grid">
+          {menuItems.map((item) => (
+            <div key={item.menuId} className="menu-card">
+              <img src={item.imageURL} alt={item.menu_name} />
               <h4>{item.menu_name}</h4>
               <p>Kalori: {item.detail_menu}</p>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
-      <div className="order-now-button">
-        <button>Order Now</button>
-      </div>
+      {/* Tombol Order muncul hanya jika sudah pilih paket */}
+      {packageId !== undefined && (
+        <div className="order-now-button">
+          <button>Order Now</button>
+        </div>
+      )}
     </div>
   );
 }
