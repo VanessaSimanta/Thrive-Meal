@@ -122,13 +122,13 @@ function MenuPage() {
         </div>
       </div>
 
-      <div className="menu-categories">
-        <button className="category-button">Weight Lost</button>
-        <button className="category-button">Balanced Wellness</button>
-        <button className="category-button">Muscle Gain</button>
-      </div>
 
       <div className="menu-grid">
+       
+        <div className="category-button">Weight Lost</div>
+        <div className="category-button">Balanced Wellness</div>
+        <div className="category-button">Muscle Gain</div>
+
         <div className="menu-card">
           <img src={grilledChicken} alt="Grilled Chicken Bowl" />
           <h4>Grilled Chicken Bowl</h4>

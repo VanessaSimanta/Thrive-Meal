@@ -254,13 +254,13 @@ body {
 
 .menu-banner {
   position: relative;
-  height: 200px;
-  background-image: url('./public/images/food1.jpg');
+  width: 100vw; 
+  height: 250px; 
+  background-image: url('./public/images/banner-menu.jpg');
   background-size: cover;
   background-position: center;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 2rem;
+  margin-top: -0.250rem;
+  margin-left: calc(-50vw + 50%); 
 }
 
 .menu-banner-overlay {
@@ -273,43 +273,50 @@ body {
 
 .menu-title {
   color: white;
-  font-size: 2.5rem;
+  font-size: 4rem;
   font-weight: bold;
   text-align: center;
 }
 
+
 /* Category Buttons */
 .menu-categories {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  justify-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .category-button {
-  background-color: #B3BBA9;
+  background-color: #748E57;
   color: white;
   padding: 0.7rem 1.5rem;
   border: none;
-  border-radius: 20px;
+  border-radius: 15px;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;
 }
 
 .category-button:hover {
-  background-color: #748E57;
+  background-color: #5f7446; /* sedikit lebih gelap saat hover */
 }
+
 
 .menu-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 2rem; /* Tambahkan jarak antar kolom dan baris */
   justify-items: center;
   margin: 2rem auto;
   padding: 0;
-  max-width: 700px; /* batasi lebar maksimal grid */
+  max-width: 900px; /* Bisa diperlebar sedikit agar tidak terlalu sempit */
 }
+
 
 
 .menu-card {
@@ -317,7 +324,7 @@ body {
   border-radius: 14px;
   padding: 1rem;
   text-align: center;
-  width: 100%; /* full lebar kolom */
+  width: 100%; 
   max-width: 220px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease;
@@ -347,14 +354,13 @@ body {
   color: #3f3a32;
 }
 
-/* Order Now Button */
 .order-now-button {
   text-align: center;
   margin-top: 2rem;
 }
 
 .order-now-button button {
-  background-color: #748E57; /* hijau olive seperti di gambar */
+  background-color: #748E57; 
   color: white;
   padding: 0.75rem 2rem;
   font-size: 1rem;
@@ -372,20 +378,23 @@ body {
 
 /* Footer Section */
 .footer {
-  background-color: #f1f1f1;
+  background-color: #283618;
   padding: 60px 20px 30px;
   text-align: center;
+  color: white;
 }
 
 .footer .find-us {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 12px;
+  color: white;
 }
 
 .footer .social-icons a img {
   width: 22px;
   margin: 0 6px;
+   filter: brightness(0) invert(1);
 }
 
 .footer-links {
@@ -395,7 +404,7 @@ body {
 
 .footer-links a {
   margin: 0 6px;
-  color: black;
+  color: white;
   text-decoration: none;
 }
 
