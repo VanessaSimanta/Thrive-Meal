@@ -23,34 +23,33 @@ const getOrderById = async (orderId) => {
 // Create new order
 const createOrder = async (orderData) => {
   try {
-    const [result] = await db('orders').insert(orderData).returning('*');
-    return result;
+    const result = await db('orders').insert(orderData).returning('*');
+    return result[0];
   } catch (error) {
     throw new Error('Failed to create order: ' + error.message);
   }
 };
 
-// Create order with proper camelCase columns
-const createOrderInDb = async ({ customerId, packageId, periodId }) => {
-  try {
-    const [newOrder] = await db('orders')
-      .insert({
-        customerId,
-        packageId,
-        periodId,
-      })
-      .returning('*');
-    return newOrder;
-  } catch (error) {
-    throw new Error('Failed to create order: ' + error.message);
-  }
+const createOrderInDb = async ({
+  customerId,
+  packageId,
+  periodId,
+}) => {
+  const [newOrder] = await db('orders')
+    .insert({
+      customerId: customerId,
+      packageId: packageId,
+      periodId: periodId,
+    })
+    .returning('*');
+
+  return newOrder;
 };
 
-// Create customer with camelCase columns matching migration
 const createCustomerInDb = async ({
   fullName,
   phoneNumber,
-  roadName,
+  roadName,          // ganti address -> roadName
   urbanVillage,
   province,
   city,
@@ -59,35 +58,32 @@ const createCustomerInDb = async ({
   addressNotes,
   allergyNotes,
 }) => {
-  try {
-    const [newCustomer] = await db('customers')
-      .insert({
-        customer_name: fullName,
-        phone_number: phoneNumber,
-        road_name: roadName,
-        urban_village: urbanVillage,
-        province,
-        city,
-        district,
-        zip_code: zipCode,
-        address_notes: addressNotes,
-        allergy_notes: allergyNotes,
-      })
-      .returning('*');
-    return newCustomer;
-  } catch (error) {
-    throw new Error('Failed to create customer: ' + error.message);
-  }
+  const [newCustomer] = await db('customers')
+    .insert({
+      customer_name: fullName,
+      phone_number: phoneNumber,
+      road_name: roadName,
+      urban_village: urbanVillage,
+      province,
+      city,
+      district,
+      zip_code: zipCode,
+      address_notes: addressNotes,
+      allergy_notes: allergyNotes,
+    })
+    .returning('*');
+
+  return newCustomer;
 };
 
-// Update existing order with camelCase columns
+// Update existing order
 const updateOrder = async (orderId, orderData) => {
   try {
     await db('orders')
       .where({ orderId })
       .update({
         ...orderData,
-        updatedAt: db.fn.now(),
+        updated_at: db.fn.now(),
       });
     return { message: 'Order updated successfully' };
   } catch (error) {
