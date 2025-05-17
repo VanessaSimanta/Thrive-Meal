@@ -11,7 +11,7 @@ function Payment({ show, handleClose }) {
         <p className="text-center fw-semibold">Select Your Payment Method</p>
         <Row className="text-center mb-3">
           <Col xs={6} className="mb-3">
-            <Image src="/images/bca.png" width={80} />
+            <Image src="../images/bca.png" width={80} />
             <p className="mb-0">Virtual Account</p>
           </Col>
           <Col xs={6} className="mb-3">
