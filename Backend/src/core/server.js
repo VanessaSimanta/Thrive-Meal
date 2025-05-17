@@ -16,7 +16,7 @@ app.use(cors());
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use('/uploads', express.static(path.join(__dirname, 'image_upload')));
+app.use('/image_upload', express.static(path.join(__dirname, '../../image_upload')));
 
 // Routes
 app.use(config.api.prefix, routes());

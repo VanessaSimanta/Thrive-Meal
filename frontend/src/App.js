@@ -1,6 +1,8 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, {useState, useEffect} from 'react';
+import { Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import './App.css';
+import MenuPage from './public/component/MenuPage';
 import FormOrder from './public/component/FormOrder';
 import logoImage from './public/images/logo.png';
 import foodImage1 from './public/images/food1.jpg';
@@ -19,28 +21,33 @@ import whatsappIcon from './public/icons/whatsapp.png';
 import instagramIcon from './public/icons/instagram.png';
 import facebookIcon from './public/icons/facebook.png';
 
+// ---------- COMPONENTS ----------
+function Navbar() {
+  return (
+    <nav className="navbar">
+      <div className="logo">
+        <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
+      </div>
+      <ul>
+        <ul>
+        <li><NavLink to="/" className={({ isActive }) => isActive ? 'active-link' : ''}>Home</NavLink></li>
+        <li><NavLink to="/menu" className={({ isActive }) => isActive ? 'active-link' : ''}>Menu</NavLink></li>
+        <li><NavLink to="/about" className={({ isActive }) => isActive ? 'active-link' : ''}>About</NavLink></li>
+        <li><NavLink to="/faq" className={({ isActive }) => isActive ? 'active-link' : ''}>FAQ</NavLink></li>
+        <li><NavLink to="/article" className={({ isActive }) => isActive ? 'active-link' : ''}>Article</NavLink></li>
+      </ul>
+      </ul>
+    </nav>
+  );
+}
 
-function App() {
+function HomePage() {
   const [showModal, setShowModal] = useState(false);
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
   return (
-    <div className="App">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="logo">
-          <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
-        </div>
-        <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#menu">Menu</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="#article">Article</a></li>
-        </ul>
-      </nav>
-
+    <>
       {/* Hero Section */}
       <section className="hero" id="home">
         <div className="hero-text">
@@ -58,7 +65,7 @@ function App() {
         </div>
       </section>
 
-      {/* Order Modal */}
+      {/* Modal Order Form */}
       <FormOrder show={showModal} handleClose={handleClose} />
 
       {/* Slogan */}
@@ -104,25 +111,11 @@ function App() {
   );
 }
 
-function MenuPage() {
-  return (
-    <section className="menu-section">
-      <h2>Our Menu</h2>
-      <ul>
-        <li>Ayam Panggang + Nasi Merah + Sayur Kukus</li>
-        <li>Salmon Salad + Quinoa</li>
-        <li>Oatmeal + Buah Segar</li>
-        <li>Tempe Orek + Tumis Sayur + Nasi Jagung</li>
-      </ul>
-    </section>
-  );
-}
-
 function AboutPage() {
   return (
     <section className="about-section">
       <h2>About Us</h2>
-      <p>Thrive Meal adalah layanan katering sehat...</p>
+      <p>Thrive Meal adalah layanan katering sehat yang memberikan solusi makan praktis dan bernutrisi untuk gaya hidup aktif dan sehat.</p>
     </section>
   );
 }
@@ -156,16 +149,13 @@ function Footer() {
         <a href="#"><img src={facebookIcon} alt="Facebook" /></a>
       </div>
       <div className="footer-links">
-        <Link to="/">Home</Link> |
-        <Link to="/menu">Menu</Link> |
-        <Link to="/about">About</Link> |
-        <Link to="/faq">FAQ</Link> |
-        <Link to="/article">Article</Link>
+        <Link to="/">Home</Link> | <Link to="/menu">Menu</Link> | <Link to="/about">About</Link> | <Link to="/faq">FAQ</Link> | <Link to="/article">Article</Link>
       </div>
     </footer>
   );
 }
 
+// ---------- MAIN APP ----------
 function App() {
   return (
     <Router>

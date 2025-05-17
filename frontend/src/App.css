@@ -13,13 +13,41 @@ body {
   line-height: 1.5;
 }
 
-/* Navbar */
+
 .navbar {
+  width: 100%;
   background-color: #283618;
-  padding: 20px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 10px 30px;
+  height: 100px;
+}
+
+.navbar ul li {
+  display: inline-block;
+  margin: 0 10px;
+  padding: 10px;
+}
+
+.navbar ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 20px;
+  transition: color 0.3s ease;
+}
+
+.navbar ul li a:hover {
+  color: #b8cba2; 
+  border-bottom: 2px solid #b8cba2;
+  padding-bottom: 4px;
+}
+
+.navbar ul li .active-link {
+  border-bottom: 2px solid #b8cba2;
+  font-weight: 700;
+  color: #b8cba2;
 }
 
 .logo {
@@ -29,16 +57,6 @@ body {
   color: white;
   font-size: 22px;
   font-weight: 600;
-}
-
-.navbar {
-  background-color: #283618;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 30px;
-  height: 100px;
-  overflow: hidden;
 }
 
 .logo-image {
@@ -249,89 +267,152 @@ body {
 /* menu section */
 .menu-page {
   padding: 2rem;
-  text-align: center;
+  background-color: #fffdf6;
+}
+
+.menu-banner {
+  position: relative;
+  width: 100vw; 
+  height: 250px; 
+  background-image: url('./public/images/banner-menu.jpg');
+  background-size: cover;
+  background-position: center;
+  margin-top: -0.250rem;
+  margin-left: calc(-50vw + 50%); 
+}
+
+.menu-banner-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .menu-title {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-
-.menu-tags {
-  margin-bottom: 2rem;
-}
-
-.menu-tags button {
-  background-color: #8a9c6c;
   color: white;
-  border: none;
-  padding: 0.6rem 1rem;
-  margin: 0 0.5rem;
-  border-radius: 5px;
-  cursor: pointer;
+  font-size: 4rem;
+  font-weight: bold;
+  text-align: center;
 }
 
-.menu-items {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.5rem;
+
+/* Category Buttons */
+.menu-categories {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  justify-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
+
+.category-button {
+  background-color: #748E57;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.category-button:hover {
+  background-color: #5f7446; /* sedikit lebih gelap saat hover */
+}
+
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem; /* Tambahkan jarak antar kolom dan baris */
+  justify-items: center;
+  margin: 2rem auto;
+  padding: 0;
+  max-width: 900px; /* Bisa diperlebar sedikit agar tidak terlalu sempit */
+}
+
+
 
 .menu-card {
-  background-color: #f9f9f9;
+  background-color: #B3BBA9;
+  border-radius: 14px;
   padding: 1rem;
-  width: 250px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-align: center;
+  width: 100%; 
+  max-width: 220px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
 }
 
 .menu-card img {
   width: 100%;
-  border-radius: 10px;
   height: 180px;
   object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
 }
 
 .menu-card h4 {
-  margin: 0.8rem 0 0.5rem;
-  font-size: 1.1rem;
+  margin: 0.3rem 0 0.2rem;
+  font-size: 0.95rem;
+  color: #2e2b26;
 }
 
 .menu-card p {
   margin: 0;
-  color: #555;
+  font-size: 0.85rem;
+  color: #3f3a32;
 }
 
-.menu-cta {
+.order-now-button {
+  text-align: center;
   margin-top: 2rem;
 }
 
-.menu-cta .cta {
-  background-color: #8a9c6c;
+.order-now-button button {
+  background-color: #748E57; 
   color: white;
-  padding: 0.7rem 1.5rem;
-  text-decoration: none;
-  border-radius: 5px;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
   font-weight: bold;
+  transition: background-color 0.3s ease;
 }
+
+.order-now-button button:hover {
+  background-color: #6b8545;
+}
+
 
 /* Footer Section */
 .footer {
-  background-color: #f1f1f1;
+  background-color: #283618;
   padding: 60px 20px 30px;
   text-align: center;
+  color: white;
 }
 
 .footer .find-us {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 12px;
+  color: white;
 }
 
 .footer .social-icons a img {
   width: 22px;
   margin: 0 6px;
+   filter: brightness(0) invert(1);
 }
 
 .footer-links {
@@ -341,7 +422,7 @@ body {
 
 .footer-links a {
   margin: 0 6px;
-  color: black;
+  color: white;
   text-decoration: none;
 }
 

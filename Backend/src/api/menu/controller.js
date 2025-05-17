@@ -111,14 +111,24 @@ const deleteMenuCtrl = async (req, res) => {
 }
 
 const getAllMenuByPackageIdCtrl = async (req, res) => {
-    try {
-        const { packageId } = req.params;  
-        const result = await getAllMenuByPackageId(packageId);
-        res.status(200).json(result);
-    } catch (error) {
-        return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
-    }
-}
+  try {
+    const { packageId } = req.params;
+    const menus = await getAllMenuByPackageId(packageId);
+
+    // Misal menus adalah array of objects
+    const host = req.protocol + '://' + req.get('host'); // contoh: http://localhost:8000
+    const updatedMenus = menus.map(menu => ({
+  ...menu,
+  imageURL: menu.imageURL ? `${host}${menu.imageURL}` : null  // cuma prefix host saja
+}));
+
+
+    res.status(200).json(updatedMenus);
+  } catch (error) {
+    return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
+  }
+};
+
 
 module.exports = {
     getPackageCtrl,
