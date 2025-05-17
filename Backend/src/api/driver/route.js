@@ -8,6 +8,4 @@ router.post('/', createNewDriver);
 router.put('/:driverID', updateDriverInfo);
 router.delete('/:driverID', deleteDriverInfo);
 
-module.exports = (app) => {
-  app.use('/api/driver', router);
-};
+module.exports = router;

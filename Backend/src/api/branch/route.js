@@ -8,6 +8,4 @@ router.post('/', createNewBranch);
 router.put('/:branchID', updateBranchInfo);
 router.delete('/:branchID', deleteBranchInfo);
 
-module.exports = (app) => {
-  app.use('/api/branch', router);
-};
+module.exports = router;

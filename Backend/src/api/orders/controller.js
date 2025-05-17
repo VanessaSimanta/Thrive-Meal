@@ -1,0 +1,198 @@
+const { errorResponder, errorTypes } = require('../../core/errors');
+const {
+  getAllOrders,
+  getOrderById,
+  createOrder,
+  updateOrder,
+  deleteOrder,
+  createCustomerInDb,
+  createOrderInDb,
+} = require('./repository');
+
+// Get all orders
+const getAllOrdersCtrl = async (req, res) => {
+  try {
+    const orders = await getAllOrders();
+    res.status(200).json(orders);
+  } catch (error) {
+    return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
+  }
+};
+
+// Get order by ID
+const getOrderByIdCtrl = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const order = await getOrderById(orderId);
+    if (!order) {
+      throw errorResponder(errorTypes.NOT_FOUND, 'Order not found');
+    }
+    res.status(200).json(order);
+  } catch (error) {
+    const status = error.status || 500;
+    res.status(status).json({
+      statusCode: status,
+      error: error.code || 'UNKNOWN_ERROR',
+      description: error.description || 'Unknown error',
+      message: error.message || 'An error occurred',
+    });
+  }
+};
+
+// Create new order
+const createOrderCtrl = async (req, res) => {
+  try {
+    const {
+      customerId,
+      packageId,
+      periodId,
+    } = req.body;
+
+    const newOrder = await createOrder({
+      customer_id: customerId,
+      package_id: packageId,
+      period_id: periodId,
+    });
+
+    res.status(201).json({ message: 'Order created successfully', order: newOrder });
+  } catch (error) {
+    const status = error.status || 500;
+    res.status(status).json({
+      statusCode: status,
+      error: error.code || 'UNKNOWN_ERROR',
+      description: error.description || 'Unknown error',
+      message: error.message || 'An error occurred',
+    });
+  }
+};
+
+const createFullOrderCtrl = async (req, res) => {
+  try {
+    const {
+      fullName,
+      phoneNumber,
+      roadName,         // sesuaikan dengan migration
+      urbanVillage,
+      province,
+      city,
+      district,
+      zipCode,
+      addressNotes,
+      allergyNotes,
+      packageId,
+      periodId,
+    } = req.body;
+
+    // Validasi input wajib
+    if (!fullName || !phoneNumber || !roadName || !packageId || !periodId) {
+      throw errorResponder(errorTypes.INVALID_PAYLOAD, 'Required fields are missing');
+    }
+
+    // Step 1: Masukkan customer ke DB
+    const customer = await createCustomerInDb({
+      fullName,
+      phoneNumber,
+      roadName,
+      urbanVillage,
+      province,
+      city,
+      district,
+      zipCode,
+      addressNotes,
+      allergyNotes,
+    });
+
+    const customerId = customer.customerId;  // sesuai migration
+
+    // Step 2: Buat order
+    const order = await createOrderInDb({
+      customerId,
+      packageId,
+      periodId,
+    });
+
+    res.status(201).json({
+      message: 'Customer and Order created successfully',
+      customerId,
+      order,
+    });
+  } catch (error) {
+    const status = error.status || 500;
+    res.status(status).json({
+      statusCode: status,
+      error: error.code || 'UNKNOWN_ERROR',
+      description: error.description || 'Unknown error',
+      message: error.message || 'An error occurred',
+    });
+  }
+};
+
+// Update order
+const updateOrderCtrl = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const {
+      customerId,
+      packageId,
+      periodId,
+      paymentId,
+      branchId,
+      driverId,
+      adminId,
+    } = req.body;
+
+    const updateData = {};
+
+    if (customerId !== undefined) updateData.customer_id = customerId;
+    if (packageId !== undefined) updateData.package_id = packageId;
+    if (periodId !== undefined) updateData.period_id = periodId;
+    if (paymentId !== undefined) updateData.payment_id = paymentId;
+    if (branchId !== undefined) updateData.branch_id = branchId;
+    if (driverId !== undefined) updateData.driver_id = driverId;
+    if (adminId !== undefined) updateData.admin_id = adminId;
+
+    if (Object.keys(updateData).length === 0) {
+      throw errorResponder(errorTypes.EMPTY_BODY, 'No fields provided for update');
+    }
+
+    const updated = await updateOrder(orderId, updateData);
+
+    res.status(200).json({ message: 'Order updated successfully', result: updated });
+  } catch (error) {
+    const status = error.status || 500;
+    res.status(status).json({
+      statusCode: status,
+      error: error.code || 'UNKNOWN_ERROR',
+      description: error.description || 'Unknown error',
+      message: error.message || 'An error occurred',
+    });
+  }
+};
+
+// Delete order
+const deleteOrderCtrl = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const deleted = await deleteOrder(orderId);
+
+    res.status(200).json({ message: 'Order deleted successfully', result: deleted });
+  } catch (error) {
+    const status = error.status || 500;
+    res.status(status).json({
+      statusCode: status,
+      error: error.code || 'UNKNOWN_ERROR',
+      description: error.description || 'Unknown error',
+      message: error.message || 'An error occurred',
+    });
+  }
+};
+
+module.exports = {
+  getAllOrdersCtrl,
+  getOrderByIdCtrl,
+  createOrderCtrl,
+  createFullOrderCtrl,
+  updateOrderCtrl,
+  deleteOrderCtrl,
+};
