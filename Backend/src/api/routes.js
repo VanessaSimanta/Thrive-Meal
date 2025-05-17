@@ -6,10 +6,12 @@ const branch = require('./branch/route');
 const driver = require('./driver/route');
 const orders = require('./orders/route');
 const customers = require('./customers/route');
+const payment = require('./payment/route');
 module.exports = () => {
   const app = express.Router();
 
   menu(app);
+  payment(app);
   app.use('/menu', menu)
   app.use('/admin', admin)
   app.use('/branch', branch)
