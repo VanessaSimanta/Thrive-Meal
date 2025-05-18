@@ -1,116 +1,66 @@
 const db = require('../../core/db');
 
-// Get all orders
-const getAllOrders = async () => {
-  try {
-    const orders = await db('orders').select('*');
-    return orders;
-  } catch (error) {
-    throw new Error('Failed to get orders: ' + error.message);
-  }
+// get package
+const getPackage = async () => {
+  const packageData = await db('package').select('packageId','package_type');
+  return packageData;
 };
 
-// Get order by ID
-const getOrderById = async (orderId) => {
-  try {
-    const order = await db('orders').where({ orderId }).first();
-    return order;
-  } catch (error) {
-    throw new Error('Failed to get order by ID: ' + error.message);
-  }
+// add menu
+const postMenu = async (menuData) => {
+    try {
+        const result = await db('menu').insert(menuData).returning('*');
+        return result;
+    } catch (error) {
+        throw new Error('Failed to add menu: ' + error.message);
+    }
 };
 
-// Create new order
-const createOrder = async (orderData) => {
-  try {
-    const [result] = await db('orders').insert(orderData).returning('*');
-    return result;
-  } catch (error) {
-    throw new Error('Failed to create order: ' + error.message);
-  }
+// edit menu
+const updateMenu = async (menuId, menuData) => {
+    try {
+        await db('menu')
+            .where({ menuId }) 
+            .update({
+            ...menuData,
+            updateAt: db.fn.now(), //timestamp 
+            });
+    
+        return { message: 'Menu updated successfully' };
+    } catch (error) {
+        throw new Error('Failed to update menu: ' + error.message);
+    }
+  };
+
+// get menu by id
+const getMenuById = async (menuId) => {
+   return db('menu').where({ menuId: menuId }).first();
 };
 
-// Create order with proper camelCase columns
-const createOrderInDb = async ({ customerId, packageId, periodId }) => {
-  try {
-    const [newOrder] = await db('orders')
-      .insert({
-        customerId,
-        packageId,
-        periodId,
-      })
-      .returning('*');
-    return newOrder;
-  } catch (error) {
-    throw new Error('Failed to create order: ' + error.message);
-  }
-};
-
-// Create customer with camelCase columns matching migration
-const createCustomerInDb = async ({
-  fullName,
-  phoneNumber,
-  roadName,
-  urbanVillage,
-  province,
-  city,
-  district,
-  zipCode,
-  addressNotes,
-  allergyNotes,
-}) => {
-  try {
-    const [newCustomer] = await db('customers')
-      .insert({
-        customer_name: fullName,
-        phone_number: phoneNumber,
-        road_name: roadName,
-        urban_village: urbanVillage,
-        province,
-        city,
-        district,
-        zip_code: zipCode,
-        address_notes: addressNotes,
-        allergy_notes: allergyNotes,
-      })
-      .returning('*');
-    return newCustomer;
-  } catch (error) {
-    throw new Error('Failed to create customer: ' + error.message);
-  }
-};
-
-// Update existing order with camelCase columns
-const updateOrder = async (orderId, orderData) => {
-  try {
-    await db('orders')
-      .where({ orderId })
-      .update({
-        ...orderData,
-        updatedAt: db.fn.now(),
-      });
-    return { message: 'Order updated successfully' };
-  } catch (error) {
-    throw new Error('Failed to update order: ' + error.message);
-  }
-};
-
-// Delete order
-const deleteOrder = async (orderId) => {
-  try {
-    const deleted = await db('orders').where({ orderId }).del();
-    return deleted;
-  } catch (error) {
-    throw new Error('Failed to delete order: ' + error.message);
-  }
-};
+//delete menu
+const deleteMenu = async (menuId) => {
+    try {
+        return db('menu').where({ menuId: menuId }).del();
+    }
+    catch(error) {
+        throw new error('Failed to delete menu: ' + error.message);
+    }  
+}
+//get All menu by packageId
+const getAllMenuByPackageId = async (packageId) => {
+    try {
+        return db('menu').where({ packageId: packageId });
+    }
+    catch(error) {
+        throw new error('Failed to get menu: ' + error.message);
+    }  
+}
 
 module.exports = {
-  getAllOrders,
-  getOrderById,
-  createOrder,
-  updateOrder,
-  deleteOrder,
-  createOrderInDb,
-  createCustomerInDb,
+  getPackage,
+  postMenu,
+  updateMenu,
+  getMenuById,
+  deleteMenu,
+  getAllMenuByPackageId
 };

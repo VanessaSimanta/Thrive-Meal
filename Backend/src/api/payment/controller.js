@@ -31,6 +31,7 @@ const createTransaction = async (req, res) => {
         console.log('Gross amount:', gross_amount);
         const authString = Buffer.from(`${MIDTRANS_SERVER_KEY}:`).toString('base64');
 
+        //data payload midtrans
         const payload = {
             transaction_details: {
                 order_id: transactionId,

@@ -23,7 +23,7 @@ const postMenuCtrl = async (req, res) => {
       res.status(200).json({ message: "Inputed Successfully", menu });
   
     } catch (error) {
-        return res.status(500).json(errorResponder(errorTypes.BAD_REQUEST));
+        return res.status(400).json(errorResponder(errorTypes.BAD_REQUEST));
     }
       
     };
@@ -115,7 +115,6 @@ const getAllMenuByPackageIdCtrl = async (req, res) => {
     const { packageId } = req.params;
     const menus = await getAllMenuByPackageId(packageId);
 
-    // Misal menus adalah array of objects
     const host = req.protocol + '://' + req.get('host'); // contoh: http://localhost:8000
     const updatedMenus = menus.map(menu => ({
   ...menu,

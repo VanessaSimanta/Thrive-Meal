@@ -12,7 +12,6 @@ module.exports = () => {
 
   menu(app);
   payment(app);
-  app.use('/menu', menu)
   app.use('/admin', admin)
   app.use('/branch', branch)
   app.use('/driver',driver)
