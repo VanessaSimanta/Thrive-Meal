@@ -699,6 +699,23 @@ body {
   background-color: #6b8545;
 }
 
+/* Menu Section */
+.about-header-section {
+  overflow: hidden;
+  background-color: #748E57;
+  position: relative;
+  z-index: 1;
+  color: black;
+}
+
+.skewed-bg {
+  background-color: #e0ecdd;
+  transform: skewY(-3deg);
+  transform-origin: top left;
+  height: 100%;
+  z-index: 0;
+}
+
 
 /* Footer Section */
 .footer {

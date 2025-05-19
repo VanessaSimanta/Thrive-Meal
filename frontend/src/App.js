@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import MenuPage from './public/component/MenuPage';
 import FormOrder from './public/component/FormOrder';
 import logoImage from './public/images/logo.png';
@@ -20,6 +21,8 @@ import scheduleIcon from './public/icons/schedule.jpg';
 import whatsappIcon from './public/icons/whatsapp.png';
 import instagramIcon from './public/icons/instagram.png';
 import facebookIcon from './public/icons/facebook.png';
+import aboutUsImage from './public/images/aboutUs.jpg';
+import aboutUs1Image from './public/images/aboutUs1.jpg';
 
 // ---------- COMPONENTS ----------
 function Navbar() {
@@ -113,12 +116,63 @@ function HomePage() {
 
 function AboutPage() {
   return (
-    <section className="about-section">
-      <h2>About Us</h2>
-      <p>Thrive Meal adalah layanan katering sehat yang memberikan solusi makan praktis dan bernutrisi untuk gaya hidup aktif dan sehat.</p>
-    </section>
+    <div className="about-page-wrapper">
+      {/* Section Atas: About Us dengan latar miring */}
+      <section className="about-header-section position-relative text-white py-5">
+        <div className="skewed-bg position-absolute top-0 start-0 w-100 h-100"></div>
+        <div className="container position-relative">
+          <h2 className="fw-bold mb-4">About Us</h2>
+          <div className="row align-items-center">
+            <div className="col-md-8">
+              <p className="lead">
+                At Thrive Meal, we believe that healthy living starts from the plate.
+                We craft delicious, nutritious meals — designed by nutritionists, cooked by 5-star chefs, and delivered fresh to your door.
+              </p>
+            </div>
+            <div className="col-md-4 d-flex justify-content-end">
+              <img src={aboutUsImage} alt="Chef Cooking" className="img-thumbnail me-2" style={{ width: "100px" }} />
+              <img src={aboutUs1Image} alt="Healthy Dish" className="img-thumbnail" style={{ width: "100px" }} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Vision Section */}
+      <section className="text-center my-5">
+        <h4 className="btn btn-dark rounded-pill px-4 mb-3">Our Vision</h4>
+        <div className="bg-light p-4 mx-auto rounded-3 shadow-sm" style={{ maxWidth: '800px' }}>
+          <p className="mb-0">
+            To inspire a healthier lifestyle by making nutritious, balanced meals accessible, delicious, and part of everyday living.
+            We believe that eating well should be simple, satisfying, and sustainable.
+          </p>
+        </div>
+      </section>
+
+      {/* Quote with Image */}
+      <section className="text-center mb-5">
+        <img src={foodImage1} alt="Meal Box" className="img-fluid mb-3" style={{ width: '200px' }} />
+        <p className="lead fw-semibold">
+          <span className="text-success">Your Healthy </span>
+          <span className="text-info">Habit </span>
+          <span className="text-danger">Starts Here.</span>
+        </p>
+      </section>
+
+      {/* Mission Section */}
+      <section className="text-center mb-5">
+        <h4 className="btn btn-dark rounded-pill px-4 mb-3">Our Mission</h4>
+        <div className="bg-light p-4 mx-auto rounded-3 shadow-sm" style={{ maxWidth: '800px' }}>
+          <p className="mb-0">
+            To deliver thoughtfully crafted meals that support your wellness goals —
+            combining expert nutrition, chef-quality taste, and seamless service.
+            We’re here to make healthy eating effortless, flexible, and enjoyable for everyone.
+          </p>
+        </div>
+      </section>
+    </div>
   );
 }
+
 
 function FaqPage() {
   return (
