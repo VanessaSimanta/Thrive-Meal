@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
 import Payment from './Payment';
+import useSnap from '../../hooks/useSnap';
 
 function FormOrder({ show, handleClose }) {
+  const { snapEmbed } = useSnap();
+
   const [formData, setFormData] = useState({
     name: '', phone: '', address: '', urbanVillage: '', province: '',
     city: '', district: '', zip: '', addressNote: '', allergyNote: '',
@@ -18,14 +21,14 @@ function FormOrder({ show, handleClose }) {
     }));
   };
 
-    const mapPackageToId = (packageName) => {
+  const mapPackageToId = (packageName) => {
     const packageIdMap = {
-      'Weight Loss Program': 25,
-      'Weight Maintenance Program': 26,
-      'Diabet Cholesterol Program': 27,
-      'Gluten Free Program': 28,
-      'Gain Muscle Program': 29,
-      'Vegetarian Program': 30,
+      'Weight Loss Program': 19,
+      'Weight Maintenance Program': 20,
+      'Diabet Cholesterol Program': 21,
+      'Gluten Free Program': 22,
+      'Gain Muscle Program': 23,
+      'Vegetarian Program': 34,
     };
     return packageIdMap[packageName];
   };
@@ -40,13 +43,13 @@ function FormOrder({ show, handleClose }) {
     return periodIdMap[subscriptionName];
   };
 
-
   const handleSubmit = async () => {
     const {
       name, phone, address, urbanVillage, province,
       city, district, zip, addressNote, allergyNote, package: pack, subscription,
     } = formData;
 
+    // Validasi input
     if (!name || !phone || !address || !urbanVillage ||
         !province || !city || !district || !zip || !pack || !subscription) {
       setError('Please complete all required fields before submitting the form');
@@ -58,7 +61,8 @@ function FormOrder({ show, handleClose }) {
       return;
     }
 
-      const dataToSend = {
+    // Data untuk API order
+    const dataToSend = {
       fullName: name,
       phoneNumber: phone,
       roadName: address,
@@ -74,27 +78,58 @@ function FormOrder({ show, handleClose }) {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/api/orders/full', {
+      // Kirim order ke backend
+      const orderRes = await fetch('http://localhost:8000/api/orders/full', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Order submitted successfully:', result);
-        setError('');
-        setShowPayment(true); // Show payment modal
-      } else {
-        const errorData = await response.json();
+      if (!orderRes.ok) {
+        const errorData = await orderRes.json();
         setError(errorData.message || 'Failed to submit order');
+        return;
       }
-    } catch (error) {
-      console.error('Error submitting order:', error);
-      setError('An unexpected error occurred');
-    }
+
+      const orderResult = await orderRes.json();
+      console.log('Order response:', orderResult);
+
+      const orderId = orderResult.order?.orderId;
+      const customerId = orderResult.customerId;
+
+      if (!orderId) {
+        setError('Order creation failed: missing order ID');
+        return;
+      }
+
+      const packageId = mapPackageToId(pack);
+      const periodId = mapSubscriptionToId(subscription);
+
+      console.log("Sending to /transaction:", { customerId, orderId, packageId, periodId });
+
+      const paymentRes = await fetch('http://localhost:8000/api/transaction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          customerId,
+          orderId,
+          packageId: dataToSend.packageId,
+          periodId: dataToSend.periodId, }),
+      });
+
+      const paymentData = await paymentRes.json();
+
+      if (paymentData.status === 'success') {
+        snapEmbed(paymentData.data.snap_token, 'midtrans-container', {});
+        setShowPayment(true);
+        setError('');
+      } else {
+        setError('Failed to initiate payment');
+      }
+    } catch (err) {
+        console.error('Submit error:', err.message, err);
+        setError(err.message || 'An unexpected error occurred');
+      }
   };
 
   const closePaymentModal = () => {
@@ -126,17 +161,17 @@ function FormOrder({ show, handleClose }) {
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Full Name</Form.Label>
-              <Form.Control type="text" placeholder="Enter your name" name="name" value={formData.name} onChange={handleChange} />
+              <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Enter your name" />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Phone Number</Form.Label>
-              <Form.Control type="text" placeholder="Enter phone number" name="phone" value={formData.phone} onChange={handleChange} />
+              <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Enter phone number" />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Address</Form.Label>
-              <Form.Control type="text" placeholder="Street address" name="address" value={formData.address} onChange={handleChange} />
+              <Form.Control type="text" name="address" value={formData.address} onChange={handleChange} placeholder="Street address" />
             </Form.Group>
 
             <Row>
@@ -168,39 +203,40 @@ function FormOrder({ show, handleClose }) {
             </Form.Group>
 
             <Row className="mb-3">
-            <Col>
-              <Form.Select name="package" value={formData.package} onChange={handleChange}>
-                <option value="" disabled hidden>Select Your Package</option>
-                <option value="Weight Loss Program">Weight Loss Program</option>
-                <option value="Weight Maintenance Program">Weight Maintenance Program</option>
-                <option value="Diabet Cholesterol Program">Diabet Cholesterol Program</option>
-                <option value="Gluten Free Program">Gluten Free Program</option>
-                <option value="Gain Muscle Program">Gain Muscle Program</option>
-                <option value="Vegetarian Program">Vegetarian Program</option>
-              </Form.Select>
-            </Col>
-            <Col>
-              <Form.Select name="subscription" value={formData.subscription} onChange={handleChange}>
-                <option value="" disabled hidden>Subscription</option>
-                <option value="1 Week">1 Week</option>
-                <option value="1 Month">1 Month</option>
-                <option value="3 Month">3 Month</option>
-                <option value="6 Month">6 Month</option>
-              </Form.Select>
-            </Col>
-          </Row>
-
+              <Col>
+                <Form.Select name="package" value={formData.package} onChange={handleChange}>
+                  <option value="" disabled hidden>Select Your Package</option>
+                  <option value="Weight Loss Program">Weight Loss Program</option>
+                  <option value="Weight Maintenance Program">Weight Maintenance Program</option>
+                  <option value="Diabet Cholesterol Program">Diabet Cholesterol Program</option>
+                  <option value="Gluten Free Program">Gluten Free Program</option>
+                  <option value="Gain Muscle Program">Gain Muscle Program</option>
+                  <option value="Vegetarian Program">Vegetarian Program</option>
+                </Form.Select>
+              </Col>
+              <Col>
+                <Form.Select name="subscription" value={formData.subscription} onChange={handleChange}>
+                  <option value="" disabled hidden>Subscription</option>
+                  <option value="1 Week">1 Week</option>
+                  <option value="1 Month">1 Month</option>
+                  <option value="3 Month">3 Month</option>
+                  <option value="6 Month">6 Month</option>
+                </Form.Select>
+              </Col>
+            </Row>
 
             <div className="text-center">
               <Button style={{ backgroundColor: '#748E57', borderRadius: '10px' }} onClick={handleSubmit}>
-                Process Payment
+                Submit & Pay
               </Button>
             </div>
           </Form>
         </Modal.Body>
       </Modal>
+      
 
-      {/* Payment Modal */}
+
+      {/* Optional: Payment status/modal */}
       <Payment show={showPayment} handleClose={closePaymentModal} />
     </>
   );

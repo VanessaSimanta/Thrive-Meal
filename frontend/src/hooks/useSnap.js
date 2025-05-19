@@ -1,42 +1,34 @@
-const { useEffect } = require("react")
-const { MIDTRANS_CLIENT_ID } = require("../utils/const")
+import { useEffect } from 'react';
 
 const useSnap = () => {
-    useEffect(() => {
-        const myMidtransClientKey = MIDTRANS_CLIENT_ID
-        const script = document.createElement('script');
-        script.src = '${MIDTRANS_API_URL}/snap/snap.js';
-        script.setAttribute('data-client-key', myMidtransClientKey);
-        script.onload = () => {
-            setSnap(window.snap);
-        };
-        document.body.appendChild(script);
+  useEffect(() => {
+    const scriptId = 'snap-script';
+    const clientKey = 'YOUR_MIDTRANS_CLIENT_KEY'; // Ganti dengan client key Midtrans Anda
+    const snapUrl = 'https://app.sandbox.midtrans.com/snap/snap.js';
 
-        return () => {
-            document.body.removeChild(script);
-        };
- },   []);
-
-    const snapEmbed = (snap_token, embedId, action) => {
-        if (snap) {
-            snap.embed(snap_token, {
-                embedId,
-                onSuccess: function (result) {
-                    console.log('success', result);
-                    action.onSuccess(result);
-            },
-                onPending: function (result) {
-                    console.log('pending', result);
-                    action.onPending(result);
-            },
-                onClose: function () {
-                    action.onClose();
-                 }
-            })
-        }
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement('script');
+      script.src = `${snapUrl}`;
+      script.setAttribute('data-client-key', clientKey);
+      script.id = scriptId;
+      script.async = true;
+      document.body.appendChild(script);
     }
-    
-    return {snapEmbed}
-}
+  }, []);
+
+  const snapEmbed = (token, domId, options = {}) => {
+    const interval = setInterval(() => {
+      if (window.snap && window.snap.embed) {
+        window.snap.embed(token, {
+          embedId: domId,
+          ...options
+        });
+        clearInterval(interval);
+      }
+    }, 100);
+  };
+
+  return { snapEmbed };
+};
 
 export default useSnap;
