@@ -4,7 +4,7 @@ import Payment from './Payment';
 import useSnap from '../../hooks/useSnap';
 
 function FormOrder({ show, handleClose }) {
-  const { snapEmbed } = useSnap();
+  const { snapPay } = useSnap();
 
   const [formData, setFormData] = useState({
     name: '', phone: '', address: '', urbanVillage: '', province: '',
@@ -13,6 +13,7 @@ function FormOrder({ show, handleClose }) {
   });
   const [error, setError] = useState('');
   const [showPayment, setShowPayment] = useState(false);
+  const [snapToken, setSnapToken] = useState(null);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -49,7 +50,6 @@ function FormOrder({ show, handleClose }) {
       city, district, zip, addressNote, allergyNote, package: pack, subscription,
     } = formData;
 
-    // Validasi input
     if (!name || !phone || !address || !urbanVillage ||
         !province || !city || !district || !zip || !pack || !subscription) {
       setError('Please complete all required fields before submitting the form');
@@ -61,7 +61,6 @@ function FormOrder({ show, handleClose }) {
       return;
     }
 
-    // Data untuk API order
     const dataToSend = {
       fullName: name,
       phoneNumber: phone,
@@ -78,7 +77,6 @@ function FormOrder({ show, handleClose }) {
     };
 
     try {
-      // Kirim order ke backend
       const orderRes = await fetch('http://localhost:8000/api/orders/full', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -92,8 +90,6 @@ function FormOrder({ show, handleClose }) {
       }
 
       const orderResult = await orderRes.json();
-      console.log('Order response:', orderResult);
-
       const orderId = orderResult.order?.orderId;
       const customerId = orderResult.customerId;
 
@@ -102,38 +98,41 @@ function FormOrder({ show, handleClose }) {
         return;
       }
 
-      const packageId = mapPackageToId(pack);
-      const periodId = mapSubscriptionToId(subscription);
-
-      console.log("Sending to /transaction:", { customerId, orderId, packageId, periodId });
-
       const paymentRes = await fetch('http://localhost:8000/api/transaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           customerId,
           orderId,
           packageId: dataToSend.packageId,
-          periodId: dataToSend.periodId, }),
+          periodId: dataToSend.periodId,
+        }),
       });
+
+      if (!paymentRes.ok) {
+        const errorPayment = await paymentRes.json();
+        setError(errorPayment.message || 'Failed to initiate payment');
+        return;
+      }
 
       const paymentData = await paymentRes.json();
 
       if (paymentData.status === 'success') {
-        snapEmbed(paymentData.data.snap_token, 'midtrans-container', {});
+        setSnapToken(paymentData.data.snap_token);
         setShowPayment(true);
         setError('');
       } else {
         setError('Failed to initiate payment');
       }
     } catch (err) {
-        console.error('Submit error:', err.message, err);
-        setError(err.message || 'An unexpected error occurred');
-      }
+      console.error('Submit error:', err.message, err);
+      setError(err.message || 'An unexpected error occurred');
+    }
   };
 
   const closePaymentModal = () => {
     setShowPayment(false);
+    setSnapToken(null);
   };
 
   useEffect(() => {
@@ -145,6 +144,7 @@ function FormOrder({ show, handleClose }) {
       });
       setError('');
       setShowPayment(false);
+      setSnapToken(null);
     }
   }, [show]);
 
@@ -233,13 +233,20 @@ function FormOrder({ show, handleClose }) {
           </Form>
         </Modal.Body>
       </Modal>
-      
 
-
-      {/* Optional: Payment status/modal */}
-      <Payment show={showPayment} handleClose={closePaymentModal} />
+      {/* Kirim snapToken ke Payment dan snapPay akan dijalankan di sana */}
+      <Payment 
+        show={showPayment} 
+        handleClose={closePaymentModal} 
+        snapToken={snapToken} 
+        snapPay={snapPay}
+      />
     </>
   );
 }
 
 export default FormOrder;
+
+  
+
+    

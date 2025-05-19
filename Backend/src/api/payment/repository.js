@@ -69,10 +69,26 @@ const createTransactionItems = async ({
   ]);
 };
 
+const cekPaymentId = async (transactionId) => {
+  const payment = await db('transactions').where({ transactionId }).first();
+  return payment;
+}
+
+const updatePaymentStatus = async (transactionId) => {
+  const updated = await db('transactions')
+  .where({ transactionId })
+  .update({ payment_status: 'Success', updated_at: new Date() });
+
+console.log('Rows updated:', updated);
+};
+
 module.exports = {
   getOrder,
   getPackagePriceById,
   getPeriodPriceById,
   createTransaction,
-  createTransactionItems
+  createTransactionItems,
+  updatePaymentStatus,
+  cekPaymentId
+ 
 };

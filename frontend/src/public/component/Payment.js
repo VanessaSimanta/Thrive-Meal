@@ -1,21 +1,18 @@
-// Payment.js
 import React, { useEffect } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 
-function Payment({ show, handleClose }) {
+function Payment({ show, handleClose, snapToken, snapPay }) {
+  useEffect(() => {
+    if (show && snapToken) {
+      snapPay(snapToken, 'midtrans-container', {});
+    }
+  }, [show, snapToken, snapPay]);
+
   return (
-    <Modal show={show} onHide={handleClose} size="lg" centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Payment</Modal.Title>
-      </Modal.Header>
+    <Modal show={show} onHide={handleClose} size="md" centered>
       <Modal.Body>
-        <div id="midtrans-container" className="snap-embed-container"></div>
+        <div id="midtrans-container" />
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 }

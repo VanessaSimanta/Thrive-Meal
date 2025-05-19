@@ -1,5 +1,5 @@
 
-const paymentRepo = require('./repository.js');
+const { paymentRepo, updatePaymentStatus, cekPaymentId} = require('./repository.js');
 const { MIDTRANS_APP_URL, MIDTRANS_SERVER_KEY, PENDING_PAYMENT } = require('../../utils/constant.js');
 const { errorResponder, errorTypes } = require('../../core/errors');
 const fetch = require('node-fetch'); 
@@ -10,6 +10,7 @@ const getNanoid = async () => {
 
 
 const createTransaction = async (req, res) => {
+     console.log("Incoming transaction payload:", req.body);
     const { customerId, orderId, packageId, periodId } = req.body;
 
     try {
@@ -109,6 +110,27 @@ const createTransaction = async (req, res) => {
     }
 };
 
+const updatePaymentCtrl = async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+    const existingPayment = await cekPaymentId(transactionId);
+
+    if (!existingPayment) {
+    return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
+    }
+
+    await updatePaymentStatus(transactionId);
+
+    return res.status(200).json({ message: 'Payment status updated successfully' });
+  } catch (error) {
+    console.error('Error updating payment status:', error);
+    return res.status(500).json(errorResponder(errorTypes.INTERNAL_SERVER));
+  }
+};
+
+
+
 module.exports = {
-    createTransaction
+    createTransaction,
+    updatePaymentCtrl
 };
