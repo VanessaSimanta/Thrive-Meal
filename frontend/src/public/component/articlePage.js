@@ -50,7 +50,7 @@ const featuredArticles = [
 
 function ArticlePage() {
     return (
-        <div style={{ backgroundColor: "#f5f9f5" }}>
+        <div style={{ backgroundColor: "#fffbf0" }}>
             <div className="menu-page">
             <div className="menu-banner">
                 <div className="menu-banner-overlay">
@@ -59,21 +59,17 @@ function ArticlePage() {
             </div>
             </div>
             <section className="container py-5">
-                <div className="container my-5">
             <div
                 className="row justify-content-center p-4"
                 style={{
                     backgroundColor: "#e8f2e5",
                     borderRadius: "16px",
+                    marginBottom : "50px",
                     boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                 }}
             >
                 {featuredArticles.map((article) => (
-                    <div className="col-md-5 mx-2 mb-4" key={article.id}>
-                        <div
-                            className="text-center p-3 article-card"
-                            style={{ borderRadius: "12px", transition: "0.3s" }}
-                        >
+                    <div className="col-md-5 mx-2 mb-4 align-items-center text-center" key={article.id}>
                             <div className="overflow-hidden rounded" style={{ height: "200px" }}>
                                 <img
                                     src={article.image}
@@ -88,10 +84,9 @@ function ArticlePage() {
                             </div>
                             <p className="fw-semibold mt-3">{article.title}</p>
                             <p className="text-muted small">by {article.author}</p>
-                        </div>
+
                     </div>
                 ))}
-            </div>
             </div>
                 <h2 className="text-center fw-bold mb-4 bg-custom text-white">OUR LATEST ARTICLE</h2>
                 <div className="row justify-content-center">
