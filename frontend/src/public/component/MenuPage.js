@@ -36,9 +36,12 @@ function MenuPage() {
       <div className="menu-grid">
         {/* Tombol kategori */}
          {/* Package Id sesuain dulu nanti reset db biar mulai dari 1 kalo udh final  */}
-        <div className="category-button" onClick={() => setPackageId(7)}>Weight Loss</div>
-        <div className="category-button" onClick={() => setPackageId(8)}>Balanced Wellness</div>
-        <div className="category-button" onClick={() => setPackageId(9)}>Muscle Gain</div>
+        <div className="category-button" onClick={() => setPackageId(7)}>Weight Loss Program</div>
+        <div className="category-button" onClick={() => setPackageId(8)}>Weight Maintenance Program</div>
+        <div className="category-button" onClick={() => setPackageId(9)}>Gain Muscle Program</div>
+        <div className="category-button" onClick={() => setPackageId(10)}>Vegetarian Program</div>
+        <div className="category-button" onClick={() => setPackageId(11)}>Gluten Free Program</div>
+        <div className="category-button" onClick={() => setPackageId(12)}>Diabet Cholesterol Program</div>
   
       </div>
 
