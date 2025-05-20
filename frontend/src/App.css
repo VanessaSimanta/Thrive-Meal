@@ -544,6 +544,28 @@ body {
   max-width: 90vw;
 }
 
+/* Article */
+.bg-custom {
+  padding: 3rem;
+  margin-left: 0;
+  margin-right: 0;
+  background-color: #283618;
+}
+
+.bg-custom2 {
+  background-color: #dfeee0;
+}
+
+.article-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  background-color: #dfeee0;
+}
+
+.article-card:hover .article-img {
+  transform: scale(1.05);
+}
+
 @keyframes rotateWave {
   0% {
     transform: rotate(0deg) scale(1);
@@ -782,6 +804,7 @@ body {
   width: 26px;
   height: 26px;
 }
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
