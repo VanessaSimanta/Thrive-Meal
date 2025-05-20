@@ -701,20 +701,32 @@ body {
 
 /* Menu Section */
 .about-header-section {
-  overflow: hidden;
   background-color: #748E57;
+  color: white;
   position: relative;
+  overflow: hidden;
   z-index: 1;
-  color: black;
 }
 
-.skewed-bg {
-  background-color: #e0ecdd;
-  transform: skewY(-3deg);
-  transform-origin: top left;
-  height: 100%;
+.angled-top-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-left: 180px solid transparent;
+  border-bottom: 180px solid #748E57;
   z-index: 0;
 }
+
+
+.vision-button {
+  background-color: #B3BBA9;
+  font-size: 1.2rem;
+  border-radius: 0.5rem;
+  z-index: 2;
+}
+
 
 
 /* Footer Section */
