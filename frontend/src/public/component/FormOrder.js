@@ -3,6 +3,7 @@ import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
 import Payment from './Payment';
 import useSnap from '../../hooks/useSnap';
 
+
 function FormOrder({ show, handleClose }) {
   const { snapPay } = useSnap();
 
@@ -14,6 +15,8 @@ function FormOrder({ show, handleClose }) {
   const [error, setError] = useState('');
   const [showPayment, setShowPayment] = useState(false);
   const [snapToken, setSnapToken] = useState(null);
+  const [transactionId, setTransactionId] = useState(null);
+
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -93,6 +96,7 @@ function FormOrder({ show, handleClose }) {
       const orderId = orderResult.order?.orderId;
       const customerId = orderResult.customerId;
 
+
       if (!orderId) {
         setError('Order creation failed: missing order ID');
         return;
@@ -119,6 +123,8 @@ function FormOrder({ show, handleClose }) {
 
       if (paymentData.status === 'success') {
         setSnapToken(paymentData.data.snap_token);
+        setTransactionId(paymentData.data.transactionId); 
+        console.log(paymentData.data.transactionId)
         setShowPayment(true);
         setError('');
       } else {
@@ -239,7 +245,7 @@ function FormOrder({ show, handleClose }) {
         show={showPayment} 
         handleClose={closePaymentModal} 
         snapToken={snapToken} 
-        snapPay={snapPay}
+        snapPay={() => snapPay(snapToken, transactionId)}
       />
     </>
   );

@@ -1,15 +1,16 @@
 
-const { paymentRepo, updatePaymentStatus, cekPaymentId} = require('./repository.js');
+const { createTransaction, createTransactionItems, updatePaymentStatus, cekPaymentId, updateOrderPayment, getPackagePriceById, getPeriodPriceById } = require('./repository.js');
 const { MIDTRANS_APP_URL, MIDTRANS_SERVER_KEY, PENDING_PAYMENT } = require('../../utils/constant.js');
 const { errorResponder, errorTypes } = require('../../core/errors');
 const fetch = require('node-fetch'); 
+
 const getNanoid = async () => {
   const { nanoid } = await import('nanoid');
   return nanoid;
 };
 
 
-const createTransaction = async (req, res) => {
+const createTransactionCtrl = async (req, res) => {
      console.log("Incoming transaction payload:", req.body);
     const { customerId, orderId, packageId, periodId } = req.body;
 
@@ -17,8 +18,8 @@ const createTransaction = async (req, res) => {
         const nanoid = await getNanoid();
         const transactionId = `TRX-${nanoid(4)}-${nanoid(8)}`;
 
-        const packageResult = await paymentRepo.getPackagePriceById(packageId);
-        const periodResult = await paymentRepo.getPeriodPriceById(periodId);
+        const packageResult = await getPackagePriceById(packageId);
+        const periodResult = await getPeriodPriceById(periodId);
 
         const packagePrice = packageResult?.[0]?.package_price;
         const periodPrice = periodResult?.[0]?.period_price;
@@ -75,7 +76,7 @@ const createTransaction = async (req, res) => {
         }
         
         await Promise.all([
-            paymentRepo.createTransaction({
+            createTransaction({
                 transactionId,
                 gross_amount,
                 customerId,
@@ -83,7 +84,7 @@ const createTransaction = async (req, res) => {
                 snap_token: data.token,
                 snap_redirect_url: data.redirect_url
             }),
-            paymentRepo.createTransactionItems({
+            createTransactionItems({
                 transactionId,
                 packageId,
                 periodId
@@ -93,7 +94,7 @@ const createTransaction = async (req, res) => {
         res.json({
             status: 'success',
             data: {
-                id: transactionId,
+                transactionId,
                 status: PENDING_PAYMENT,
                 customerId,
                 orderId,
@@ -113,24 +114,50 @@ const createTransaction = async (req, res) => {
 const updatePaymentCtrl = async (req, res) => {
   try {
     const { transactionId } = req.params;
-    const existingPayment = await cekPaymentId(transactionId);
 
-    if (!existingPayment) {
-    return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
+    // Update payment status di table transactions
+    const updated = await updatePaymentStatus(transactionId);
+    if (!updated) {
+      return res.status(404).json({ message: 'Transaction not found' });
     }
 
-    await updatePaymentStatus(transactionId);
+    // Ambil data transaksi untuk dapat orderId
+    const trx = await cekPaymentId(transactionId);
+    if (!trx) {
+      return res.status(404).json({ message: 'Transaction data not found' });
+    }
+
+    await updateOrderPayment(trx.orderId, trx.transactionId); 
 
     return res.status(200).json({ message: 'Payment status updated successfully' });
   } catch (error) {
     console.error('Error updating payment status:', error);
-    return res.status(500).json(errorResponder(errorTypes.INTERNAL_SERVER));
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const handleCallback = async (req, res) => {
+  const { order_id, transaction_status } = req.body;
+
+  try {
+    // Cek jika pembayaran sukses
+    if (transaction_status === 'settlement' || transaction_status === 'capture') {
+      await updatePaymentStatus(order_id); 
+
+      return res.status(200).json({ message: 'Payment success & updated.' });
+    }
+
+    res.status(200).json({ message: 'Payment not completed yet.' });
+  } catch (err) {
+    console.error('Error in Midtrans webhook:', err);
+    res.status(500).json({ error: 'Webhook processing failed.' });
   }
 };
 
 
 
 module.exports = {
-    createTransaction,
-    updatePaymentCtrl
+    createTransactionCtrl,
+    updatePaymentCtrl,
+    handleCallback
 };

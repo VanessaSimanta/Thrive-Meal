@@ -135,7 +135,7 @@ const updateOrderCtrl = async (req, res) => {
       customerId,
       packageId,
       periodId,
-      paymentId,
+      transactionId,
       branchId,
       driverId,
       adminId,
@@ -146,7 +146,7 @@ const updateOrderCtrl = async (req, res) => {
     if (customerId !== undefined) updateData.customer_id = customerId;
     if (packageId !== undefined) updateData.package_id = packageId;
     if (periodId !== undefined) updateData.period_id = periodId;
-    if (paymentId !== undefined) updateData.payment_id = paymentId;
+    if (transactionId !== undefined) updateData.payment_id = transactionId;
     if (branchId !== undefined) updateData.branch_id = branchId;
     if (driverId !== undefined) updateData.driver_id = driverId;
     if (adminId !== undefined) updateData.admin_id = adminId;
