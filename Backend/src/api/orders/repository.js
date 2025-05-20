@@ -77,12 +77,12 @@ const createCustomerInDb = async ({
 };
 
 // Update existing order
-const updateOrder = async (orderId, orderData) => {
+const updateOrder = async (orderId) => {
   try {
     await db('orders')
       .where({ orderId })
       .update({
-        ...orderData,
+        pa,
         updated_at: db.fn.now(),
       });
     return { message: 'Order updated successfully' };

@@ -8,7 +8,7 @@ exports.up = function(knex) {
       table.integer('customerId').notNullable(); // FK1
       table.integer('packageId').notNullable(); // F
       table.integer('periodId').notNullable(); // FK3
-      table.integer('paymentId');              // FK4 (nullable)
+      table.integer('transactionId');              // FK4 (nullable)
       table.integer('branchID');               // FK5 (nullable)
       table.integer('driverID');               // FK6 (nullable)
       table.integer('adminId');                // FK7 (nullable)
@@ -19,7 +19,6 @@ exports.up = function(knex) {
       table.foreign('customerId').references('customerId').inTable('customers');
       table.foreign('packageId').references('packageId').inTable('package');
       table.foreign('periodId').references('periodId').inTable('period');
-      table.foreign('paymentId').references('paymentId').inTable('payment');
       table.foreign('branchID').references('branchID').inTable('branch');
       table.foreign('driverID').references('driverID').inTable('driver');
       table.foreign('adminId').references('adminId').inTable('admin');

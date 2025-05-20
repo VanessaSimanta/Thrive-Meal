@@ -79,8 +79,20 @@ const updatePaymentStatus = async (transactionId) => {
   .where({ transactionId })
   .update({ payment_status: 'Success', updated_at: new Date() });
 
-console.log('Rows updated:', updated);
+  console.log('Rows updated:', updated);
+  return updated;
 };
+
+const updateOrderPayment = async (orderId, transactionId) => {
+  return await db('orders')
+    .where({ orderId })
+    .update({
+      transactionId: transactionId,
+      updatedAt: new Date(),
+    });
+};
+
+
 
 module.exports = {
   getOrder,
@@ -89,6 +101,6 @@ module.exports = {
   createTransaction,
   createTransactionItems,
   updatePaymentStatus,
-  cekPaymentId
- 
+  cekPaymentId,
+  updateOrderPayment
 };
