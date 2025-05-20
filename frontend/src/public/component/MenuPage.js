@@ -36,9 +36,9 @@ function MenuPage() {
       <div className="menu-grid">
         {/* Tombol kategori */}
          {/* Package Id sesuain dulu nanti reset db biar mulai dari 1 kalo udh final  */}
-        <div className="category-button" onClick={() => setPackageId(7)}>Weight Loss</div>
-        <div className="category-button" onClick={() => setPackageId(8)}>Balanced Wellness</div>
-        <div className="category-button" onClick={() => setPackageId(9)}>Muscle Gain</div>
+        <div className="category-button" onClick={() => setPackageId(19)}>Weight Loss</div>
+        <div className="category-button" onClick={() => setPackageId(20)}>Balanced Wellness</div>
+        <div className="category-button" onClick={() => setPackageId(21)}>Muscle Gain</div>
   
       </div>
 
@@ -50,10 +50,11 @@ function MenuPage() {
         <div className="menu-grid">
           {menuItems.map((item) => (
             <div key={item.menuId} className="menu-card">
-              <img src={item.imageURL} alt={item.menu_name} />
-              <h4>{item.menu_name}</h4>
-              <p>Detail Menu : {item.detail_menu}</p>
-            </div>
+            <img src={item.imageURL} alt={item.menu_name} className="menu-image" />
+            <h4 className="menu-title">{item.menu_name}</h4>
+            <p className="menu-type">Jenis Menu: {item.menu_type}</p>
+            <p className="menu-detail">Detail Menu: {item.detail_menu}</p>
+          </div>
           ))}
         </div>
       )}

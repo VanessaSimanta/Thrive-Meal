@@ -24,6 +24,7 @@ import facebookIcon from './public/icons/facebook.png';
 import aboutUsImage from './public/images/aboutUs.jpg';
 import aboutUs1Image from './public/images/aboutUs1.jpg';
 import aboutUs2Image from './public/images/about2.jpg';
+import ArticlePage from './public/component/articlePage';
 
 // ---------- COMPONENTS ----------
 function Navbar() {
@@ -55,6 +56,7 @@ function HomePage() {
       {/* Hero Section */}
       <section className="hero" id="home">
         <div className="hero-text">
+          <h2>(DEMO WEBSITE)</h2>
           <h1>Makan Sehat, Hidup Lebih Fit</h1>
           <p className="fat-loss">99% FAT LOSS</p>
           <div className="icons">
@@ -243,15 +245,6 @@ function FaqPage() {
       <h2>FAQ</h2>
       <p><strong>Q:</strong> Apakah bisa custom menu?</p>
       <p><strong>A:</strong> Bisa, kami menyediakan opsi menu fleksibel.</p>
-    </section>
-  );
-}
-
-function ArticlePage() {
-  return (
-    <section className="article-section">
-      <h2>Article</h2>
-      <p>Baca berbagai artikel seputar hidup sehat dan diet.</p>
     </section>
   );
 }
