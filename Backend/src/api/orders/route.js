@@ -6,7 +6,9 @@ const {
   createOrderCtrl,
   updateOrderCtrl,
   deleteOrderCtrl,
-  createFullOrderCtrl
+  createFullOrderCtrl,
+  assignBranchCtrl,
+  assignDriverCtrl
 } = require('./controller');
 
 // GET all orders
@@ -21,5 +23,9 @@ router.put('/:orderId', updateOrderCtrl);
 router.delete('/:orderId', deleteOrderCtrl);
 
 router.post('/full', createFullOrderCtrl);
+
+// put driver and branch to order
+router.put('/assign-branch/:orderId', assignBranchCtrl);
+router.put('/assign-driver/:orderId', assignDriverCtrl);
 
 module.exports = router;

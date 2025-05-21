@@ -7,6 +7,8 @@ const {
   deleteOrder,
   createCustomerInDb,
   createOrderInDb,
+  assignBranch,
+  assignDriver
 } = require('./repository');
 
 // Get all orders
@@ -188,6 +190,34 @@ const deleteOrderCtrl = async (req, res) => {
   }
 };
 
+// assign branch
+const assignBranchCtrl = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { branchID } = req.body;
+    const updated = await assignBranch(orderId, branchID);
+    
+
+    res.status(200).json({ message: 'Order updated successfully', result: updated });
+  } catch (error) {
+      console.error('assignBranchCtrl ERROR:', error); 
+  return res.status(500).json({ message: error.message });
+  }
+}
+
+//assign driver
+const assignDriverCtrl = async (req, res) => {
+  try {
+    const {orderId} = req.params;
+    const {driverID} = req.body;
+    const updated = await assignDriver(orderId, driverID);
+    res.status(200).json({ message: 'Order updated successfully', result: updated });
+  } catch (error) {
+    console.error('assignDriverCtrl ERROR:', error); 
+  return res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
   getAllOrdersCtrl,
   getOrderByIdCtrl,
@@ -195,4 +225,6 @@ module.exports = {
   createFullOrderCtrl,
   updateOrderCtrl,
   deleteOrderCtrl,
+  assignBranchCtrl,
+  assignDriverCtrl
 };

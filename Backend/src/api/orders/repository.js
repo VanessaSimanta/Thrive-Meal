@@ -101,6 +101,37 @@ const deleteOrder = async (orderId) => {
   }
 };
 
+// assign branch to order
+const assignBranch = async (orderId, branchID) => {
+  try {
+    await db('orders')
+      .where({ orderId })
+      .update({
+        branchID,
+        updatedAt: db.fn.now(),
+      });
+      console.log("updateddd")
+    return { message: 'Order updated successfully' };
+  } catch (error) {
+    throw new Error('Failed to update order: ' + error.message);
+  }
+};
+
+//asign driver
+const assignDriver = async (orderId, driverID) => {
+  try {
+    await db('orders')
+      .where({ orderId })
+      .update({
+        driverID,
+        updatedAt: db.fn.now(),
+      });
+    return { message: 'Order updated successfully' };
+  } catch (error) {
+    throw new Error('Failed to update order: ' + error.message);
+  }
+}
+
 module.exports = {
   getAllOrders,
   getOrderById,
@@ -109,4 +140,6 @@ module.exports = {
   deleteOrder,
   createOrderInDb,
   createCustomerInDb,
+  assignBranch,
+  assignDriver
 };
