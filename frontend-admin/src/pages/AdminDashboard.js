@@ -34,7 +34,9 @@ const AdminDashboard = () => {
 
   const handleNavigate = (path) => {
     if (path === '/logout') {
-      navigate(path);
+      localStorage.removeItem('token');
+      localStorage.removeItem('isAdmin');
+      navigate('/');
     } else if (path === '/branch-driver') {
       setActiveView('branch-driver');
     } else {

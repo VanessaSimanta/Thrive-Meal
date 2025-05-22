@@ -40,9 +40,11 @@ const AdminLogin = () => {
           password,
         });
 
-        // Jika berhasil login
-        localStorage.setItem('isAdmin', 'true');
+        const { token } = response.data;
+        localStorage.setItem('token', token);        // simpan JWT
+        localStorage.setItem('isAdmin', 'true');     
         window.location.href = '/dashboard';
+
       } catch (err) {
         if (err.response && err.response.data && err.response.data.message) {
           setLoginError(err.response.data.message);

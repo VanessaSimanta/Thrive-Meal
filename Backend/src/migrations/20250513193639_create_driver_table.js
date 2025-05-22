@@ -5,7 +5,7 @@
 
 exports.up = async function(knex) {
   await knex.schema.createTable('driver', (table) => {
-    table.increments('driverID').primary(); // <-- ini yang diperbaiki
+    table.increments('driverID').primary(); 
     table.integer('branchID').notNullable();
     table.string('driver_name', 100).notNullable();
     table.string('driver_dob', 100).notNullable();
