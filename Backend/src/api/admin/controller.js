@@ -1,4 +1,7 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
 const { getAdminByEmail, updatePassword } = require('./repository');
 
 const loginAdmin = async (req, res) => {
@@ -15,12 +18,19 @@ const loginAdmin = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    return res.status(200).json({ message: 'Login successful' });
+    const token = jwt.sign(
+      { id: admin.id, email: admin.email },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1d' }
+    );
+
+    return res.status(200).json({ message: 'Login successful', token });
   } catch (error) {
     console.error('Login error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 const changePassword = async (req, res) => {
   const { email, oldPassword, newPassword, confirmPassword } = req.body;
