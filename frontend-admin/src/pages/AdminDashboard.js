@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from '../images/logo.png';
 import '../App.css';
+import EditMenu from './EditMenu';
+import ViewOrders from './ViewOrders'; 
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -30,6 +32,10 @@ const AdminDashboard = () => {
       navigate('/');
     } else if (path === '/branch') {
       setActiveView('branch');
+    } else if (path === '/edit-menu') {
+      setActiveView('edit-menu');
+    } else if (path === '/view-orders') {
+      setActiveView('view-orders');
     } else {
       setActiveView('dashboard');
       navigate(path);
@@ -44,8 +50,8 @@ const AdminDashboard = () => {
     <div className="d-flex flex-column min-vh-100" style={{ fontFamily: 'Poppins, sans-serif' }}>
       <div className="d-flex flex-grow-1">
         {/* Sidebar */}
-        <div className={`position-fixed top-0 start-0 h-100 shadow transition-sidebar ${showSidebar ? 'd-block' : 'd-none'}`}
-             style={{ width: '260px', backgroundColor: '#e9f0dc', zIndex: 1050, padding: '2rem 1.5rem' }}>
+        <div className={`position-fixed top-0 start-0 h-100 shadow'}`}
+             style={{ width: '260px', backgroundColor: '#e9f0dc', zIndex: 1050, padding: '2rem 1.5rem',  transition: 'transform 0.4s ease-in-out', transform: showSidebar ? 'translateX(0)' : 'translateX(-100%)' }}>
           <div className="mb-4">
             <div className="d-flex justify-content-between align-items-center">
               <strong className="fs-5">Admin Panel</strong>
@@ -83,11 +89,12 @@ const AdminDashboard = () => {
         </div>
 
         {/* Main content */}
-        <div className="flex-grow-1 w-100">
+        <div className="flex-grow-1 w-100 d-flex flex-column">
           <div className="d-flex align-items-center justify-content-between px-4 py-3 shadow-sm" style={{ backgroundColor: '#283618', color: 'white' }}>
             <button className="btn text-white fs-3" onClick={() => setShowSidebar(true)}>&#9776;</button>
-            <h5 className="mb-0">MY DASHBOARD</h5>
-            <img src={logo} alt="logo" style={{ height: '60px' }} />
+         <h5 className="mb-0 fw-bold" style={{ fontSize: '2.5rem', letterSpacing: '2px', textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
+          MY DASHBOARD</h5>
+            <img src={logo} alt="logo" style={{ height: '75px' }} />
           </div>
 
           <div className="p-4">
@@ -139,6 +146,10 @@ const AdminDashboard = () => {
               </div>
             )}
           </div>
+
+          {activeView === 'edit-menu' && <EditMenu />}
+          {activeView === 'view-orders' && <ViewOrders />}
+
 
           <footer style={{ backgroundColor: '#283618', color: 'white', textAlign: 'center', padding: '1rem 0' }}>
             © 2025 Thrive Meal. All Rights Reserved.
