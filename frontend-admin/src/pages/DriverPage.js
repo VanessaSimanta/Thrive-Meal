@@ -1,22 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
 const DriverPage = () => {
-  const [drivers, setDrivers] = useState([]);
+  const [driver, setDriver] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    axios.get('http://localhost:8000/api/drivers')
-      .then((response) => {
-        setDrivers(Array.isArray(response.data) ? response.data : []);
+    const fetchDriver = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/driver/');
+        if (!response.ok) throw new Error('Failed to fetch driver');
+        const data = await response.json();
+        setDriver(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('❌ Error fetching driver:', error);
+        setDriver([]);
+      } finally {
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error('❌ Gagal ambil data driver:', error);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchDriver();
   }, []);
 
   const handleDriverClick = (driver) => {
@@ -31,11 +35,10 @@ const DriverPage = () => {
     <div style={{ padding: '2rem', fontFamily: 'Poppins, sans-serif' }}>
       <h3 className="fw-semibold mb-4">Driver List</h3>
 
-      {loading && <p>Loading drivers...</p>}
+      {loading && <p>Loading driver...</p>}
+      {!loading && driver.length === 0 && <p>No driver found.</p>}
 
-      {!loading && drivers.length === 0 && <p>No drivers found.</p>}
-
-      {!loading && drivers.length > 0 && (
+      {!loading && driver.length > 0 && (
         <table className="table table-bordered table-striped">
           <thead className="table-light">
             <tr>
@@ -45,7 +48,7 @@ const DriverPage = () => {
             </tr>
           </thead>
           <tbody>
-            {drivers.map((driver, index) => (
+            {driver.map((driver, index) => (
               <tr key={index}>
                 <td>
                   <button
@@ -63,7 +66,7 @@ const DriverPage = () => {
         </table>
       )}
 
-      {/* Driver Detail Modal */}
+      {/* Modal Detail Driver */}
       {selectedDriver && (
         <div
           className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
