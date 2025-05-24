@@ -3,7 +3,8 @@ import axios from 'axios';
 import {
   Container, Form, Button, Table, Row, Col, Card
 } from 'react-bootstrap';
-import { PlusLg } from 'react-bootstrap-icons';
+import { PlusLg } from 'react-bootstrap-icons'; 
+import { BACK_END_URL }  from '../utils/const';
 
 const EditMenu = () => {
   const [packages, setPackages] = useState([]);
@@ -23,14 +24,14 @@ const EditMenu = () => {
   });
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/package')
+    axios.get(`${BACK_END_URL}/api/package`)
       .then(res => setPackages(res.data))
       .catch(err => console.error(err));
   }, []);
 
   useEffect(() => {
     if (selectedPackage) {
-      axios.get(`http://localhost:8000/api/menu/${selectedPackage}`)
+      axios.get(`${BACK_END_URL}/api/menu/${selectedPackage}`)
         .then(res => setMenuList(res.data))
         .catch(err => console.error(err));
 
@@ -51,7 +52,7 @@ const EditMenu = () => {
 
   const handleDelete = async (menuId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/menu/${menuId}`);
+      await axios.delete(`${BACK_END_URL}/api/menu/${menuId}`);
       setMenuList(menuList.filter((menu) => menu.menuId !== menuId));
       setEditData(null);
       setAlertMessage('Menu deleted successfully');
@@ -81,12 +82,12 @@ const EditMenu = () => {
         formData.append('imageURL', editData.picture);
       }
 
-      await axios.put(`http://localhost:8000/api/menu/${editData.menuId}`, formData);
+      await axios.put(`${BACK_END_URL}/api/menu/${editData.menuId}`, formData);
       setAlertMessage('Menu updated successfully');
       setAlertVariant('success');
       setEditData(null);
 
-      const updatedMenus = await axios.get(`http://localhost:8000/api/menu/${selectedPackage}`);
+      const updatedMenus = await axios.get(`${BACK_END_URL}/api/menu/${selectedPackage}`);
       setMenuList(updatedMenus.data);
     } catch (err) {
       console.error(err);
@@ -113,11 +114,11 @@ const EditMenu = () => {
         formData.append('imageURL', picture);
       }
 
-      await axios.post('http://localhost:8000/api/menu', formData);
+      await axios.post(`${BACK_END_URL}/api/menu`, formData);
       setAlertMessage('Menu added successfully');
       setAlertVariant('success');
 
-      const updatedMenus = await axios.get(`http://localhost:8000/api/menu/${packageType}`);
+      const updatedMenus = await axios.get(`${BACK_END_URL}/api/menu/${packageType}`);
       setMenuList(updatedMenus.data);
 
       setNewMenuData({
