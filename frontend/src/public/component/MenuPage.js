@@ -1,99 +1,71 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const DriverPage = () => {
-  const [drivers, setDrivers] = useState([]);
-  const [selectedDriver, setSelectedDriver] = useState(null);
+function MenuPage() {
+  const [menuItems, setMenuItems] = useState([]);
+  const [packageId, setPackageId] = useState(undefined);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    axios.get('http://localhost:8000/api/drivers')
-      .then((response) => {
-        setDrivers(Array.isArray(response.data) ? response.data : []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('❌ Gagal ambil data driver:', error);
-        setLoading(false);
-      });
-  }, []);
-
-  const handleDriverClick = (driver) => {
-    setSelectedDriver(driver);
-  };
-
-  const closeDriverModal = () => {
-    setSelectedDriver(null);
-  };
+    if (packageId !== undefined) {
+      setLoading(true);
+      axios
+        .get(`http://localhost:8000/api/menu/${packageId}`)
+        .then((response) => {
+          console.log("🔥 Full response data:", response.data);
+          setMenuItems(Array.isArray(response.data) ? response.data : []);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('❌ Gagal ambil data menu:', error);
+          setLoading(false);
+        });
+    }
+  }, [packageId]);
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Poppins, sans-serif' }}>
-      <h3 className="fw-semibold mb-4">Driver List</h3>
-
-      {loading && <p>Loading drivers...</p>}
-
-      {!loading && drivers.length === 0 && <p>No drivers found.</p>}
-
-      {!loading && drivers.length > 0 && (
-        <table className="table table-bordered table-striped">
-          <thead className="table-light">
-            <tr>
-              <th>Driver Id</th>
-              <th>Driver Name</th>
-              <th>Phone Number</th>
-            </tr>
-          </thead>
-          <tbody>
-            {drivers.map((driver, index) => (
-              <tr key={index}>
-                <td>
-                  <button
-                    className="btn btn-link p-0 text-decoration-none text-primary"
-                    onClick={() => handleDriverClick(driver)}
-                  >
-                    {driver.id}
-                  </button>
-                </td>
-                <td>{driver.name}</td>
-                <td>{driver.phone}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      {/* Driver Detail Modal */}
-      {selectedDriver && (
-        <div
-          className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-          style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 2000 }}
-        >
-          <div className="bg-light rounded shadow p-4" style={{ width: '360px', position: 'relative' }}>
-            <button
-              className="position-absolute top-0 end-0 btn btn-sm btn-link text-dark"
-              onClick={closeDriverModal}
-            >
-              ✖
-            </button>
-            <div className="text-center mb-3">
-              <img src="https://via.placeholder.com/80" alt="Driver Avatar" className="rounded-circle mb-2" />
-              <div className="text-danger fw-semibold">Driver ID : {selectedDriver.id}</div>
-              <div className="text-danger fw-semibold">Branch ID : {selectedDriver.branchId}</div>
-            </div>
-            <div className="ms-2">
-              <p><strong>Name</strong> : {selectedDriver.name}</p>
-              <p><strong>Date of Birth</strong> : {selectedDriver.dob}</p>
-              <p><strong>Phone Number</strong> : {selectedDriver.phone}</p>
-              <p><strong>Road Name</strong> : {selectedDriver.road}</p>
-              <p><strong>Urban Village</strong> : {selectedDriver.village}</p>
-              <p><strong>District</strong> : {selectedDriver.district}</p>
-            </div>
-          </div>
+    <div className="menu-page">
+      <div className="menu-banner">
+        <div className="menu-banner-overlay">
+          <h1 className="menu-title">OUR MENU</h1>
         </div>
-      )}
+      </div>
+
+      <div style={{ padding: '2rem', fontFamily: 'Poppins, sans-serif' }}>
+
+        <div className="menu-grid">
+          <div className="category-button" onClick={() => setPackageId(7)}>Weight Loss Program</div>
+          <div className="category-button" onClick={() => setPackageId(8)}>Weight Maintenance Program</div>
+          <div className="category-button" onClick={() => setPackageId(9)}>Gain Muscle Program</div>
+          <div className="category-button" onClick={() => setPackageId(10)}>Gluten Free Program</div>
+          <div className="category-button" onClick={() => setPackageId(11)}>Diabet Cholesterol Program</div>
+          <div className="category-button" onClick={() => setPackageId(12)}>Vegetarian Program</div>
+        </div>
+
+        {loading && <p>Loading menu...</p>}
+
+        {!loading && packageId !== undefined && Array.isArray(menuItems) && menuItems.length > 0 && (
+          <div className="menu-grid mt-4">
+            {menuItems.map((item) => (
+              <div key={item.menuId} className="menu-card">
+                <img src={item.imageURL} alt={item.menu_name} className="menu-image" />
+                <h4 className="menu-title">{item.menu_name}</h4>
+                <p className="menu-type">Jenis Menu: {item.menu_type}</p>
+                <p className="menu-detail">Detail Menu: {item.detail_menu}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Tombol Order */}
+        {packageId !== undefined && menuItems.length > 0 && (
+          <div className="order-now-button mt-4">
+            <button>Order Now</button>
+          </div>
+        )}
+      </div>
     </div>
   );
-};
+}
 
-export default DriverPage;
+export default MenuPage;
