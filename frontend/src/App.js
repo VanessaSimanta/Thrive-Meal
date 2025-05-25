@@ -24,6 +24,7 @@ import aboutUsImage from './public/images/aboutUs.jpg';
 import aboutUs1Image from './public/images/aboutUs1.jpg';
 import aboutUs2Image from './public/images/about2.jpg';
 import ArticlePage from './public/component/articlePage';
+import FaqPage from './public/component/FaqPage';
 
 function Navbar() {
   return (
@@ -237,15 +238,7 @@ function AboutPage() {
   );
 }
 
-function FaqPage() {
-  return (
-    <section className="faq-section">
-      <h2>FAQ</h2>
-      <p><strong>Q:</strong> Apakah bisa custom menu?</p>
-      <p><strong>A:</strong> Bisa, kami menyediakan opsi menu fleksibel.</p>
-    </section>
-  );
-}
+
 
 function Footer() {
   return (
@@ -273,7 +266,7 @@ function App() {
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/menu/:packageId" element={<MenuPage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/faq" element ={<FaqPage />} />
           <Route path="/article" element={<ArticlePage />} />
         </Routes>
         <Footer />
