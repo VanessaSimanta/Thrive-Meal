@@ -17,7 +17,8 @@ const getPackageCtrl = async (req, res) => {
 const postMenuCtrl = async (req, res) => {
     try {
       const { packageId, menu_name, menu_type, detail_menu } = req.body;
-      const imageURL = `/image_upload/${req.file.filename}`;
+      const imageURL = `${req.protocol}://${req.get('host')}/image_upload/${req.file.filename}`;
+
   
       const menu = await postMenu({ packageId, menu_name, menu_type, detail_menu, imageURL });
       res.status(200).json({ message: "Inputed Successfully", menu });
