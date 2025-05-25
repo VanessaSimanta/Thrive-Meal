@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
-import { Link } from 'react-router-dom';
-import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MenuPage from './public/component/MenuPage';
@@ -26,7 +25,6 @@ import aboutUs1Image from './public/images/aboutUs1.jpg';
 import aboutUs2Image from './public/images/about2.jpg';
 import ArticlePage from './public/component/articlePage';
 
-// ---------- COMPONENTS ----------
 function Navbar() {
   return (
     <nav className="navbar">
@@ -34,13 +32,11 @@ function Navbar() {
         <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
       </div>
       <ul>
-        <ul>
         <li><NavLink to="/" className={({ isActive }) => isActive ? 'active-link' : ''}>Home</NavLink></li>
         <li><NavLink to="/menu" className={({ isActive }) => isActive ? 'active-link' : ''}>Menu</NavLink></li>
         <li><NavLink to="/about" className={({ isActive }) => isActive ? 'active-link' : ''}>About</NavLink></li>
         <li><NavLink to="/faq" className={({ isActive }) => isActive ? 'active-link' : ''}>FAQ</NavLink></li>
         <li><NavLink to="/article" className={({ isActive }) => isActive ? 'active-link' : ''}>Article</NavLink></li>
-      </ul>
       </ul>
     </nav>
   );
@@ -48,12 +44,17 @@ function Navbar() {
 
 function HomePage() {
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
+  const goToMenu = (packageId) => {
+    navigate(`/menu/${packageId}`);
+  };
+
   return (
     <>
-      {/* Hero Section */}
       <section className="hero" id="home">
         <div className="hero-text">
           <h2>(DEMO WEBSITE)</h2>
@@ -71,29 +72,26 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Modal Order Form */}
       <FormOrder show={showModal} handleClose={handleClose} />
 
-      {/* Slogan */}
       <div className="slogan">
         Thrive Meal – Sajian Sehat, Hidup Lebih Berkembang.
       </div>
 
-      {/* Diet Programs */}
       <section className="programs">
         <h2>Our Diet Programs</h2>
         <div className="cards">
-          <div className="card">
+          <div className="card" onClick={() => goToMenu(7)}>
             <img src={foodImage1} alt="Weight Loss" />
             <h3>Weight Loss Program</h3>
             <p>Menurunkan berat badan dengan asupan bergizi dan porsi yang sesuai.</p>
           </div>
-          <div className="card">
+          <div className="card" onClick={() => goToMenu(8)}>
             <img src={foodImage2} alt="Balanced Wellness" />
             <h3>Balanced Wellness</h3>
             <p>Menu seimbang untuk menjaga energi dan kesehatan sepanjang hari.</p>
           </div>
-          <div className="card">
+          <div className="card" onClick={() => goToMenu(9)}>
             <img src={foodImage3} alt="Muscle Gain" />
             <h3>Muscle Gain</h3>
             <p>Meningkatkan massa otot dengan porsi protein dan karbohidrat yang cukup.</p>
@@ -101,7 +99,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Why Thrive Meal */}
       <section className="why-thrive">
         <h2>Kenapa Harus Thrive Meal?</h2>
         <div className="benefits">
@@ -182,29 +179,30 @@ function AboutPage() {
       </section>
 
       <section className="container my-5">
-        <div className="row align-items-center">
-          <div className="col-md-6 text-center mb-3 mb-md-0">
-            <img
-              src={aboutUs2Image}
-              alt="Meal Box"
-              className="img-fluid"
-              style={{
-                maxWidth: '320px',
-                borderRadius: '20px',
-                aspectRatio: '4 / 3',
-                objectFit: 'cover',
-              }}
-            />
-          </div>
-          <div className="col-md-6 text-start">
-            <p className="lead fw-semibold m-0">
-              <span className="text-success">"Your Healthy </span>
-              <span className="text-info">Habit </span>
-              <span className="text-danger">Starts Here."</span>
-            </p>
-          </div>
-        </div>
-      </section>
+  <div className="row align-items-center justify-content-center text-center text-md-start">
+    <div className="col-md-5 d-flex justify-content-center">
+      <img
+        src={aboutUs2Image}
+        alt="Meal Box"
+        className="img-fluid"
+        style={{
+          maxWidth: '320px',
+          borderRadius: '20px',
+          aspectRatio: '4 / 3',
+          objectFit: 'cover',
+        }}
+      />
+    </div>
+    <div className="col-md-5">
+      <p className="lead fw-semibold m-0">
+        <span className="text-success">"Your Healthy </span>
+        <span className="text-info">Habit </span>
+        <span className="text-danger">Starts Here."</span>
+      </p>
+    </div>
+  </div>
+</section>
+
 
       {/* SECTION: Our Mission */}
       <section className="text-center mb-5">
@@ -259,13 +257,12 @@ function Footer() {
         <p>© 2025 Thrive Meal. All Rights Reserved.</p>
       </div>
       <div className="footer-links">
-        <Link to="/">Home</Link> | <Link to="/menu">Menu</Link> | <Link to="/about">About</Link> | <Link to="/faq">FAQ</Link> | <Link to="/article">Article</Link>
+        <NavLink to="/">Home</NavLink> | <NavLink to="/menu">Menu</NavLink> | <NavLink to="/about">About</NavLink> | <NavLink to="/faq">FAQ</NavLink> | <NavLink to="/article">Article</NavLink>
       </div>
     </footer>
   );
 }
 
-// ---------- MAIN APP ----------
 function App() {
   return (
     <Router>
@@ -274,13 +271,12 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/menu" element={<MenuPage />} />
+          <Route path="/menu/:packageId" element={<MenuPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/article" element={<ArticlePage />} />
         </Routes>
         <Footer />
-
-        {/* Floating WhatsApp Button */}
         <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" className="whatsapp-float">
           <img src={whatsappIcon} alt="WhatsApp" />
         </a>
