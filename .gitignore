@@ -1145,3 +1145,5 @@ Backend/node_modules/resolve/test/shadowed_core.js
 Backend/node_modules/resolve/test/resolver_sync.js
 Backend/node_modules/resolve/test/symlinks.js
 /Backend/node_modules
+frontend/.env
+frontend-admin/.env

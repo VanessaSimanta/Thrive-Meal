@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { BACK_END_URL } from '../../utils/const';
 
 function MenuPage() {
   const [menuItems, setMenuItems] = useState([]);
@@ -9,7 +10,8 @@ function MenuPage() {
   useEffect(() => {
     if (packageId !== undefined) {
       setLoading(true);
-      axios.get(`http://localhost:8000/api/menu/${packageId}`)
+      axios
+        .get(`${BACK_END_URL}/api/menu/${packageId}`)
         .then((response) => {
           console.log("🔥 Full response data:", response.data);
           setMenuItems(Array.isArray(response.data) ? response.data : []);
@@ -29,7 +31,6 @@ function MenuPage() {
           <h1 className="menu-title">OUR MENU</h1>
         </div>
       </div>
-
       <div className="menu-grid">
         <div className="category-button" onClick={() => setPackageId(1)}>Weight Loss Program</div>
         <div className="category-button" onClick={() => setPackageId(2)}>Weight Maintenance Program</div>
@@ -54,7 +55,7 @@ function MenuPage() {
         </div>
       )}
 
-      {!loading && packageId !== undefined && (
+{!loading && packageId !== undefined && (
         <div className="order-now-button">
           <button>Order Now</button>
         </div>
