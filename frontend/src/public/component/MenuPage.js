@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { BACK_END_URL } from '../../utils/const';
 
 function MenuPage() {
+  const { packageId: paramId } = useParams();
   const [menuItems, setMenuItems] = useState([]);
-  const [packageId, setPackageId] = useState(undefined);
+  const [packageId, setPackageId] = useState(paramId ? parseInt(paramId) : undefined);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -13,7 +15,6 @@ function MenuPage() {
       axios
         .get(`${BACK_END_URL}/api/menu/${packageId}`)
         .then((response) => {
-          console.log("🔥 Full response data:", response.data);
           setMenuItems(Array.isArray(response.data) ? response.data : []);
           setLoading(false);
         })

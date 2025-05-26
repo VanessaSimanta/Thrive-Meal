@@ -6,14 +6,9 @@ import polaHidup from '../images/pola-hidup.webp';
 import olahraga from '../images/olahraga.jpg';
 import makan from '../images/makan-sehat.webp';
 import makan2 from '../images/makan2.jpg';
-import FormOrder from './FormOrder'; // perhatikan path ini agar sesuai
-import React, { useState } from 'react';
+
 
 function ArticlePage() {
-  const [showModal, setShowModal] = useState(false);
-  const handleOpen = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
-
   const articles = [
     {
       id: 1,
@@ -45,13 +40,13 @@ function ArticlePage() {
     {
       id: 1,
       title: "Makan Enak Tanpa Takut Gemuk: Tips Diet Sehat yang Mudah Dilakukan",
-      author: "Love",
+      url: "https://www.biofarma.co.id/id/announcement/detail/5-tips-diet-sehat-untun-menurunkan-berat-badan",
       image: makan,
     },
     {
       id: 2,
-      title: "Emotional Eating: Ketika Emosi Mengendalikan Nafsu Makanmu",
-      author: "Hillary",
+      title: "Emotional Eating: Ketika Emosi Mengendalikan Nafsu Makanmu (bahasa inggris)",
+      url: "https://www.healthline.com/health/emotional-eating",
       image: makan2,
     },
   ];
@@ -77,7 +72,7 @@ function ArticlePage() {
         >
           {featuredArticles.map((article) => (
             <div
-              className="col-md-5 mx-2 mb-4 align-items-center text-center"
+              className="col-md-5 mx-2 mb-3 mt-4 align-items-center text-center"
               key={article.id}
             >
               <div className="overflow-hidden rounded" style={{ height: "200px" }}>
@@ -92,8 +87,18 @@ function ArticlePage() {
                   }}
                 />
               </div>
-              <p className="fw-semibold mt-3">{article.title}</p>
-              <p className="text-muted small">by {article.author}</p>
+              <p className="fw-semibold fs-5 mt-3 mb-4">{article.title}</p>
+              <div className="text-center mb-3">
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="category-button"
+                    style={{ position: "relative", zIndex: 2 }}
+                  >
+                    SEE MORE
+                  </a>
+                </div>
             </div>
           ))}
         </div>
@@ -127,14 +132,6 @@ function ArticlePage() {
             </div>
           ))}
         </div>
-        <div className="text-center my-4">
-          <button className="cta" onClick={handleOpen}>
-            Order Now
-          </button>
-        </div>
-
-        {/* Modal Order Form */}
-        <FormOrder show={showModal} handleClose={handleClose} />
       </section>
     </div>
   );
