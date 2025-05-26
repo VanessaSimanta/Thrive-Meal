@@ -13,7 +13,6 @@ body {
   line-height: 1.5;
 }
 
-
 .navbar {
   width: 100%;
   background-color: #283618;
@@ -22,34 +21,11 @@ body {
   align-items: center;
   padding: 10px 30px;
   height: 100px;
+  position: relative;
+  z-index: 100;
 }
 
-.navbar ul li {
-  display: inline-block;
-  margin: 0 10px;
-  padding: 10px;
-}
-
-.navbar ul li a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 20px;
-  transition: color 0.3s ease;
-}
-
-.navbar ul li a:hover {
-  color: #b8cba2; 
-  border-bottom: 2px solid #b8cba2;
-  padding-bottom: 4px;
-}
-
-.navbar ul li .active-link {
-  border-bottom: 2px solid #b8cba2;
-  font-weight: 700;
-  color: #b8cba2;
-}
-
+/* Logo */
 .logo {
   display: flex;
   flex-direction: column;
@@ -65,17 +41,17 @@ body {
   object-fit: contain;
 }
 
-
-.logo {
-  color: white;
-  font-size: 22px;
-  font-weight: 600;
-}
-
+/* Navigation Links */
 .navbar ul {
   list-style: none;
   display: flex;
   gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar ul li {
+  padding: 10px;
 }
 
 .navbar ul li a {
@@ -83,7 +59,58 @@ body {
   text-decoration: none;
   font-weight: 500;
   font-size: 20px;
+  transition: color 0.3s ease;
 }
+
+.navbar ul li a:hover {
+  color: #b8cba2;
+  border-bottom: 2px solid #b8cba2;
+  padding-bottom: 4px;
+}
+
+.navbar ul li .active-link {
+  border-bottom: 2px solid #b8cba2;
+  font-weight: 700;
+  color: #b8cba2;
+}
+
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+    margin-right: 20px;
+    margin-bottom: 20px;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    background-color: #283618;
+    opacity: 90%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    display: none;
+    padding: 0;
+    gap: 0;
+  }
+
+  .navbar ul.open {
+    display: flex;
+  }
+
+  .navbar ul li {
+    text-align: center;
+    padding: 15px 0;
+  }
+}
+
 
 /* Hero Section */
 .hero {

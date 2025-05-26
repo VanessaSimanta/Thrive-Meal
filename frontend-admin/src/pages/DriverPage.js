@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BACK_END_URL }  from '../utils/const';
 
 const DriverPage = () => {
   const [driver, setDriver] = useState([]);
@@ -8,7 +9,7 @@ const DriverPage = () => {
   useEffect(() => {
     const fetchDriver = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/driver/');
+        const response = await fetch(`${BACK_END_URL}/api/driver/`);
         if (!response.ok) throw new Error('Failed to fetch driver');
         const data = await response.json();
         setDriver(Array.isArray(data) ? data : []);
@@ -44,7 +45,7 @@ const DriverPage = () => {
             <tr>
               <th>Driver Id</th>
               <th>Driver Name</th>
-              <th>Phone Number</th>
+              <th>Address (Road Noame)</th>
             </tr>
           </thead>
           <tbody>
@@ -55,11 +56,11 @@ const DriverPage = () => {
                     className="btn btn-link p-0 text-decoration-none text-primary"
                     onClick={() => handleDriverClick(driver)}
                   >
-                    {driver.id}
+                    {driver.driverID}
                   </button>
                 </td>
-                <td>{driver.name}</td>
-                <td>{driver.phone}</td>
+                <td>{driver.driver_name}</td>
+                <td>{driver.road_name}</td>
               </tr>
             ))}
           </tbody>
@@ -81,15 +82,15 @@ const DriverPage = () => {
             </button>
             <div className="text-center mb-3">
               <img src="https://via.placeholder.com/80" alt="Driver Avatar" className="rounded-circle mb-2" />
-              <div className="text-danger fw-semibold">Driver ID : {selectedDriver.id}</div>
-              <div className="text-danger fw-semibold">Branch ID : {selectedDriver.branchId}</div>
+              <div className="text-danger fw-semibold">Driver ID : {selectedDriver.driverID}</div>
+              <div className="text-danger fw-semibold">Branch ID : {selectedDriver.branchID}</div>
             </div>
             <div className="ms-2">
-              <p><strong>Name</strong> : {selectedDriver.name}</p>
-              <p><strong>Date of Birth</strong> : {selectedDriver.dob}</p>
-              <p><strong>Phone Number</strong> : {selectedDriver.phone}</p>
-              <p><strong>Road Name</strong> : {selectedDriver.road}</p>
-              <p><strong>Urban Village</strong> : {selectedDriver.village}</p>
+              <p><strong>Name</strong> : {selectedDriver.driver_name}</p>
+              <p><strong>Date of Birth</strong> : {selectedDriver.driver_dob}</p>
+              <p><strong>Phone Number</strong> : {selectedDriver.phone_number}</p>
+              <p><strong>Road Name</strong> : {selectedDriver.road_name}</p>
+              <p><strong>Urban Village</strong> : {selectedDriver.urban_village}</p>
               <p><strong>District</strong> : {selectedDriver.district}</p>
             </div>
           </div>

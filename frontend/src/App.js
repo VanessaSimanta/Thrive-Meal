@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 import MenuPage from './public/component/MenuPage';
 import FormOrder from './public/component/FormOrder';
 import logoImage from './public/images/logo.png';
@@ -27,17 +28,34 @@ import ArticlePage from './public/component/articlePage';
 import FaqPage from './public/component/FaqPage';
 
 function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false)
+  
   return (
     <nav className="navbar">
       <div className="logo">
         <img src={logoImage} alt="Thrive Meal Logo" className="logo-image" />
       </div>
-      <ul>
-        <li><NavLink to="/" className={({ isActive }) => isActive ? 'active-link' : ''}>Home</NavLink></li>
-        <li><NavLink to="/menu" className={({ isActive }) => isActive ? 'active-link' : ''}>Menu</NavLink></li>
-        <li><NavLink to="/about" className={({ isActive }) => isActive ? 'active-link' : ''}>About</NavLink></li>
-        <li><NavLink to="/faq" className={({ isActive }) => isActive ? 'active-link' : ''}>FAQ</NavLink></li>
-        <li><NavLink to="/article" className={({ isActive }) => isActive ? 'active-link' : ''}>Article</NavLink></li>
+
+      <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+        ☰
+      </div>
+
+      <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
+        <li>
+          <NavLink to="/" className={({ isActive }) => isActive ? 'active-link' : ''}>Home</NavLink>
+        </li>
+        <li>
+          <NavLink to="/menu" className={({ isActive }) => isActive ? 'active-link' : ''}>Menu</NavLink>
+        </li>
+        <li>
+          <NavLink to="/about" className={({ isActive }) => isActive ? 'active-link' : ''}>About</NavLink>
+        </li>
+        <li>
+          <NavLink to="/faq" className={({ isActive }) => isActive ? 'active-link' : ''}>FAQ</NavLink>
+        </li>
+        <li>
+          <NavLink to="/article" className={({ isActive }) => isActive ? 'active-link' : ''}>Article</NavLink>
+        </li>
       </ul>
     </nav>
   );
@@ -58,7 +76,6 @@ function HomePage() {
     <>
       <section className="hero" id="home">
         <div className="hero-text">
-          <h2>(DEMO WEBSITE)</h2>
           <h1>Makan Sehat, Hidup Lebih Fit</h1>
           <p className="fat-loss">99% FAT LOSS</p>
           <div className="icons">
