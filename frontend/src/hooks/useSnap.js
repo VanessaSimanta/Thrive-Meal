@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { MIDTRANS_CLIENT_ID }  from '../utils/const';
-import { BACK_END_URL } from '../../utils/const';
+import { BACK_END_URL } from '../utils/const';
 
 
 const useSnap = () => {
