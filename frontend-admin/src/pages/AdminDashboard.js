@@ -6,12 +6,14 @@ import '../App.css';
 import EditMenu from './EditMenu';
 import ViewOrders from './ViewOrders';
 import DriverPage from './DriverPage';
+import BranchPage from './BranchPage';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [showSidebar, setShowSidebar] = useState(false);
   const [activeView, setActiveView] = useState('dashboard');
   const [selectedDriver, setSelectedDriver] = useState(null);
+  const [branchDriverView, setBranchDriverView] = useState('branch'); 
 
   useEffect(() => {
     const isAdmin = localStorage.getItem('isAdmin');
@@ -101,7 +103,28 @@ const AdminDashboard = () => {
               </>
             )}
 
-            {activeView === 'branch-driver' && <DriverPage />}
+            {activeView === 'branch-driver' && (
+              <div>
+                <div className="mb-4 d-flex gap-3">
+                  <button
+                    className={`btn ${branchDriverView === 'branch' ? 'btn-success' : 'btn-outline-success'}`}
+                    onClick={() => setBranchDriverView('branch')}
+                  >
+                    Branches
+                  </button>
+                  <button
+                    className={`btn ${branchDriverView === 'driver' ? 'btn-success' : 'btn-outline-success'}`}
+                    onClick={() => setBranchDriverView('driver')}
+                  >
+                    Drivers
+                  </button>
+                </div>
+
+                {branchDriverView === 'branch' && <BranchPage />}
+                {branchDriverView === 'driver' && <DriverPage />}
+              </div>
+            )}
+
             {activeView === 'edit-menu' && <EditMenu />}
             {activeView === 'view-orders' && <ViewOrders />}
           </div>

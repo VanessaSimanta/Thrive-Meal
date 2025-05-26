@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BACK_END_URL }  from '../utils/const';
+import branchImg from '../images/branch.jpg';
+
 
 const DriverPage = () => {
   const [driver, setDriver] = useState([]);
@@ -81,7 +83,7 @@ const DriverPage = () => {
               ✖
             </button>
             <div className="text-center mb-3">
-              <img src="https://via.placeholder.com/80" alt="Driver Avatar" className="rounded-circle mb-2" />
+              <img src={branchImg} alt="Branch" className="rounded-circle mb-2" style={{ width: '80px', height: '80px' }} />
               <div className="text-danger fw-semibold">Driver ID : {selectedDriver.driverID}</div>
               <div className="text-danger fw-semibold">Branch ID : {selectedDriver.branchID}</div>
             </div>
