@@ -1,48 +1,60 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
 .App {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Sidebar */
+.sidebar {
+  background: #f9f9f9;
+  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  padding: 1rem;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+  z-index: 1000;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.sidebar.closed {
+  transform: translateX(-100%);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .sidebar ul li {
   margin: 1rem 0;
+  font-size: 1.1rem;
   cursor: pointer;
 }
-.sidebar button {
-  font-size: 1rem;
+
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  font-size: 1.2rem;
+  border-radius: 4px;
+  z-index: 1100;
+  cursor: pointer;
 }
 
 .driver-popup {
@@ -54,9 +66,11 @@
   left: 50%;
   transform: translate(-50%, -30%);
   z-index: 2000;
-  width: 300px;
+  width: 320px;
+  max-width: 90%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
+
 .btn-close {
   position: absolute;
   right: 10px;
@@ -64,23 +78,79 @@
   background: none;
   border: none;
   font-size: 1.2rem;
+  cursor: pointer;
 }
 
 table {
   font-size: 14px;
-}
-
-a {
-  font-weight: 500;
-  color: #007bff;
-  text-decoration: underline;
-}
-
-a:hover {
-  color: #0056b3;
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
 }
 
 button:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    width: 70vw;
+    max-width: 280px;
+    height: 100vh;
+    padding-top: 3rem;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .App-header {
+    padding-left: 0.5rem;
+    font-size: calc(10px + 1.5vmin);
+  }
+
+  .App-logo {
+    height: 30vmin;
+  }
+
+  table {
+    font-size: 13px;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .driver-popup {
+    width: 90%;
+    padding: 1rem;
+    top: 25%;
+    transform: translate(-50%, -25%);
+  }
+
+  .btn-close {
+    font-size: 1rem;
+  }
+
+  .dashboard-header h5 {
+    font-size: 1.2rem !important;
+    text-align: center;
+  }
+
+  .dashboard-header img {
+    height: 50px !important;
+  }
+
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  .dashboard-main {
+    padding: 1rem !important;
+  }
 }
