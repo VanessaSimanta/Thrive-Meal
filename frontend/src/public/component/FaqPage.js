@@ -24,28 +24,12 @@ function FaqPage() {
   return (
     <div style={{ backgroundColor: "#fffbf0", minHeight: "100vh" }}>
       {/* Banner Section */}
-      <div className="faq-page position-relative text-center">
-        <div
-          className="faq-banner"
-          style={{
-            backgroundImage: `url('../images/banner-menu.jpg)`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            height: "300px",
-            position: "relative",
-          }}
-        >
-          <div
-            className="menu-banner-overlay d-flex justify-content-center align-items-center"
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.7)",
-              height: "100%",
-              width: "100%",
-            }}
-          >
-            <h1 className="menu-title display-1 fw-bold">FAQ</h1>
-          </div>
+      <div className="menu-page">
+      <div className="menu-banner">
+        <div className="menu-banner-overlay">
+          <h1 className="menu-title">FAQ</h1>
         </div>
+      </div>
       </div>
 
       {/* FAQ Section */}
