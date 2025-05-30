@@ -21,21 +21,21 @@ const DriverPage = () => {
     district: '',
   });
 
-  useEffect(() => {
-    const fetchDrivers = async () => {
-      try {
-        const res = await fetch(`${BACK_END_URL}/api/driver/`);
-        if (!res.ok) throw new Error('Failed to fetch drivers');
-        const data = await res.json();
-        setDrivers(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error('❌ Error:', err);
-        setDrivers([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchDrivers = async () => {
+    try {
+      const res = await fetch(`${BACK_END_URL}/api/driver/`);
+      if (!res.ok) throw new Error('Failed to fetch drivers');
+      const data = await res.json();
+      setDrivers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('❌ Error:', err);
+      setDrivers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchDrivers();
   }, []);
 
@@ -75,10 +75,10 @@ const DriverPage = () => {
         body: JSON.stringify(driverForm),
       });
       if (!res.ok) throw new Error('Failed to add driver');
-      const newDriver = await res.json();
-      setDrivers([...drivers, newDriver]);
+      await res.json();
       showAlert('success', '✅ Driver successfully added.');
       resetForm();
+      fetchDrivers(); // ✅ Refresh list dari server
     } catch (err) {
       console.error('❌ Add driver error:', err);
       showAlert('danger', '❌ Failed to add driver.');
@@ -210,7 +210,7 @@ const DriverPage = () => {
                     ['driverID', 'Driver ID', 'text'],
                     ['branchID', 'Branch ID', 'text'],
                     ['driver_name', 'Driver Name', 'text'],
-                    ['driver_dob', 'Date of Birth', 'date'], // 🔥 date type input here
+                    ['driver_dob', 'Date of Birth', 'date'],
                     ['phone_number', 'Phone Number', 'text'],
                     ['road_name', 'Road Name', 'text'],
                     ['urban_village', 'Urban Village', 'text'],

@@ -17,21 +17,22 @@ const BranchPage = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
 
-  useEffect(() => {
-    const fetchBranches = async () => {
-      try {
-        const response = await fetch(`${BACK_END_URL}/api/branch/`);
-        if (!response.ok) throw new Error('Failed to fetch branch data');
-        const data = await response.json();
-        setBranches(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('❌ Error fetching branches:', error);
-        setBranches([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Fungsi fetchBranches agar bisa dipanggil ulang
+  const fetchBranches = async () => {
+    try {
+      const response = await fetch(`${BACK_END_URL}/api/branch/`);
+      if (!response.ok) throw new Error('Failed to fetch branch data');
+      const data = await response.json();
+      setBranches(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('❌ Error fetching branches:', error);
+      setBranches([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchBranches();
   }, []);
 
@@ -54,13 +55,8 @@ const BranchPage = () => {
   };
 
   const handleAddBranch = async () => {
-    if (
-      !newBranch.branchID ||
-      !newBranch.road_name ||
-      !newBranch.city ||
-      !newBranch.province ||
-      !newBranch.phone_number
-    ) {
+    const { branchID, road_name, city, province, phone_number } = newBranch;
+    if (!branchID || !road_name || !city || !province || !phone_number) {
       showAlert('danger', 'Please fill in all fields.');
       return;
     }
@@ -73,10 +69,10 @@ const BranchPage = () => {
       });
 
       if (!response.ok) throw new Error('Failed to add branch');
-      const added = await response.json();
-      setBranches([...branches, added]);
+      await response.json();
       showAlert('success', '✅ Branch successfully added.');
       resetForm();
+      fetchBranches(); // Refresh data setelah tambah
     } catch (error) {
       console.error('❌ Error adding branch:', error);
       showAlert('danger', '❌ Failed to add branch.');
@@ -90,29 +86,24 @@ const BranchPage = () => {
   };
 
   const handleUpdateBranch = async () => {
-    if (
-      !newBranch.branchID ||
-      !newBranch.road_name ||
-      !newBranch.city ||
-      !newBranch.province ||
-      !newBranch.phone_number
-    ) {
+    const { branchID, road_name, city, province, phone_number } = newBranch;
+    if (!branchID || !road_name || !city || !province || !phone_number) {
       showAlert('danger', 'Please fill in all fields.');
       return;
     }
 
     try {
-      const response = await fetch(`${BACK_END_URL}/api/branch/${newBranch.branchID}`, {
+      const response = await fetch(`${BACK_END_URL}/api/branch/${branchID}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newBranch),
       });
 
       if (!response.ok) throw new Error('Failed to update branch');
-      const updated = await response.json();
-      setBranches(branches.map((b) => (b.branchID === updated.branchID ? updated : b)));
+      await response.json();
       showAlert('success', '✏️ Branch successfully updated.');
       resetForm();
+      fetchBranches(); // Refresh data setelah edit
     } catch (error) {
       console.error('❌ Error updating branch:', error);
       showAlert('danger', '❌ Failed to update branch.');
