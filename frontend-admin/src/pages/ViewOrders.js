@@ -7,17 +7,19 @@ const ViewOrders = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertVariant, setAlertVariant] = useState('');
 
   const [branchList, setBranchList] = useState([]);
-  const [driverList, setDriverList] = useState([]);
-  const [branch, setBranch] = useState('');
+  const [drivers, setDrivers] = useState([]);
+  const [branchID, setBranchID] = useState('');
   const [driver, setDriver] = useState('');
+
 
   const [loadingBranches, setLoadingBranches] = useState(false);
   const [loadingDrivers, setLoadingDrivers] = useState(false);
   const [assignLoading, setAssignLoading] = useState(false);
 
-  // Pagination 
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
 
@@ -31,7 +33,6 @@ const ViewOrders = () => {
     }
   };
 
-  // Fetch orders 
   const fetchOrdersWithCustomerData = async (page = 1) => {
     try {
       const orderRes = await axios.get(`http://localhost:8000/api/orders?page=${page}`);
@@ -39,17 +40,11 @@ const ViewOrders = () => {
       setCurrentPage(currentPage);
       setLastPage(lastPage);
 
-
       const ordersWithDetails = await Promise.all(
         orderData.map(async (order) => {
-          const customerRes = await axios
-            .get(`http://localhost:8000/api/customers/${order.customerId}`)
-            .catch(() => null);
-
+          const customerRes = await axios.get(`http://localhost:8000/api/customers/${order.customerId}`).catch(() => null);
           const transactionId = order.payment_id;
-          const transaction = transactionId
-            ? await fetchTransactionByOrderId(transactionId)
-            : null;
+          const transaction = transactionId ? await fetchTransactionByOrderId(transactionId) : null;
 
           return {
             ...order,
@@ -66,7 +61,6 @@ const ViewOrders = () => {
     }
   };
 
-  // Fetch branch
   useEffect(() => {
     const fetchBranches = async () => {
       setLoadingBranches(true);
@@ -82,61 +76,61 @@ const ViewOrders = () => {
     fetchBranches();
   }, []);
 
-  // Fetch drivers
   useEffect(() => {
-    if (!branch) {
-      setDriverList([]);
+    if (!branchID) {
+      setDrivers([]);
       setDriver('');
       return;
     }
-    const fetchDrivers = async () => {
+
+    const fetchDriversByBranch = async () => {
       setLoadingDrivers(true);
       try {
-        const res = await axios.get(`http://localhost:8000/api/driver?branch=${encodeURIComponent(branch)}`);
-        setDriverList(res.data);
+        const res = await axios.get(`http://localhost:8000/api/driver?branchId=${branchID}`);
+        setDrivers(res.data);
       } catch (error) {
         console.error('Error fetching drivers:', error);
-        setDriverList([]);
+        setDrivers([]);
       } finally {
         setLoadingDrivers(false);
       }
     };
-    fetchDrivers();
-  }, [branch]);
+
+    fetchDriversByBranch();
+  }, [branchID]);
 
   useEffect(() => {
     fetchOrdersWithCustomerData(1);
   }, []);
 
-  // Modal buat assign order
   const handleAssignClick = (orderId) => {
     setSelectedOrderId(orderId);
     setShowModal(true);
-    setBranch('');
+    setBranchID('');
     setDriver('');
   };
 
   const handleModalClose = () => {
     setShowModal(false);
-    setBranch('');
+    setBranchID('');
     setDriver('');
   };
 
   const handleAssignSubmit = async () => {
-    if (!branch || !driver) {
+    if (!branchID || !driver) {
       alert('Please select both branch and driver');
       return;
     }
     setAssignLoading(true);
     try {
-      await axios.post('http://localhost:8000/api/assign', {
-        orderId: selectedOrderId,
-        branch,
-        driver,
+      await axios.put(`http://localhost:8000/api/branch/assign-branch/${selectedOrderId}`, {
+      setAlertMessage('Menu updated successfully');
+      setAlertVariant('success');
+      setEditData(null);
       });
-      alert(`Order ${selectedOrderId} assigned to branch ${branch} and driver ${driver}`);
+      alert(`Order ${selectedOrderId} assigned to branch ${branchID} and driver ${driver}`);
       handleModalClose();
-      fetchOrdersWithCustomerData(currentPage); // reload current page
+      fetchOrdersWithCustomerData(currentPage);
     } catch (error) {
       console.error('Error assigning order:', error);
       alert('Failed to assign order, please try again');
@@ -147,10 +141,7 @@ const ViewOrders = () => {
 
   return (
     <div className="px-8 py-6">
-      <h3
-        className="text-center font-bold text-black mb-6"
-        style={{ textShadow: '3px 3px 1px rgba(0,0,0,0.2)', fontSize: '50px', letterSpacing: '6px' }}
-      >
+      <h3 className="text-center font-bold text-black mb-6" style={{ textShadow: '3px 3px 1px rgba(0,0,0,0.2)', fontSize: '50px', letterSpacing: '6px' }}>
         ORDER
       </h3>
 
@@ -228,9 +219,8 @@ const ViewOrders = () => {
           </tbody>
         </table>
 
-        {/* Pagination buttons */}
         <div className="text-center my-4 space-x-4">
-          <button 
+          <button
             className="fetch-button m-3"
             onClick={() => {
               const prevPage = currentPage - 1;
@@ -255,65 +245,112 @@ const ViewOrders = () => {
           >
             Next Page
           </button>
-
         </div>
       </div>
 
-      {/* Assign modal */}
-      <Modal show={showModal} onHide={handleModalClose} centered>
-        <div style={{ backgroundColor: '#E7F1DB', borderRadius: '15px', overflow: 'hidden' }}>
-          <Modal.Header closeButton>
-            <Modal.Title>Assign Order {selectedOrderId}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group className="mb-3" controlId="branchSelect">
-                <Form.Label>Branch</Form.Label>
-                <Form.Select
-                  value={branch}
-                  onChange={(e) => setBranch(e.target.value)}
-                  disabled={loadingBranches || assignLoading}
-                >
-                  <option value="">Select Branch</option>
-                  {branchList.map((branchItem) => (
-                    <option key={branchItem.branchName} value={branchItem.branchName}>
-                      {branchItem.branchName}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
+  <Modal show={showModal} onHide={handleModalClose} centered>
+  <div
+    style={{
+      backgroundColor: '#E7F1DB',
+      borderRadius: '10px',
+      padding: '20px 30px',
+      textAlign: 'center',
+      width: '100%',
+      maxWidth: '510px',
+      margin: 'auto',
+    }}
+  >
+    {/* Close button */}
+    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <Button
+        variant="link"
+        onClick={handleModalClose}
+        style={{ textDecoration: 'none', fontSize: '1.5rem', color: 'black' }}
+      >
+        ×
+      </Button>
+    </div>
 
-              <Form.Group className="mb-3" controlId="driverSelect">
-                <Form.Label>Driver</Form.Label>
-                <Form.Select
-                  value={driver}
-                  onChange={(e) => setDriver(e.target.value)}
-                  disabled={!branch || loadingDrivers || assignLoading}
-                >
-                  <option value="">Select Driver</option>
-                  {driverList.map((driverItem) => (
-                    <option key={driverItem.driverName} value={driverItem.driverName}>
-                      {driverItem.driverName}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleModalClose} disabled={assignLoading}>
-              Close
-            </Button>
-            <Button
-              variant="success"
-              onClick={handleAssignSubmit}
-              disabled={assignLoading || !branch || !driver}
-            >
-              {assignLoading ? 'Assigning...' : 'Assign'}
-            </Button>
-          </Modal.Footer>
-        </div>
-      </Modal>
+    {/* Title */}
+    <h5 style={{ fontWeight: 'bold', marginBottom: '10px' }}>Assign Order</h5>
+    <h4 style={{ color: '#C1282E', fontWeight: 'bold', marginBottom: '25px' }}>
+      Order ID : {selectedOrderId}
+    </h4>
+
+    <Form>
+      {/* Branch Label */}
+      <div style={{ textAlign: 'left', fontWeight: '500', marginBottom: '5px' }}>
+        Branch ID | Branch Name
+      </div>
+      <Form.Group className="mb-3" controlId="branchSelect">
+        <Form.Select
+          value={branchID}
+          onChange={(e) => setBranchID(e.target.value)}
+          disabled={loadingBranches || assignLoading}
+          style={{
+            padding: '10px',
+            borderRadius: '10px',
+            borderColor: '#ccc',
+            marginBottom: '20px',
+          }}
+        >
+          <option value="" disabled hidden>
+            Select Branch
+          </option>
+          {branchList.map((branchItem) => (
+            <option key={branchItem.branchID} value={branchItem.branchID}>
+              {branchItem.branchID} | {branchItem.city}
+            </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+
+      {/* Driver Label */}
+      <div style={{ textAlign: 'left', fontWeight: '500', marginBottom: '5px' }}>
+        Branch ID | Driver Name
+      </div>
+      <Form.Group className="mb-3" controlId="driverSelect">
+        <Form.Select
+          value={driver}
+          onChange={(e) => setDriver(e.target.value)}
+          disabled={!branchID || loadingDrivers || assignLoading}
+          style={{
+            padding: '10px',
+            borderRadius: '10px',
+            borderColor: '#ccc',
+            marginBottom: '25px',
+          }}
+        >
+          <option value="" disabled hidden>
+            Select Driver
+          </option>
+          {drivers.map((driver) => (
+            <option key={driver.driverID} value={driver.driverID}>
+              {driver.branchID} | {driver.driver_name}
+            </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+
+      {/* Assign Button */}
+      <Button
+        onClick={handleAssignSubmit}
+        disabled={assignLoading || !branchID || !driver}
+        style={{
+          backgroundColor: '#6C8759',
+          borderColor: '#6C8759',
+          color: 'white',
+          padding: '10px 30px',
+          borderRadius: '12px',
+          fontWeight: 'bold',
+          fontSize: '16px',
+        }}
+      >
+        {assignLoading ? 'Assigning...' : 'Assign'}
+      </Button>
+    </Form>
+  </div>
+</Modal>
     </div>
   );
 };
