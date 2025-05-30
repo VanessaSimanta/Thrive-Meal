@@ -8,18 +8,35 @@ const {
   createCustomerInDb,
   createOrderInDb,
   assignBranch,
-  assignDriver
+  assignDriver,
+  assignAdmin
 } = require('./repository');
 
-// Get all orders
+// Get orders
 const getAllOrdersCtrl = async (req, res) => {
   try {
-    const orders = await getAllOrders();
-    res.status(200).json(orders);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const sort = req.query.sort === 'asc' ? 'asc' : 'desc'; 
+
+    const { orders, total } = await getAllOrders(limit, offset, sort);
+    const lastPage = Math.ceil(total / limit);
+
+    res.status(200).json({
+      data: orders,
+      currentPage: page,
+      lastPage,
+      totalPages: lastPage,
+      totalData: total,
+    });
   } catch (error) {
     return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
   }
 };
+
+
 
 // Get order by ID
 const getOrderByIdCtrl = async (req, res) => {
@@ -218,6 +235,24 @@ const assignDriverCtrl = async (req, res) => {
   }
 }
 
+const assignAdminCtrl = async (req, res) => {
+  const { orderId } = req.params;
+  const adminId = req.user.adminId;
+
+  try {
+    const order = await assignAdmin(orderId, adminId);
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.json({ message: 'Order successfully assigned', order });
+  } catch (error) {
+    console.error('Error assigning order:', error);
+    res.status(500).json({ message: 'Database error while assigning order' });
+  }
+};
+
 module.exports = {
   getAllOrdersCtrl,
   getOrderByIdCtrl,
@@ -226,5 +261,6 @@ module.exports = {
   updateOrderCtrl,
   deleteOrderCtrl,
   assignBranchCtrl,
-  assignDriverCtrl
+  assignDriverCtrl,
+  assignAdminCtrl
 };

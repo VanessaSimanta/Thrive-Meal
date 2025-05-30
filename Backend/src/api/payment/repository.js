@@ -1,4 +1,5 @@
 const db = require('../../core/db');
+const { get } = require('../driver/route');
 
 // get order data
 const getOrder = async () => {
@@ -92,6 +93,11 @@ const updateOrderPayment = async (orderId, transactionId) => {
     });
 };
 
+const getTransaction = async(transactionId) => {
+  const transaction = await db('transactions').where({ transactionId }).first();
+  return transaction;
+}
+
 
 
 module.exports = {
@@ -102,5 +108,6 @@ module.exports = {
   createTransactionItems,
   updatePaymentStatus,
   cekPaymentId,
-  updateOrderPayment
+  updateOrderPayment,
+  getTransaction
 };
