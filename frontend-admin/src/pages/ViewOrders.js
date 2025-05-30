@@ -7,14 +7,11 @@ const ViewOrders = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertVariant, setAlertVariant] = useState('');
 
   const [branchList, setBranchList] = useState([]);
   const [drivers, setDrivers] = useState([]);
   const [branchID, setBranchID] = useState('');
   const [driver, setDriver] = useState('');
-
 
   const [loadingBranches, setLoadingBranches] = useState(false);
   const [loadingDrivers, setLoadingDrivers] = useState(false);
@@ -124,9 +121,9 @@ const ViewOrders = () => {
     setAssignLoading(true);
     try {
       await axios.put(`http://localhost:8000/api/branch/assign-branch/${selectedOrderId}`, {
-      setAlertMessage('Menu updated successfully');
-      setAlertVariant('success');
-      setEditData(null);
+        orderId: selectedOrderId,
+        branchID,
+        driver,
       });
       alert(`Order ${selectedOrderId} assigned to branch ${branchID} and driver ${driver}`);
       handleModalClose();
