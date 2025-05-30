@@ -142,6 +142,15 @@ const assignDriver = async (orderId, driverID) => {
   }
 }
 
+const assignAdmin = async (orderId, adminId) => {
+  const updatedOrder = await db('orders')
+    .where({ orderId })
+    .update({ adminId })
+    .returning('*'); // PostgreSQL only
+
+  return updatedOrder[0];
+};
+
 module.exports = {
   getAllOrders,
   getOrderById,
@@ -151,5 +160,6 @@ module.exports = {
   createOrderInDb,
   createCustomerInDb,
   assignBranch,
-  assignDriver
+  assignDriver,
+  assignAdmin
 };

@@ -8,7 +8,8 @@ const {
   createCustomerInDb,
   createOrderInDb,
   assignBranch,
-  assignDriver
+  assignDriver,
+  assignAdmin
 } = require('./repository');
 
 // Get orders
@@ -20,7 +21,6 @@ const getAllOrdersCtrl = async (req, res) => {
     const offset = (page - 1) * limit;
 
     const { orders, total } = await getAllOrders(limit, offset);
-    console.log(orders)
     const lastPage = Math.ceil(total / limit);
 
     res.status(200).json({
@@ -233,6 +233,24 @@ const assignDriverCtrl = async (req, res) => {
   }
 }
 
+const assignAdminCtrl = async (req, res) => {
+  const { orderId } = req.params;
+  const adminId = req.user.adminId;
+
+  try {
+    const order = await assignAdmin(orderId, adminId);
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.json({ message: 'Order successfully assigned', order });
+  } catch (error) {
+    console.error('Error assigning order:', error);
+    res.status(500).json({ message: 'Database error while assigning order' });
+  }
+};
+
 module.exports = {
   getAllOrdersCtrl,
   getOrderByIdCtrl,
@@ -241,5 +259,6 @@ module.exports = {
   updateOrderCtrl,
   deleteOrderCtrl,
   assignBranchCtrl,
-  assignDriverCtrl
+  assignDriverCtrl,
+  assignAdminCtrl
 };

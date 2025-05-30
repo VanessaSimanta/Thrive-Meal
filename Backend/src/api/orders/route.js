@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const authenticateToken = require('../admin/authMiddleware');
 const {
   getAllOrdersCtrl,
   getOrderByIdCtrl,
@@ -8,7 +9,8 @@ const {
   deleteOrderCtrl,
   createFullOrderCtrl,
   assignBranchCtrl,
-  assignDriverCtrl
+  assignDriverCtrl,
+  assignAdminCtrl
 } = require('./controller');
 
 // GET all orders
@@ -24,8 +26,9 @@ router.delete('/:orderId', deleteOrderCtrl);
 
 router.post('/full', createFullOrderCtrl);
 
-// put driver and branch to order
+// put driver, branch, admin to order
 router.put('/assign-branch/:orderId', assignBranchCtrl);
 router.put('/assign-driver/:orderId', assignDriverCtrl);
+router.put('/assign-admin/:orderId', authenticateToken, assignAdminCtrl);
 
 module.exports = router;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { BACK_END_URL } from '../utils/const';
 
 const ViewOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -24,10 +25,10 @@ const ViewOrders = () => {
   const [alertVariant, setAlertVariant] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
 
-   // Package type mapping
+  // Package type mapping
   const packageTypes = {
     25: "Weight Loss Program",
-    26: "Weight Maintenance Program", 
+    26: "Weight Maintenance Program",
     27: "Diabet Cholesterol Program",
     28: "Gluten Free Program",
     29: "Gain Muscle Program",
@@ -37,14 +38,14 @@ const ViewOrders = () => {
   // Period mapping
   const periods = {
     1: "1 minggu",
-    2: "1 bulan", 
+    2: "1 bulan",
     3: "3 bulan",
     4: "6 bulan"
   };
 
   const fetchTransactionByOrderId = async (transactionId) => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/transactions/${transactionId}`);
+      const res = await axios.get(`${BACK_END_URL}/api/transactions/${transactionId}`);
       return res.data;
     } catch (error) {
       console.warn('Transaction not found for ID:', transactionId);
@@ -54,15 +55,15 @@ const ViewOrders = () => {
 
   const fetchOrdersWithCustomerData = async (page = 1) => {
     try {
-      const orderRes = await axios.get(`http://localhost:8000/api/orders?page=${page}`);
+      const orderRes = await axios.get(`${BACK_END_URL}/api/orders?page=${page}`);
       const { data: orderData, currentPage, lastPage } = orderRes.data;
       setCurrentPage(currentPage);
       setLastPage(lastPage);
 
       const ordersWithDetails = await Promise.all(
         orderData.map(async (order) => {
-          const customerRes = await axios.get(`http://localhost:8000/api/customers/${order.customerId}`).catch(() => null);
-          
+          const customerRes = await axios.get(`${BACK_END_URL}/api/customers/${order.customerId}`).catch(() => null);
+
           // Use payment_id or transactionId to fetch transaction data
           const transactionId = order.payment_id || order.transactionId;
           const transaction = transactionId ? await fetchTransactionByOrderId(transactionId) : null;
@@ -85,7 +86,7 @@ const ViewOrders = () => {
     const fetchBranches = async () => {
       setLoadingBranches(true);
       try {
-        const res = await axios.get('http://localhost:8000/api/branch');
+        const res = await axios.get(`${BACK_END_URL}/api/branch`);
         setBranchList(res.data);
       } catch (error) {
         console.error('Error fetching branches:', error);
@@ -106,7 +107,7 @@ const ViewOrders = () => {
     const fetchDriversByBranch = async () => {
       setLoadingDrivers(true);
       try {
-        const res = await axios.get(`http://localhost:8000/api/driver?branchId=${branchID}`);
+        const res = await axios.get(`${BACK_END_URL}/api/driver?branchId=${branchID}`);
         setDrivers(res.data);
       } catch (error) {
         console.error('Error fetching drivers:', error);
@@ -156,16 +157,28 @@ const ViewOrders = () => {
     setAssignLoading(true);
     try {
       // First, assign the branch
-      await axios.put(`http://localhost:8000/api/orders/assign-branch/${selectedOrderId}`, {
+      await axios.put(`${BACK_END_URL}/api/orders/assign-branch/${selectedOrderId}`, {
         branchID,
       });
 
       // Then, assign the driver
-      await axios.put(`http://localhost:8000/api/orders/assign-driver/${selectedOrderId}`, {
+      await axios.put(`${BACK_END_URL}/api/orders/assign-driver/${selectedOrderId}`, {
         driverID: driver,
       });
 
-      showAlertMessage(`Order ${selectedOrderId} assigned to branch ${branchID} and driver ${driver}`, 'success');
+      // Assign admin
+      const token = localStorage.getItem('token'); 
+      await axios.put(
+        `${BACK_END_URL}/api/orders/assign-admin/${selectedOrderId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
+      );
+
+      showAlertMessage(`Order ${selectedOrderId} assigned to branch ${branchID} and driver ${driver}, and you as admin`, 'success');
       setTimeout(() => {
         handleModalClose();
         fetchOrdersWithCustomerData(currentPage);
@@ -221,7 +234,7 @@ const ViewOrders = () => {
                 </td>
               </tr>
             ) : (
-               orders.map((order) => {
+              orders.map((order) => {
                 const isAssigned = order.branchID && order.driverID;
                 return (
                   <tr key={order.orderId} className="border-b hover:bg-gray-50 transition duration-150">
@@ -248,9 +261,9 @@ const ViewOrders = () => {
                     <td className="px-4 py-2 border text-center">
                       <Button
                         size="sm"
-                        style={{ 
-                          backgroundColor: isAssigned ? '#6c757d' : '#748E57', 
-                          borderColor: isAssigned ? '#6c757d' : '#748E57' 
+                        style={{
+                          backgroundColor: isAssigned ? '#6c757d' : '#748E57',
+                          borderColor: isAssigned ? '#6c757d' : '#748E57'
                         }}
                         onClick={() => handleAssignClick(order.orderId)}
                         disabled={isAssigned}
@@ -316,7 +329,7 @@ const ViewOrders = () => {
               ×
             </Button>
           </div>
-           {/* Title */}
+          {/* Title */}
           <h5 style={{ fontWeight: 'bold', marginBottom: '10px' }}>Assign Order</h5>
           <h4 style={{ color: '#C1282E', fontWeight: 'bold', marginBottom: '25px' }}>
             Order ID : {selectedOrderId}
