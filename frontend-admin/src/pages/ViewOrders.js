@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ViewOrders = () => {
@@ -19,6 +19,10 @@ const ViewOrders = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertVariant, setAlertVariant] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
 
   const fetchTransactionByOrderId = async (transactionId) => {
     try {
@@ -105,32 +109,51 @@ const ViewOrders = () => {
     setShowModal(true);
     setBranchID('');
     setDriver('');
+    setShowAlert(false);
   };
 
   const handleModalClose = () => {
     setShowModal(false);
     setBranchID('');
     setDriver('');
+    setShowAlert(false);
+  };
+
+  const showAlertMessage = (message, variant) => {
+    setAlertMessage(message);
+    setAlertVariant(variant);
+    setShowAlert(true);
+    // Automatically hide the alert after 3 seconds
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 3000);
   };
 
   const handleAssignSubmit = async () => {
     if (!branchID || !driver) {
-      alert('Please select both branch and driver');
+      showAlertMessage('Please select both branch and driver', 'danger');
       return;
     }
     setAssignLoading(true);
     try {
-      await axios.put(`http://localhost:8000/api/branch/assign-branch/${selectedOrderId}`, {
-        orderId: selectedOrderId,
+      // First, assign the branch
+      await axios.put(`http://localhost:8000/api/orders/assign-branch/${selectedOrderId}`, {
         branchID,
-        driver,
       });
-      alert(`Order ${selectedOrderId} assigned to branch ${branchID} and driver ${driver}`);
-      handleModalClose();
-      fetchOrdersWithCustomerData(currentPage);
+
+      // Then, assign the driver
+      await axios.put(`http://localhost:8000/api/orders/assign-driver/${selectedOrderId}`, {
+        driverID: driver,
+      });
+
+      showAlertMessage(`Order ${selectedOrderId} assigned to branch ${branchID} and driver ${driver}`, 'success');
+      setTimeout(() => {
+        handleModalClose();
+        fetchOrdersWithCustomerData(currentPage);
+      }, 1500);
     } catch (error) {
       console.error('Error assigning order:', error);
-      alert('Failed to assign order, please try again');
+      showAlertMessage('Failed to assign order, please try again', 'danger');
     } finally {
       setAssignLoading(false);
     }
@@ -179,39 +202,46 @@ const ViewOrders = () => {
                 </td>
               </tr>
             ) : (
-              orders.map((order) => (
-                <tr key={order.orderId} className="border-b hover:bg-gray-50 transition duration-150">
-                  <td className="px-4 py-2 border">{order.orderId}</td>
-                  <td className="px-4 py-2 border">{order.customer?.customer_name || '-'}</td>
-                  <td className="px-4 py-2 border">{order.customer?.phone_number || '-'}</td>
-                  <td className="px-4 py-2 border">{order.customer?.road_name || '-'}</td>
-                  <td className="px-4 py-2 border">{order.customer?.urban_village || '-'}</td>
-                  <td className="px-4 py-2 border">{order.customer?.district || '-'}</td>
-                  <td className="px-4 py-2 border">{order.customer?.city || '-'}</td>
-                  <td className="px-4 py-2 border">{order.customer?.province || '-'}</td>
-                  <td className="px-4 py-2 border">{order.customer?.zip_code || '-'}</td>
-                  <td className="px-4 py-2 border">{order.customer?.address_notes || '-'}</td>
-                  <td className="px-4 py-2 border">{order.customer?.allergy_notes || '-'}</td>
-                  <td className="px-4 py-2 border">{order.transaction?.packageId || '-'}</td>
-                  <td className="px-4 py-2 border">{order.transaction?.periodId || '-'}</td>
-                  <td className="px-4 py-2 border">{order.transaction?.payment_status || '-'}</td>
-                  <td className="px-4 py-2 border">
-                    {order.transaction?.gross_amount
-                      ? `Rp ${parseInt(order.transaction.gross_amount).toLocaleString()}`
-                      : '-'}
-                  </td>
-                  <td className="px-4 py-2 border">{order.createdAt?.slice(0, 10) || '-'}</td>
-                  <td className="px-4 py-2 border text-center">
-                    <Button
-                      size="sm"
-                      style={{ backgroundColor: '#748E57', borderColor: '#748E57' }}
-                      onClick={() => handleAssignClick(order.orderId)}
-                    >
-                      Assign
-                    </Button>
-                  </td>
-                </tr>
-              ))
+               orders.map((order) => {
+                const isAssigned = order.branchID && order.driverID;
+                return (
+                  <tr key={order.orderId} className="border-b hover:bg-gray-50 transition duration-150">
+                    <td className="px-4 py-2 border">{order.orderId}</td>
+                    <td className="px-4 py-2 border">{order.customer?.customer_name || '-'}</td>
+                    <td className="px-4 py-2 border">{order.customer?.phone_number || '-'}</td>
+                    <td className="px-4 py-2 border">{order.customer?.road_name || '-'}</td>
+                    <td className="px-4 py-2 border">{order.customer?.urban_village || '-'}</td>
+                    <td className="px-4 py-2 border">{order.customer?.district || '-'}</td>
+                    <td className="px-4 py-2 border">{order.customer?.city || '-'}</td>
+                    <td className="px-4 py-2 border">{order.customer?.province || '-'}</td>
+                    <td className="px-4 py-2 border">{order.customer?.zip_code || '-'}</td>
+                    <td className="px-4 py-2 border">{order.customer?.address_notes || '-'}</td>
+                    <td className="px-4 py-2 border">{order.customer?.allergy_notes || '-'}</td>
+                    <td className="px-4 py-2 border">{order.transaction?.packageId || '-'}</td>
+                    <td className="px-4 py-2 border">{order.transaction?.periodId || '-'}</td>
+                    <td className="px-4 py-2 border">{order.transaction?.payment_status || '-'}</td>
+                    <td className="px-4 py-2 border">
+                      {order.transaction?.gross_amount
+                        ? `Rp ${parseInt(order.transaction.gross_amount).toLocaleString()}`
+                        : '-'}
+                    </td>
+                    <td className="px-4 py-2 border">{order.createdAt?.slice(0, 10) || '-'}</td>
+                    <td className="px-4 py-2 border text-center">
+                      <Button
+                        size="sm"
+                        style={{ 
+                          backgroundColor: isAssigned ? '#6c757d' : '#748E57', 
+                          borderColor: isAssigned ? '#6c757d' : '#748E57' 
+                        }}
+                        onClick={() => handleAssignClick(order.orderId)}
+                        disabled={isAssigned}
+                      >
+                        {isAssigned ? 'Assigned' : 'Assign'}
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
@@ -245,109 +275,115 @@ const ViewOrders = () => {
         </div>
       </div>
 
-  <Modal show={showModal} onHide={handleModalClose} centered>
-  <div
-    style={{
-      backgroundColor: '#E7F1DB',
-      borderRadius: '10px',
-      padding: '20px 30px',
-      textAlign: 'center',
-      width: '100%',
-      maxWidth: '510px',
-      margin: 'auto',
-    }}
-  >
-    {/* Close button */}
-    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-      <Button
-        variant="link"
-        onClick={handleModalClose}
-        style={{ textDecoration: 'none', fontSize: '1.5rem', color: 'black' }}
-      >
-        ×
-      </Button>
-    </div>
-
-    {/* Title */}
-    <h5 style={{ fontWeight: 'bold', marginBottom: '10px' }}>Assign Order</h5>
-    <h4 style={{ color: '#C1282E', fontWeight: 'bold', marginBottom: '25px' }}>
-      Order ID : {selectedOrderId}
-    </h4>
-
-    <Form>
-      {/* Branch Label */}
-      <div style={{ textAlign: 'left', fontWeight: '500', marginBottom: '5px' }}>
-        Branch ID | Branch Name
-      </div>
-      <Form.Group className="mb-3" controlId="branchSelect">
-        <Form.Select
-          value={branchID}
-          onChange={(e) => setBranchID(e.target.value)}
-          disabled={loadingBranches || assignLoading}
+      <Modal show={showModal} onHide={handleModalClose} centered>
+        <div
           style={{
-            padding: '10px',
+            backgroundColor: '#E7F1DB',
             borderRadius: '10px',
-            borderColor: '#ccc',
-            marginBottom: '20px',
+            padding: '20px 30px',
+            textAlign: 'center',
+            width: '100%',
+            maxWidth: '510px',
+            margin: 'auto',
           }}
         >
-          <option value="" disabled hidden>
-            Select Branch
-          </option>
-          {branchList.map((branchItem) => (
-            <option key={branchItem.branchID} value={branchItem.branchID}>
-              {branchItem.branchID} | {branchItem.city}
-            </option>
-          ))}
-        </Form.Select>
-      </Form.Group>
+          {/* Close button */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              variant="link"
+              onClick={handleModalClose}
+              style={{ textDecoration: 'none', fontSize: '1.5rem', color: 'black' }}
+            >
+              ×
+            </Button>
+          </div>
+           {/* Title */}
+          <h5 style={{ fontWeight: 'bold', marginBottom: '10px' }}>Assign Order</h5>
+          <h4 style={{ color: '#C1282E', fontWeight: 'bold', marginBottom: '25px' }}>
+            Order ID : {selectedOrderId}
+          </h4>
 
-      {/* Driver Label */}
-      <div style={{ textAlign: 'left', fontWeight: '500', marginBottom: '5px' }}>
-        Branch ID | Driver Name
-      </div>
-      <Form.Group className="mb-3" controlId="driverSelect">
-        <Form.Select
-          value={driver}
-          onChange={(e) => setDriver(e.target.value)}
-          disabled={!branchID || loadingDrivers || assignLoading}
-          style={{
-            padding: '10px',
-            borderRadius: '10px',
-            borderColor: '#ccc',
-            marginBottom: '25px',
-          }}
-        >
-          <option value="" disabled hidden>
-            Select Driver
-          </option>
-          {drivers.map((driver) => (
-            <option key={driver.driverID} value={driver.driverID}>
-              {driver.branchID} | {driver.driver_name}
-            </option>
-          ))}
-        </Form.Select>
-      </Form.Group>
+          <Form>
+            {/* Branch Label */}
+            <div style={{ textAlign: 'left', fontWeight: '500', marginBottom: '5px' }}>
+              Branch ID | Branch Name
+            </div>
+            <Form.Group className="mb-3" controlId="branchSelect">
+              <Form.Select
+                value={branchID}
+                onChange={(e) => setBranchID(e.target.value)}
+                disabled={loadingBranches || assignLoading}
+                style={{
+                  padding: '10px',
+                  borderRadius: '10px',
+                  borderColor: '#ccc',
+                  marginBottom: '20px',
+                }}
+              >
+                <option value="" disabled hidden>
+                  Select Branch
+                </option>
+                {branchList.map((branchItem) => (
+                  <option key={branchItem.branchID} value={branchItem.branchID}>
+                    {branchItem.branchID} | {branchItem.city}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
 
-      {/* Assign Button */}
-      <Button
-        onClick={handleAssignSubmit}
-        disabled={assignLoading || !branchID || !driver}
-        style={{
-          backgroundColor: '#6C8759',
-          borderColor: '#6C8759',
-          color: 'white',
-          padding: '10px 30px',
-          borderRadius: '12px',
-          fontWeight: 'bold',
-          fontSize: '16px',
-        }}
-      >
-        {assignLoading ? 'Assigning...' : 'Assign'}
-      </Button>
-    </Form>
-  </div>
-</Modal>
+            {/* Driver Label */}
+            <div style={{ textAlign: 'left', fontWeight: '500', marginBottom: '5px' }}>
+              Branch ID | Driver Name
+            </div>
+            <Form.Group className="mb-3" controlId="driverSelect">
+              <Form.Select
+                value={driver}
+                onChange={(e) => setDriver(e.target.value)}
+                disabled={!branchID || loadingDrivers || assignLoading}
+                style={{
+                  padding: '10px',
+                  borderRadius: '10px',
+                  borderColor: '#ccc',
+                  marginBottom: '25px',
+                }}
+              >
+                <option value="" disabled hidden>
+                  Select Driver
+                </option>
+                {drivers.map((driver) => (
+                  <option key={driver.driverID} value={driver.driverID}>
+                    {driver.branchID} | {driver.driver_name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            {/* Assign Button */}
+            <Button
+              onClick={handleAssignSubmit}
+              disabled={assignLoading || !branchID || !driver}
+              style={{
+                backgroundColor: '#6C8759',
+                borderColor: '#6C8759',
+                color: 'white',
+                padding: '10px 30px',
+                borderRadius: '12px',
+                fontWeight: 'bold',
+                fontSize: '16px',
+              }}
+            >
+              {assignLoading ? 'Assigning...' : 'Assign'}
+            </Button>
+
+            {/* Alert Component moved below the button */}
+            {showAlert && (
+              <Alert variant={alertVariant} onClose={() => setShowAlert(false)} dismissible style={{ marginTop: '15px' }}>
+                {alertMessage}
+              </Alert>
+            )}
+          </Form>
+        </div>
+      </Modal>
     </div>
   );
 };
