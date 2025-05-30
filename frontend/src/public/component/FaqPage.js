@@ -22,16 +22,12 @@ function FaqPage() {
   };
 
   return (
-    <div style={{ backgroundColor: "#fffbf0", minHeight: "100vh" }}>
-      {/* Banner Section */}
-      <div className="menu-page">
+    <div className="menu-page">
       <div className="menu-banner">
         <div className="menu-banner-overlay">
           <h1 className="menu-title">FAQ</h1>
         </div>
       </div>
-      </div>
-
       {/* FAQ Section */}
       <section className="container py-5">
         <h2 className="text-center fw-semibold mb-4">Frequently Ask Question</h2>
