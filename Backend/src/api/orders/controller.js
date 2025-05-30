@@ -15,18 +15,19 @@ const {
 // Get orders
 const getAllOrdersCtrl = async (req, res) => {
   try {
-    console.log('Query Params:', req.query);
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-    const { orders, total } = await getAllOrders(limit, offset);
+    const sort = req.query.sort === 'asc' ? 'asc' : 'desc'; 
+
+    const { orders, total } = await getAllOrders(limit, offset, sort);
     const lastPage = Math.ceil(total / limit);
 
     res.status(200).json({
       data: orders,
       currentPage: page,
-      lastPage: lastPage,
+      lastPage,
       totalPages: lastPage,
       totalData: total,
     });
@@ -34,6 +35,7 @@ const getAllOrdersCtrl = async (req, res) => {
     return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
   }
 };
+
 
 
 // Get order by ID

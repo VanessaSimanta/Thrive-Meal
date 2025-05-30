@@ -1,10 +1,11 @@
 const db = require('../../core/db');
 
 // Get  orders
- const getAllOrders = async (limit, offset) => {
+const getAllOrders = async (limit, offset, sort = 'desc') => {
   try {
     const orders = await db('orders')
       .select('*')
+      .orderBy('orderId', sort)
       .limit(limit)
       .offset(offset);
 

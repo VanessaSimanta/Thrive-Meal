@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BACK_END_URL } from '../utils/const';
+import { InputGroup } from 'react-bootstrap';
+import { FaSearch, FaTimes } from 'react-icons/fa';
 
 const ViewOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -24,6 +26,10 @@ const ViewOrders = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertVariant, setAlertVariant] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
+
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
+
 
   // Package type mapping
   const packageTypes = {
@@ -53,9 +59,16 @@ const ViewOrders = () => {
     }
   };
 
-  const fetchOrdersWithCustomerData = async (page = 1) => {
+  const fetchOrdersWithCustomerData = async (page = 1, sort = 'desc') => {
     try {
-      const orderRes = await axios.get(`${BACK_END_URL}/api/orders?page=${page}`);
+      // Tambahkan sort di query param
+      const orderRes = await axios.get(`${BACK_END_URL}/api/orders`, {
+        params: {
+          page,
+          sort,
+        },
+      });
+
       const { data: orderData, currentPage, lastPage } = orderRes.data;
       setCurrentPage(currentPage);
       setLastPage(lastPage);
@@ -63,8 +76,8 @@ const ViewOrders = () => {
       const ordersWithDetails = await Promise.all(
         orderData.map(async (order) => {
           const customerRes = await axios.get(`${BACK_END_URL}/api/customers/${order.customerId}`).catch(() => null);
-          
-          // Use payment_id or transactionId to fetch transaction data
+
+          // Gunakan payment_id atau transactionId untuk ambil data transaksi
           const transactionId = order.payment_id || order.transactionId;
           const transaction = transactionId ? await fetchTransactionByOrderId(transactionId) : null;
 
@@ -96,6 +109,11 @@ const ViewOrders = () => {
     };
     fetchBranches();
   }, []);
+
+  useEffect(() => {
+    fetchOrdersWithCustomerData(currentPage, sortOrder);
+  });
+
 
   useEffect(() => {
     if (!branchID) {
@@ -167,13 +185,13 @@ const ViewOrders = () => {
       });
 
       // Assign admin
-      const token = localStorage.getItem('token'); 
+      const token = localStorage.getItem('token');
       await axios.put(
         `${BACK_END_URL}/api/orders/assign-admin/${selectedOrderId}`,
         {},
         {
           headers: {
-            Authorization: `Bearer ${token}`, 
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -202,6 +220,65 @@ const ViewOrders = () => {
           Fetch New Orders
         </button>
       </div>
+
+      {/* Search Bar */}
+      <div className="d-flex mb-4 px-3">
+        <InputGroup className="w-100" style={{ maxWidth: '500px' }}>
+          {/* Search Icon */}
+          <InputGroup.Text style={{ backgroundColor: '#E7F1DB', border: '1px solid #ced4da' }}>
+            <FaSearch color="#748E57" />
+          </InputGroup.Text>
+
+          {/* Input Field */}
+          <Form.Control
+            type="text"
+            placeholder="Search by name or phone number..."
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            style={{
+              borderLeft: 'none',
+              padding: '10px 15px',
+              borderTopRightRadius: '0',
+              borderBottomRightRadius: '0',
+            }}
+          />
+
+          {/* Clear Button */}
+          {searchKeyword && (
+            <Button
+              variant="outline-secondary"
+              onClick={() => setSearchKeyword('')}
+              style={{
+                borderLeft: 'none',
+                borderTopLeftRadius: '0',
+                borderBottomLeftRadius: '0',
+                backgroundColor: '#ffffff',
+                borderColor: '#ced4da',
+              }}
+            >
+              <FaTimes color="#C1282E" />
+            </Button>
+          )}
+        </InputGroup>
+      </div>
+
+      <div className="d-flex mb-4">
+        <label htmlFor="sortOrderSelect" className="form-label mt-2 me-3 fw-semibold">
+          Sort Orders:
+        </label>
+        <select
+          id="sortOrderSelect"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          className="form-select w-auto"
+          style={{ minWidth: '200px' }}
+        >
+          <option value="desc">Sort by ID (Newest First)</option>
+          <option value="asc">Sort by ID (Oldest First)</option>
+        </select>
+      </div>
+
+
 
       <div className="overflow-x-auto border border-gray-500 rounded-lg shadow-lg bg-white px-4 mt-5">
         <table className="w-full table-auto text-sm text-left text-black">
@@ -234,46 +311,53 @@ const ViewOrders = () => {
                 </td>
               </tr>
             ) : (
-              orders.map((order) => {
-                const isAssigned = order.branchID && order.driverID;
-                return (
-                  <tr key={order.orderId} className="border-b hover:bg-gray-50 transition duration-150">
-                    <td className="px-4 py-2 border">{order.orderId}</td>
-                    <td className="px-4 py-2 border">{order.customer?.customer_name || '-'}</td>
-                    <td className="px-4 py-2 border">{order.customer?.phone_number || '-'}</td>
-                    <td className="px-4 py-2 border">{order.customer?.road_name || '-'}</td>
-                    <td className="px-4 py-2 border">{order.customer?.urban_village || '-'}</td>
-                    <td className="px-4 py-2 border">{order.customer?.district || '-'}</td>
-                    <td className="px-4 py-2 border">{order.customer?.city || '-'}</td>
-                    <td className="px-4 py-2 border">{order.customer?.province || '-'}</td>
-                    <td className="px-4 py-2 border">{order.customer?.zip_code || '-'}</td>
-                    <td className="px-4 py-2 border">{order.customer?.address_notes || '-'}</td>
-                    <td className="px-4 py-2 border">{order.customer?.allergy_notes || '-'}</td>
-                    <td className="px-4 py-2 border">{packageTypes[order.packageId] || order.packageId || '-'}</td>
-                    <td className="px-4 py-2 border">{periods[order.periodId] || order.periodId || '-'}</td>
-                    <td className="px-4 py-2 border">{order.transaction?.payment_status || '-'}</td>
-                    <td className="px-4 py-2 border">
-                      {order.transaction?.gross_amount
-                        ? `Rp ${parseInt(order.transaction.gross_amount).toLocaleString()}`
-                        : '-'}
-                    </td>
-                    <td className="px-4 py-2 border">{order.createdAt?.slice(0, 10) || '-'}</td>
-                    <td className="px-4 py-2 border text-center">
-                      <Button
-                        size="sm"
-                        style={{
-                          backgroundColor: isAssigned ? '#6c757d' : '#748E57',
-                          borderColor: isAssigned ? '#6c757d' : '#748E57'
-                        }}
-                        onClick={() => handleAssignClick(order.orderId)}
-                        disabled={isAssigned}
-                      >
-                        {isAssigned ? 'Assigned' : 'Assign'}
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })
+              orders
+                .filter((order) => {
+                  const keyword = searchKeyword.toLowerCase();
+                  const name = order.customer?.customer_name?.toLowerCase() || '';
+                  const phone = order.customer?.phone_number || '';
+                  return name.includes(keyword) || phone.includes(keyword);
+                })
+                .map((order) => {
+                  const isAssigned = order.branchID && order.driverID;
+                  return (
+                    <tr key={order.orderId} className="border-b hover:bg-gray-50 transition duration-150">
+                      <td className="px-4 py-2 border">{order.orderId}</td>
+                      <td className="px-4 py-2 border">{order.customer?.customer_name || '-'}</td>
+                      <td className="px-4 py-2 border">{order.customer?.phone_number || '-'}</td>
+                      <td className="px-4 py-2 border">{order.customer?.road_name || '-'}</td>
+                      <td className="px-4 py-2 border">{order.customer?.urban_village || '-'}</td>
+                      <td className="px-4 py-2 border">{order.customer?.district || '-'}</td>
+                      <td className="px-4 py-2 border">{order.customer?.city || '-'}</td>
+                      <td className="px-4 py-2 border">{order.customer?.province || '-'}</td>
+                      <td className="px-4 py-2 border">{order.customer?.zip_code || '-'}</td>
+                      <td className="px-4 py-2 border">{order.customer?.address_notes || '-'}</td>
+                      <td className="px-4 py-2 border">{order.customer?.allergy_notes || '-'}</td>
+                      <td className="px-4 py-2 border">{packageTypes[order.packageId] || order.packageId || '-'}</td>
+                      <td className="px-4 py-2 border">{periods[order.periodId] || order.periodId || '-'}</td>
+                      <td className="px-4 py-2 border">{order.transaction?.payment_status || '-'}</td>
+                      <td className="px-4 py-2 border">
+                        {order.transaction?.gross_amount
+                          ? `Rp ${parseInt(order.transaction.gross_amount).toLocaleString()}`
+                          : '-'}
+                      </td>
+                      <td className="px-4 py-2 border">{order.createdAt?.slice(0, 10) || '-'}</td>
+                      <td className="px-4 py-2 border text-center">
+                        <Button
+                          size="sm"
+                          style={{
+                            backgroundColor: isAssigned ? '#6c757d' : '#748E57',
+                            borderColor: isAssigned ? '#6c757d' : '#748E57'
+                          }}
+                          onClick={() => handleAssignClick(order.orderId)}
+                          disabled={isAssigned}
+                        >
+                          {isAssigned ? 'Assigned' : 'Assign'}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })
             )}
           </tbody>
         </table>
