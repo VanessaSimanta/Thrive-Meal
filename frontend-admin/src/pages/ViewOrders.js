@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { BACK_END_URL }  from '../utils/const';
 
 const ViewOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -44,7 +45,7 @@ const ViewOrders = () => {
 
   const fetchTransactionByOrderId = async (transactionId) => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/transactions/${transactionId}`);
+      const res = await axios.get(`${BACK_END_URL}/api/transactions/${transactionId}`);
       return res.data;
     } catch (error) {
       console.warn('Transaction not found for ID:', transactionId);
@@ -54,14 +55,14 @@ const ViewOrders = () => {
 
   const fetchOrdersWithCustomerData = async (page = 1) => {
     try {
-      const orderRes = await axios.get(`http://localhost:8000/api/orders?page=${page}`);
+      const orderRes = await axios.get(`${BACK_END_URL}/api/orders?page=${page}`);
       const { data: orderData, currentPage, lastPage } = orderRes.data;
       setCurrentPage(currentPage);
       setLastPage(lastPage);
 
       const ordersWithDetails = await Promise.all(
         orderData.map(async (order) => {
-          const customerRes = await axios.get(`http://localhost:8000/api/customers/${order.customerId}`).catch(() => null);
+          const customerRes = await axios.get(`${BACK_END_URL}/api/customers/${order.customerId}`).catch(() => null);
           
           // Use payment_id or transactionId to fetch transaction data
           const transactionId = order.payment_id || order.transactionId;
@@ -85,7 +86,7 @@ const ViewOrders = () => {
     const fetchBranches = async () => {
       setLoadingBranches(true);
       try {
-        const res = await axios.get('http://localhost:8000/api/branch');
+        const res = await axios.get(`${BACK_END_URL}/api/branch`);
         setBranchList(res.data);
       } catch (error) {
         console.error('Error fetching branches:', error);
@@ -106,7 +107,7 @@ const ViewOrders = () => {
     const fetchDriversByBranch = async () => {
       setLoadingDrivers(true);
       try {
-        const res = await axios.get(`http://localhost:8000/api/driver?branchId=${branchID}`);
+        const res = await axios.get(`${BACK_END_URL}/api/driver?branchId=${branchID}`);
         setDrivers(res.data);
       } catch (error) {
         console.error('Error fetching drivers:', error);
@@ -156,12 +157,12 @@ const ViewOrders = () => {
     setAssignLoading(true);
     try {
       // First, assign the branch
-      await axios.put(`http://localhost:8000/api/orders/assign-branch/${selectedOrderId}`, {
+      await axios.put(`${BACK_END_URL}/api/orders/assign-branch/${selectedOrderId}`, {
         branchID,
       });
 
       // Then, assign the driver
-      await axios.put(`http://localhost:8000/api/orders/assign-driver/${selectedOrderId}`, {
+      await axios.put(`${BACK_END_URL}/api/orders/assign-driver/${selectedOrderId}`, {
         driverID: driver,
       });
 
