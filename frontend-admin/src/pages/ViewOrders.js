@@ -63,7 +63,7 @@ const ViewOrders = () => {
       const ordersWithDetails = await Promise.all(
         orderData.map(async (order) => {
           const customerRes = await axios.get(`${BACK_END_URL}/api/customers/${order.customerId}`).catch(() => null);
-
+          
           // Use payment_id or transactionId to fetch transaction data
           const transactionId = order.payment_id || order.transactionId;
           const transaction = transactionId ? await fetchTransactionByOrderId(transactionId) : null;
