@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
 import Payment from './Payment';
 import useSnap from '../../hooks/useSnap';
+import { BACK_END_URL }  from '../../utils/const';
 
 
 function FormOrder({ show, handleClose }) {
@@ -27,12 +28,12 @@ function FormOrder({ show, handleClose }) {
 
   const mapPackageToId = (packageName) => {
     const packageIdMap = {
-      'Weight Loss Program': 19,
-      'Weight Maintenance Program': 20,
-      'Diabet Cholesterol Program': 21,
-      'Gluten Free Program': 22,
-      'Gain Muscle Program': 23,
-      'Vegetarian Program': 34,
+      'Weight Loss Program': 1,
+      'Weight Maintenance Program': 2,
+      'Diabet Cholesterol Program': 3,
+      'Gluten Free Program': 4,
+      'Gain Muscle Program': 5,
+      'Vegetarian Program': 6,
     };
     return packageIdMap[packageName];
   };
@@ -80,7 +81,7 @@ function FormOrder({ show, handleClose }) {
     };
 
     try {
-      const orderRes = await fetch('http://localhost:8000/api/orders/full', {
+      const orderRes = await fetch(`${BACK_END_URL}/api/orders/full`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend),
@@ -102,7 +103,7 @@ function FormOrder({ show, handleClose }) {
         return;
       }
 
-      const paymentRes = await fetch('http://localhost:8000/api/transaction', {
+      const paymentRes = await fetch(`${BACK_END_URL}/api/transaction`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

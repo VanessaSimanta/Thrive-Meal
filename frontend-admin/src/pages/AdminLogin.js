@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
+import { BACK_END_URL }  from '../utils/const';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -35,7 +36,7 @@ const AdminLogin = () => {
       if (!isValid) return;
 
       try {
-        const response = await axios.post('http://localhost:8000/api/admin/login', {
+        const response = await axios.post(`${BACK_END_URL}/api/admin/login`, {
           email,
           password,
         });

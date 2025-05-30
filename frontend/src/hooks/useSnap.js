@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { MIDTRANS_CLIENT_ID }  from '../utils/const';
+import { BACK_END_URL } from '../utils/const';
 
 
 const useSnap = () => {
@@ -25,7 +26,7 @@ const useSnap = () => {
         console.log('Success:', result);
 
         // ✅ Panggil API paymentSuccess
-        fetch(`http://localhost:3000/api/paymentSuccess/${transactionId}`, {
+        fetch(`${BACK_END_URL}/api/paymentSuccess/${transactionId}`, {
           method: 'PUT',
         })
           .then((res) => res.json())
