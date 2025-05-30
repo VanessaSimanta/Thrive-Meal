@@ -200,7 +200,26 @@ const AdminDashboard = () => {
 
             )}
 
-            {activeView === "branch-driver" && <DriverPage />}
+            {activeView === 'branch-driver' && (
+              <div>
+                <div className="mb-4 d-flex gap-3">
+                  <button
+                    className={`btn ${branchDriverView === 'branch' ? 'btn-success' : 'btn-outline-success'}`}
+                    onClick={() => setBranchDriverView('branch')}
+                  >
+                    Branches
+                  </button>
+                  <button
+                    className={`btn ${branchDriverView === 'driver' ? 'btn-success' : 'btn-outline-success'}`}
+                    onClick={() => setBranchDriverView('driver')}
+                  >
+                    Drivers
+                  </button>
+                </div>
+                {branchDriverView === 'branch' && <BranchPage />}
+                {branchDriverView === 'driver' && <DriverPage />}
+              </div>
+            )}
             {activeView === "edit-menu" && <EditMenu />}
             {activeView === "view-orders" && <ViewOrders />}
           </div>
