@@ -100,9 +100,7 @@ const DriverPage = () => {
       });
       if (!res.ok) throw new Error('Failed to update driver');
       const updated = await res.json();
-      setDrivers(
-        drivers.map((d) => (d.driverID === updated.driverID ? updated : d))
-      );
+      setDrivers(drivers.map((d) => (d.driverID === updated.driverID ? updated : d)));
       showAlert('success', '✏️ Driver updated successfully.');
       resetForm();
     } catch (err) {
@@ -209,26 +207,28 @@ const DriverPage = () => {
                 </h5>
                 <Form>
                   {[
-                    ['driverID', 'Driver ID'],
-                    ['branchID', 'Branch ID'],
-                    ['driver_name', 'Driver Name'],
-                    ['driver_dob', 'Date of Birth'],
-                    ['phone_number', 'Phone Number'],
-                    ['road_name', 'Road Name'],
-                    ['urban_village', 'Urban Village'],
-                    ['district', 'District'],
-                  ].map(([name, label]) => (
+                    ['driverID', 'Driver ID', 'text'],
+                    ['branchID', 'Branch ID', 'text'],
+                    ['driver_name', 'Driver Name', 'text'],
+                    ['driver_dob', 'Date of Birth', 'date'], // 🔥 date type input here
+                    ['phone_number', 'Phone Number', 'text'],
+                    ['road_name', 'Road Name', 'text'],
+                    ['urban_village', 'Urban Village', 'text'],
+                    ['district', 'District', 'text'],
+                  ].map(([name, label, type]) => (
                     <Form.Group className="mb-3" key={name}>
                       <Form.Label>{label}</Form.Label>
                       <Form.Control
-                        type="text"
+                        type={type}
                         name={name}
                         value={driverForm[name]}
                         onChange={handleInputChange}
                         disabled={isEditMode && name === 'driverID'}
+                        placeholder={name === 'driver_dob' ? 'YYYY-MM-DD' : ''}
                       />
                     </Form.Group>
                   ))}
+
                   <div className="d-flex justify-content-center gap-3 mt-4">
                     <Button
                       style={{ backgroundColor: '#CADCB5', border: 'none', color: 'black' }}
@@ -248,7 +248,6 @@ const DriverPage = () => {
         </Row>
       )}
 
-      {/* Driver Detail Modal */}
       {selectedDriver && (
         <div
           className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
