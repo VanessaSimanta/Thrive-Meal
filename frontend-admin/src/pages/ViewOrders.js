@@ -24,6 +24,24 @@ const ViewOrders = () => {
   const [alertVariant, setAlertVariant] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
 
+   // Package type mapping
+  const packageTypes = {
+    25: "Weight Loss Program",
+    26: "Weight Maintenance Program", 
+    27: "Diabet Cholesterol Program",
+    28: "Gluten Free Program",
+    29: "Gain Muscle Program",
+    30: "Vegetarian Program"
+  };
+
+  // Period mapping
+  const periods = {
+    1: "1 minggu",
+    2: "1 bulan", 
+    3: "3 bulan",
+    4: "6 bulan"
+  };
+
   const fetchTransactionByOrderId = async (transactionId) => {
     try {
       const res = await axios.get(`http://localhost:8000/api/transactions/${transactionId}`);
@@ -44,12 +62,13 @@ const ViewOrders = () => {
       const ordersWithDetails = await Promise.all(
         orderData.map(async (order) => {
           const customerRes = await axios.get(`http://localhost:8000/api/customers/${order.customerId}`).catch(() => null);
-          const transactionId = order.payment_id;
+          
+          // Use payment_id or transactionId to fetch transaction data
+          const transactionId = order.payment_id || order.transactionId;
           const transaction = transactionId ? await fetchTransactionByOrderId(transactionId) : null;
 
           return {
             ...order,
-            transactionId,
             customer: customerRes?.data || null,
             transaction: transaction || null,
           };
@@ -217,8 +236,8 @@ const ViewOrders = () => {
                     <td className="px-4 py-2 border">{order.customer?.zip_code || '-'}</td>
                     <td className="px-4 py-2 border">{order.customer?.address_notes || '-'}</td>
                     <td className="px-4 py-2 border">{order.customer?.allergy_notes || '-'}</td>
-                    <td className="px-4 py-2 border">{order.transaction?.packageId || '-'}</td>
-                    <td className="px-4 py-2 border">{order.transaction?.periodId || '-'}</td>
+                    <td className="px-4 py-2 border">{packageTypes[order.packageId] || order.packageId || '-'}</td>
+                    <td className="px-4 py-2 border">{periods[order.periodId] || order.periodId || '-'}</td>
                     <td className="px-4 py-2 border">{order.transaction?.payment_status || '-'}</td>
                     <td className="px-4 py-2 border">
                       {order.transaction?.gross_amount
