@@ -154,3 +154,22 @@ button:focus {
     padding: 1rem !important;
   }
 }
+
+.fetch-button {
+  background-color: #748E57;
+  color: white;
+  font-weight: 600;
+  padding: 12px 32px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 50px;
+}
+
+.fetch-button:hover {
+  background-color: #5e7444;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.2);
+}
