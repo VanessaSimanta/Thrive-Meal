@@ -166,7 +166,8 @@ button:focus {
 }
 
 .custom-button:hover {
-  background-color: #5f7446; 
+  color: white;
+  background-color: #495b33; 
 }
 
 .fetch-button {

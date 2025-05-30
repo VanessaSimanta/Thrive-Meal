@@ -1,14 +1,24 @@
 const db = require('../../core/db');
 
-// Get all orders
-const getAllOrders = async () => {
+// Get  orders
+ const getAllOrders = async (limit, offset) => {
   try {
-    const orders = await db('orders').select('*');
-    return orders;
+    const orders = await db('orders')
+      .select('*')
+      .limit(limit)
+      .offset(offset);
+
+    const [{ count }] = await db('orders').count('* as count');
+
+    return {
+      orders,
+      total: parseInt(count),
+    };
   } catch (error) {
     throw new Error('Failed to get orders: ' + error.message);
   }
 };
+
 
 // Get order by ID
 const getOrderById = async (orderId) => {

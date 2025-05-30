@@ -17,6 +17,10 @@ const ViewOrders = () => {
   const [loadingDrivers, setLoadingDrivers] = useState(false);
   const [assignLoading, setAssignLoading] = useState(false);
 
+  // Pagination 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+
   const fetchTransactionByOrderId = async (transactionId) => {
     try {
       const res = await axios.get(`http://localhost:8000/api/transactions/${transactionId}`);
@@ -27,10 +31,14 @@ const ViewOrders = () => {
     }
   };
 
-  const fetchOrdersWithCustomerData = async () => {
+  // Fetch orders 
+  const fetchOrdersWithCustomerData = async (page = 1) => {
     try {
-      const orderRes = await axios.get('http://localhost:8000/api/orders');
-      const orderData = orderRes.data;
+      const orderRes = await axios.get(`http://localhost:8000/api/orders?page=${page}`);
+      const { data: orderData, currentPage, lastPage } = orderRes.data;
+      setCurrentPage(currentPage);
+      setLastPage(lastPage);
+
 
       const ordersWithDetails = await Promise.all(
         orderData.map(async (order) => {
@@ -58,6 +66,7 @@ const ViewOrders = () => {
     }
   };
 
+  // Fetch branch
   useEffect(() => {
     const fetchBranches = async () => {
       setLoadingBranches(true);
@@ -73,6 +82,7 @@ const ViewOrders = () => {
     fetchBranches();
   }, []);
 
+  // Fetch drivers
   useEffect(() => {
     if (!branch) {
       setDriverList([]);
@@ -95,9 +105,10 @@ const ViewOrders = () => {
   }, [branch]);
 
   useEffect(() => {
-    fetchOrdersWithCustomerData();
+    fetchOrdersWithCustomerData(1);
   }, []);
 
+  // Modal buat assign order
   const handleAssignClick = (orderId) => {
     setSelectedOrderId(orderId);
     setShowModal(true);
@@ -125,7 +136,7 @@ const ViewOrders = () => {
       });
       alert(`Order ${selectedOrderId} assigned to branch ${branch} and driver ${driver}`);
       handleModalClose();
-      fetchOrdersWithCustomerData();
+      fetchOrdersWithCustomerData(currentPage); // reload current page
     } catch (error) {
       console.error('Error assigning order:', error);
       alert('Failed to assign order, please try again');
@@ -136,13 +147,15 @@ const ViewOrders = () => {
 
   return (
     <div className="px-8 py-6">
-      <h3 className="text-center font-bold text-black mb-6"
-        style={{ textShadow: '3px 3px 1px rgba(0,0,0,0.2)', fontSize: '50px', letterSpacing: '6px' }}>
+      <h3
+        className="text-center font-bold text-black mb-6"
+        style={{ textShadow: '3px 3px 1px rgba(0,0,0,0.2)', fontSize: '50px', letterSpacing: '6px' }}
+      >
         ORDER
       </h3>
 
       <div className="text-center mb-5">
-        <button onClick={fetchOrdersWithCustomerData} className="fetch-button">
+        <button onClick={() => fetchOrdersWithCustomerData(currentPage)} className="fetch-button">
           Fetch New Orders
         </button>
       </div>
@@ -171,98 +184,130 @@ const ViewOrders = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => (
-              <tr key={order.orderId} className="border-b hover:bg-gray-50 transition duration-150">
-                <td className="px-4 py-2 border">{order.orderId}</td>
-                <td className="px-4 py-2 border">{order.customer?.customer_name || '-'}</td>
-                <td className="px-4 py-2 border">{order.customer?.phone_number || '-'}</td>
-                <td className="px-4 py-2 border">{order.customer?.road_name || '-'}</td>
-                <td className="px-4 py-2 border">{order.customer?.urban_village || '-'}</td>
-                <td className="px-4 py-2 border">{order.customer?.district || '-'}</td>
-                <td className="px-4 py-2 border">{order.customer?.city || '-'}</td>
-                <td className="px-4 py-2 border">{order.customer?.province || '-'}</td>
-                <td className="px-4 py-2 border">{order.customer?.zip_code || '-'}</td>
-                <td className="px-4 py-2 border">{order.customer?.address_notes || '-'}</td>
-                <td className="px-4 py-2 border">{order.customer?.allergy_notes || '-'}</td>
-                <td className="px-4 py-2 border">{order.transaction?.packageId || '-'}</td>
-                <td className="px-4 py-2 border">{order.transaction?.periodId || '-'}</td>
-                <td className="px-4 py-2 border">{order.transaction?.payment_status || '-'}</td>
-                <td className="px-4 py-2 border">
-                  {order.transaction?.gross_amount
-                    ? `Rp ${parseInt(order.transaction.gross_amount).toLocaleString()}`
-                    : '-'}
-                </td>
-                <td className="px-4 py-2 border">{order.createdAt?.slice(0, 10) || '-'}</td>
-                <td className="px-4 py-2 border text-center">
-                <Button
-                  size="sm"
-                  style={{ backgroundColor: '#748E57', borderColor: '#748E57' }}
-                  onClick={() => handleAssignClick(order.orderId)}
-                >
-                  Assign
-                </Button>
-
-                </td>
-              </tr>
-            ))}
-            {orders.length === 0 && (
+            {orders.length === 0 ? (
               <tr>
                 <td colSpan={17} className="text-center py-4 text-gray-400">
                   No orders found.
                 </td>
               </tr>
+            ) : (
+              orders.map((order) => (
+                <tr key={order.orderId} className="border-b hover:bg-gray-50 transition duration-150">
+                  <td className="px-4 py-2 border">{order.orderId}</td>
+                  <td className="px-4 py-2 border">{order.customer?.customer_name || '-'}</td>
+                  <td className="px-4 py-2 border">{order.customer?.phone_number || '-'}</td>
+                  <td className="px-4 py-2 border">{order.customer?.road_name || '-'}</td>
+                  <td className="px-4 py-2 border">{order.customer?.urban_village || '-'}</td>
+                  <td className="px-4 py-2 border">{order.customer?.district || '-'}</td>
+                  <td className="px-4 py-2 border">{order.customer?.city || '-'}</td>
+                  <td className="px-4 py-2 border">{order.customer?.province || '-'}</td>
+                  <td className="px-4 py-2 border">{order.customer?.zip_code || '-'}</td>
+                  <td className="px-4 py-2 border">{order.customer?.address_notes || '-'}</td>
+                  <td className="px-4 py-2 border">{order.customer?.allergy_notes || '-'}</td>
+                  <td className="px-4 py-2 border">{order.transaction?.packageId || '-'}</td>
+                  <td className="px-4 py-2 border">{order.transaction?.periodId || '-'}</td>
+                  <td className="px-4 py-2 border">{order.transaction?.payment_status || '-'}</td>
+                  <td className="px-4 py-2 border">
+                    {order.transaction?.gross_amount
+                      ? `Rp ${parseInt(order.transaction.gross_amount).toLocaleString()}`
+                      : '-'}
+                  </td>
+                  <td className="px-4 py-2 border">{order.createdAt?.slice(0, 10) || '-'}</td>
+                  <td className="px-4 py-2 border text-center">
+                    <Button
+                      size="sm"
+                      style={{ backgroundColor: '#748E57', borderColor: '#748E57' }}
+                      onClick={() => handleAssignClick(order.orderId)}
+                    >
+                      Assign
+                    </Button>
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
+
+        {/* Pagination buttons */}
+        <div className="text-center my-4 space-x-4">
+          <button 
+            className="fetch-button m-3"
+            onClick={() => {
+              const prevPage = currentPage - 1;
+              if (prevPage >= 1) {
+                fetchOrdersWithCustomerData(prevPage);
+              }
+            }}
+            disabled={currentPage <= 1}
+          >
+            Previous Page
+          </button>
+
+          <button
+            className="fetch-button m-3"
+            onClick={() => {
+              const nextPage = currentPage + 1;
+              if (nextPage <= lastPage) {
+                fetchOrdersWithCustomerData(nextPage);
+              }
+            }}
+            disabled={currentPage >= lastPage}
+          >
+            Next Page
+          </button>
+
+        </div>
       </div>
 
+      {/* Assign modal */}
       <Modal show={showModal} onHide={handleModalClose} centered>
         <div style={{ backgroundColor: '#E7F1DB', borderRadius: '15px', overflow: 'hidden' }}>
-          <Modal.Header closeButton closeVariant="white">
-            <Modal.Title className="w-100 text-center" style={{ color: '#000' }}>
-              Assign Order
-            </Modal.Title>
+          <Modal.Header closeButton>
+            <Modal.Title>Assign Order {selectedOrderId}</Modal.Title>
           </Modal.Header>
-          <Modal.Body className="text-center">
-            <h5 className="mb-3" style={{ color: 'red' }}>
-              Order ID : {selectedOrderId}
-            </h5>
-            <Form.Group controlId="formBranch" className="mb-3">
-              <Form.Select
-                value={branch}
-                onChange={(e) => setBranch(e.target.value)}
-                disabled={loadingBranches}
-              >
-                <option value="">Select Branch</option>
-                {branchList.map((b) => (
-                  <option key={b.city} value={b.city}>
-                    {b.city}
-                  </option>
-                ))}
-              </Form.Select>
-              {loadingBranches && <small>Loading branches...</small>}
-            </Form.Group>
-            <Form.Group controlId="formDriver">
-              <Form.Select
-                value={driver}
-                onChange={(e) => setDriver(e.target.value)}
-                disabled={!branch || loadingDrivers}
-              >
-                <option value="">Select Driver</option>
-                {driverList.map((d) => (
-                  <option key={d.driverID} value={d.driver_name}>
-                    {d.driver_name}
-                  </option>
-                ))}
-              </Form.Select>
-              {loadingDrivers && <small>Loading drivers...</small>}
-            </Form.Group>
+          <Modal.Body>
+            <Form>
+              <Form.Group className="mb-3" controlId="branchSelect">
+                <Form.Label>Branch</Form.Label>
+                <Form.Select
+                  value={branch}
+                  onChange={(e) => setBranch(e.target.value)}
+                  disabled={loadingBranches || assignLoading}
+                >
+                  <option value="">Select Branch</option>
+                  {branchList.map((branchItem) => (
+                    <option key={branchItem.branchName} value={branchItem.branchName}>
+                      {branchItem.branchName}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="driverSelect">
+                <Form.Label>Driver</Form.Label>
+                <Form.Select
+                  value={driver}
+                  onChange={(e) => setDriver(e.target.value)}
+                  disabled={!branch || loadingDrivers || assignLoading}
+                >
+                  <option value="">Select Driver</option>
+                  {driverList.map((driverItem) => (
+                    <option key={driverItem.driverName} value={driverItem.driverName}>
+                      {driverItem.driverName}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Form>
           </Modal.Body>
-          <Modal.Footer className="justify-content-center">
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleModalClose} disabled={assignLoading}>
+              Close
+            </Button>
             <Button
+              variant="success"
               onClick={handleAssignSubmit}
-              disabled={assignLoading}
-              style={{ backgroundColor: '#748E57', border: 'none' }}
+              disabled={assignLoading || !branch || !driver}
             >
               {assignLoading ? 'Assigning...' : 'Assign'}
             </Button>
