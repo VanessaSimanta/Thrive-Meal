@@ -29,11 +29,11 @@ function FormOrder({ show, handleClose }) {
   const mapPackageToId = (packageName) => {
     const packageIdMap = {
       'Weight Loss Program': 1,
-      'Weight Maintenance Program': 26,
-      'Diabet Cholesterol Program': 27,
-      'Gluten Free Program': 28,
-      'Gain Muscle Program': 29,
-      'Vegetarian Program': 30,
+      'Weight Maintenance Program': 2,
+      'Diabet Cholesterol Program': 3,
+      'Gluten Free Program': 4,
+      'Gain Muscle Program': 5,
+      'Vegetarian Program': 6,
     };
     return packageIdMap[packageName];
   };

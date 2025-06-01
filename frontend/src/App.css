@@ -45,13 +45,14 @@ body {
 .navbar ul {
   list-style: none;
   display: flex;
-  gap: 30px;
+  gap: 10px;
   margin: 0;
   padding: 0;
 }
 
 .navbar ul li {
   padding: 10px;
+  margin-right: 1rem;
 }
 
 .navbar ul li a {
