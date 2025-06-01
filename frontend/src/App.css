@@ -310,15 +310,18 @@ body {
 .cards {
   display: flex;
   justify-content: center;
-  gap: 2.5rem;
   flex-wrap: wrap;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
   animation: fadeInUp 1s ease-out forwards;
   opacity: 0;
 }
 
 .card {
   background: #ffffff;
-  width: 360px;
+  flex: 1 1 calc(33.333% - 2rem); /* 3 per row with gap */
+  max-width: 360px;
   padding: 1.8rem;
   border-radius: 22px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -327,6 +330,7 @@ body {
   overflow: hidden;
   cursor: pointer;
 }
+
 
 .card::before {
   content: '';
