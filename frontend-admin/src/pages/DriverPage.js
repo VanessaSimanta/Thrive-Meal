@@ -22,13 +22,22 @@ const DriverPage = () => {
     urban_village: '',
     district: '',
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
 
-  const fetchDrivers = async () => {
+  const fetchDrivers = async (page = 1) => {
     try {
-      const res = await fetch(`${BACK_END_URL}/api/driver/`);
+      const res = await fetch(`${BACK_END_URL}/api/driver/pagination?page=${page}`);
       if (!res.ok) throw new Error('Failed to fetch drivers');
       const data = await res.json();
-      setDrivers(Array.isArray(data) ? data : []);
+
+      if (data && data.data) {
+        setDrivers(data.data);
+        setCurrentPage(data.currentPage);
+        setLastPage(data.lastPage);
+      } else {
+        setDrivers([]);
+      }
     } catch (err) {
       console.error('❌ Error:', err);
       setDrivers([]);
@@ -36,6 +45,7 @@ const DriverPage = () => {
       setLoading(false);
     }
   };
+
 
   const fetchBranches = async () => {
     try {
@@ -50,9 +60,10 @@ const DriverPage = () => {
   };
 
   useEffect(() => {
-    fetchDrivers();
+    fetchDrivers(1);
     fetchBranches();
   }, []);
+
 
   const showAlert = (type, message) => {
     setAlert({ show: true, type, message });
@@ -118,25 +129,25 @@ const DriverPage = () => {
   };
 
   const handleUpdateDriver = async () => {
-  if (phoneError) return showAlert('danger', 'Fix phone number input first.');
-  if (!driverForm.driverID) return showAlert('danger', 'Driver ID is missing.');
+    if (phoneError) return showAlert('danger', 'Fix phone number input first.');
+    if (!driverForm.driverID) return showAlert('danger', 'Driver ID is missing.');
 
-  try {
-    const res = await fetch(`${BACK_END_URL}/api/driver/${driverForm.driverID}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(driverForm),
-    });
-    if (!res.ok) throw new Error('Failed to update driver');
-    const updated = await res.json();
-    showAlert('success', '✏️ Driver updated successfully.');
-    resetForm();
-    fetchDrivers(); // ✅ Refresh list driver setelah update berhasil
-  } catch (err) {
-    console.error('❌ Update error:', err);
-    showAlert('danger', '❌ Failed to update driver.');
-  }
-};
+    try {
+      const res = await fetch(`${BACK_END_URL}/api/driver/${driverForm.driverID}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(driverForm),
+      });
+      if (!res.ok) throw new Error('Failed to update driver');
+      const updated = await res.json();
+      showAlert('success', '✏️ Driver updated successfully.');
+      resetForm();
+      fetchDrivers(); // ✅ Refresh list driver setelah update berhasil
+    } catch (err) {
+      console.error('❌ Update error:', err);
+      showAlert('danger', '❌ Failed to update driver.');
+    }
+  };
 
 
   const handleDeleteDriver = async (id) => {
@@ -225,6 +236,37 @@ const DriverPage = () => {
           {showForm ? 'Hide Form' : 'Add New Driver'}
         </Button>
       </div>
+
+      <div className="text-center my-4 space-x-4">
+        <button
+          className="fetch-button m-3"
+          onClick={() => {
+            const prevPage = currentPage - 1;
+            if (prevPage >= 1) {
+              fetchDrivers(prevPage);
+              setCurrentPage(prevPage);  // update state currentPage biar UI sinkron
+            }
+          }}
+          disabled={currentPage <= 1}
+        >
+          Previous Page
+        </button>
+
+        <button
+          className="fetch-button m-3"
+          onClick={() => {
+            const nextPage = currentPage + 1;
+            if (nextPage <= lastPage) {
+              fetchDrivers(nextPage);
+              setCurrentPage(nextPage);  // update state currentPage
+            }
+          }}
+          disabled={currentPage >= lastPage}
+        >
+          Next Page
+        </button>
+      </div>
+
 
       {showForm && (
         <Row className="justify-content-center">

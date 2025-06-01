@@ -18,12 +18,24 @@ const BranchPage = () => {
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
   const [phoneError, setPhoneError] = useState('');
 
-  const fetchBranches = async () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+
+  const fetchBranches = async (page = 1) => {
+    setLoading(true);
     try {
-      const response = await fetch(`${BACK_END_URL}/api/branch/`);
+      // Buat URL dengan query param page
+      const url = new URL(`${BACK_END_URL}/api/branch/pagination`);
+      url.searchParams.append('page', page);
+
+      const response = await fetch(url.toString());
       if (!response.ok) throw new Error('Failed to fetch branch data');
+
       const data = await response.json();
-      setBranches(Array.isArray(data) ? data : []);
+      // Asumsi API mengembalikan { data: [...], currentPage: x, lastPage: y }
+      setBranches(Array.isArray(data.data) ? data.data : []);
+      setCurrentPage(data.currentPage);
+      setLastPage(data.lastPage);
     } catch (error) {
       console.error('❌ Error fetching branches:', error);
       setBranches([]);
@@ -33,8 +45,8 @@ const BranchPage = () => {
   };
 
   useEffect(() => {
-    fetchBranches();
-  }, []);
+    fetchBranches(currentPage);
+  }, [currentPage]);
 
   const handleBranchClick = (branch) => {
     setSelectedBranch(branch);
@@ -94,7 +106,7 @@ const BranchPage = () => {
       await response.json();
       showAlert('success', '✅ Branch successfully added.');
       resetForm();
-      fetchBranches();
+      fetchBranches(currentPage);
     } catch (error) {
       console.error('❌ Error adding branch:', error);
       showAlert('danger', '❌ Failed to add branch.');
@@ -123,7 +135,7 @@ const BranchPage = () => {
       await response.json();
       showAlert('success', '✏️ Branch successfully updated.');
       resetForm();
-      fetchBranches();
+      fetchBranches(currentPage);
     } catch (error) {
       console.error('❌ Error updating branch:', error);
       showAlert('danger', '❌ Failed to update branch.');
@@ -291,14 +303,20 @@ const BranchPage = () => {
 
                   <div className="d-flex justify-content-center gap-3 mt-4">
                     <Button
-                      style={{ backgroundColor: '#CADCB5', border: 'none', color: 'black' }}
-                      className="px-4 fw-semibold"
-                      onClick={isEditMode ? handleUpdateBranch : handleAddBranch}
+                      style={{ backgroundColor: '#CADCB5', border: 'none', color: '#000' }}
+                      className="fw-semibold px-5"
+                      onClick={() => {
+                        isEditMode ? handleUpdateBranch() : handleAddBranch();
+                      }}
                     >
                       {isEditMode ? 'Update Branch' : 'Add Branch'}
                     </Button>
-                    <Button variant="secondary" className="px-4 fw-semibold" onClick={resetForm}>
-                      Reset
+                    <Button
+                      variant="secondary"
+                      className="fw-semibold px-5"
+                      onClick={resetForm}
+                    >
+                      Cancel
                     </Button>
                   </div>
                 </Form>
@@ -308,30 +326,83 @@ const BranchPage = () => {
         </Row>
       )}
 
+      {/* Modal for Selected Branch */}
       {selectedBranch && (
         <div
-          className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-          style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 2000 }}
+          className="modal fade show"
+          style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}
+          tabIndex="-1"
+          role="dialog"
+          onClick={closeModal}
         >
-          <div className="bg-light rounded shadow p-4" style={{ width: '360px', position: 'relative' }}>
-            <button
-              className="position-absolute top-0 end-0 btn btn-sm btn-link text-dark"
-              onClick={closeModal}
-            >
-              ✖
-            </button>
-            <div className="text-center mb-3">
-              <div className="text-primary fw-semibold">Branch ID : {selectedBranch.branchID}</div>
-            </div>
-            <div className="ms-2">
-              <p><strong>Road Name</strong> : {selectedBranch.road_name}</p>
-              <p><strong>City</strong> : {selectedBranch.city}</p>
-              <p><strong>Province</strong> : {selectedBranch.province}</p>
-              <p><strong>Phone Number</strong> : {selectedBranch.phone_number}</p>
+          <div
+            className="modal-dialog modal-dialog-centered"
+            role="document"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Branch Details</h5>
+                <button type="button" className="btn-close" onClick={closeModal}></button>
+              </div>
+              <div className="modal-body">
+                <p>
+                  <strong>Branch ID:</strong> {selectedBranch.branchID}
+                </p>
+                <p>
+                  <strong>Road Name:</strong> {selectedBranch.road_name}
+                </p>
+                <p>
+                  <strong>City:</strong> {selectedBranch.city}
+                </p>
+                <p>
+                  <strong>Province:</strong> {selectedBranch.province}
+                </p>
+                <p>
+                  <strong>Phone Number:</strong> {selectedBranch.phone_number}
+                </p>
+              </div>
+              <div className="modal-footer">
+                <Button variant="secondary" onClick={closeModal}>
+                  Close
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Pagination */}
+      <div className="text-center my-4 space-x-4">
+        <button
+          className="fetch-button m-3"
+          onClick={() => {
+            const prevPage = currentPage - 1;
+            if (prevPage >= 1) {
+              fetchBranches(prevPage);
+              setCurrentPage(prevPage);
+            }
+          }}
+          disabled={currentPage <= 1}
+        >
+          Previous Page
+        </button>
+
+        <button
+          className="fetch-button m-3"
+          onClick={() => {
+            const nextPage = currentPage + 1;
+            if (nextPage <= lastPage) {
+              fetchBranches(nextPage);
+              setCurrentPage(nextPage);
+            }
+          }}
+          disabled={currentPage >= lastPage}
+        >
+          Next Page
+        </button>
+      </div>
+
     </div>
   );
 };

@@ -110,9 +110,9 @@ const ViewOrders = () => {
     fetchBranches();
   }, []);
 
- useEffect(() => {
-  fetchOrdersWithCustomerData(currentPage, sortOrder);
-}, [currentPage, sortOrder]);
+  useEffect(() => {
+    fetchOrdersWithCustomerData(currentPage, sortOrder);
+  }, [currentPage, sortOrder]);
 
 
 

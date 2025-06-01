@@ -1,4 +1,5 @@
-  const { getAllDrivers, getDriverById, createDriver, updateDriver, deleteDriver } = require('./repository');
+  const { getAllDrivers, getDriver, createDriver, updateDriver, deleteDriver } = require('./repository');
+  const { errorResponder, errorTypes } = require('../../core/errors');
 
   const getDrivers = async (req, res) => {
     try {
@@ -10,18 +11,26 @@
     }
   };
 
-  const getDriver = async (req, res) => {
-    const { driverID } = req.params;
+  const getDriverCtrl = async (req, res) => {
     try {
-      const driver = await getDriverById(driverID);
-      if (!driver) {
-        return res.status(404).json({ message: 'Driver not found' });
-      }
-      return res.status(200).json(driver);
-    } catch (error) {
-      console.error('Error fetching driver:', error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 2;
+    const offset = (page - 1) * limit;
+
+    const { data, total } = await getDriver(limit, offset);
+    const lastPage = Math.ceil(total / limit);
+
+    res.status(200).json({
+      data,
+      currentPage: page,
+      lastPage,
+      totalPages: lastPage,
+      totalData: total,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
+  }
   };
 
   const createNewDriver = async (req, res) => {
@@ -66,7 +75,7 @@
 
   module.exports = {
     getDrivers,
-    getDriver,
+    getDriverCtrl,
     createNewDriver,
     updateDriverInfo,
     deleteDriverInfo
