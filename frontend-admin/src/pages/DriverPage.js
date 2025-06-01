@@ -5,11 +5,13 @@ import branchImg from '../images/branch.jpg';
 
 const DriverPage = () => {
   const [drivers, setDrivers] = useState([]);
+  const [branches, setBranches] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
+  const [phoneError, setPhoneError] = useState('');
   const [driverForm, setDriverForm] = useState({
     driverID: '',
     branchID: '',
@@ -35,8 +37,21 @@ const DriverPage = () => {
     }
   };
 
+  const fetchBranches = async () => {
+    try {
+      const res = await fetch(`${BACK_END_URL}/api/branch/`);
+      if (!res.ok) throw new Error('Failed to fetch branches');
+      const data = await res.json();
+      setBranches(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('❌ Fetch branches error:', err);
+      setBranches([]);
+    }
+  };
+
   useEffect(() => {
     fetchDrivers();
+    fetchBranches();
   }, []);
 
   const showAlert = (type, message) => {
@@ -46,6 +61,12 @@ const DriverPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'phone_number') {
+      const isNumeric = /^[0-9]*$/.test(value);
+      setPhoneError(isNumeric ? '' : 'Phone number must contain only digits.');
+    }
+
     setDriverForm({ ...driverForm, [name]: value });
   };
 
@@ -60,13 +81,16 @@ const DriverPage = () => {
       urban_village: '',
       district: '',
     });
+    setPhoneError('');
     setIsEditMode(false);
     setShowForm(false);
+    setSelectedDriver(null);
   };
 
   const handleAddDriver = async () => {
     const empty = Object.values(driverForm).some((val) => val === '');
     if (empty) return showAlert('danger', 'Please fill in all fields.');
+    if (phoneError) return showAlert('danger', 'Fix phone number input first.');
 
     try {
       const res = await fetch(`${BACK_END_URL}/api/driver/`, {
@@ -78,7 +102,7 @@ const DriverPage = () => {
       await res.json();
       showAlert('success', '✅ Driver successfully added.');
       resetForm();
-      fetchDrivers(); // ✅ Refresh list dari server
+      fetchDrivers();
     } catch (err) {
       console.error('❌ Add driver error:', err);
       showAlert('danger', '❌ Failed to add driver.');
@@ -86,28 +110,34 @@ const DriverPage = () => {
   };
 
   const handleEditDriver = (driver) => {
-    setDriverForm(driver);
+    setDriverForm({ ...driver });
+    setPhoneError('');
     setIsEditMode(true);
     setShowForm(true);
+    // setSelectedDriver(driver); // ❌ Jangan panggil ini saat edit, karena akan munculkan detail popup
   };
 
   const handleUpdateDriver = async () => {
-    try {
-      const res = await fetch(`${BACK_END_URL}/api/driver/${driverForm.driverID}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(driverForm),
-      });
-      if (!res.ok) throw new Error('Failed to update driver');
-      const updated = await res.json();
-      setDrivers(drivers.map((d) => (d.driverID === updated.driverID ? updated : d)));
-      showAlert('success', '✏️ Driver updated successfully.');
-      resetForm();
-    } catch (err) {
-      console.error('❌ Update error:', err);
-      showAlert('danger', '❌ Failed to update driver.');
-    }
-  };
+  if (phoneError) return showAlert('danger', 'Fix phone number input first.');
+  if (!driverForm.driverID) return showAlert('danger', 'Driver ID is missing.');
+
+  try {
+    const res = await fetch(`${BACK_END_URL}/api/driver/${driverForm.driverID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(driverForm),
+    });
+    if (!res.ok) throw new Error('Failed to update driver');
+    const updated = await res.json();
+    showAlert('success', '✏️ Driver updated successfully.');
+    resetForm();
+    fetchDrivers(); // ✅ Refresh list driver setelah update berhasil
+  } catch (err) {
+    console.error('❌ Update error:', err);
+    showAlert('danger', '❌ Failed to update driver.');
+  }
+};
+
 
   const handleDeleteDriver = async (id) => {
     try {
@@ -117,6 +147,9 @@ const DriverPage = () => {
       if (!res.ok) throw new Error('Failed to delete driver');
       setDrivers(drivers.filter((d) => d.driverID !== id));
       showAlert('success', '🗑️ Driver deleted.');
+      if (selectedDriver?.driverID === id) {
+        setSelectedDriver(null);
+      }
     } catch (err) {
       console.error('❌ Delete error:', err);
       showAlert('danger', '❌ Failed to delete driver.');
@@ -140,16 +173,16 @@ const DriverPage = () => {
         <table className="table table-bordered table-striped">
           <thead className="table-light">
             <tr>
-              <th style={{ textAlign: 'center' }}>Driver ID</th>
-              <th style={{ textAlign: 'center' }}>Driver Name</th>
-              <th style={{ textAlign: 'center' }}>Road Name</th>
-              <th style={{ textAlign: 'center' }}>Action</th>
+              <th className="text-center">Driver ID</th>
+              <th className="text-center">Driver Name</th>
+              <th className="text-center">Road Name</th>
+              <th className="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
             {drivers.map((d, idx) => (
               <tr key={idx}>
-                <td style={{ textAlign: 'center' }}>
+                <td className="text-center">
                   <button
                     className="btn btn-link p-0 text-decoration-none text-primary"
                     onClick={() => setSelectedDriver(d)}
@@ -157,9 +190,9 @@ const DriverPage = () => {
                     {d.driverID}
                   </button>
                 </td>
-                <td style={{ textAlign: 'center' }}>{d.driver_name}</td>
-                <td style={{ textAlign: 'center' }}>{d.road_name}</td>
-                <td style={{ textAlign: 'center' }}>
+                <td className="text-center">{d.driver_name}</td>
+                <td className="text-center">{d.road_name}</td>
+                <td className="text-center">
                   <div className="d-flex gap-2 justify-content-center">
                     <Button
                       variant="warning"
@@ -169,11 +202,7 @@ const DriverPage = () => {
                     >
                       Edit
                     </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDeleteDriver(d.driverID)}
-                    >
+                    <Button variant="danger" size="sm" onClick={() => handleDeleteDriver(d.driverID)}>
                       Delete
                     </Button>
                   </div>
@@ -206,9 +235,30 @@ const DriverPage = () => {
                   {isEditMode ? 'Edit Driver' : 'Add New Driver'}
                 </h5>
                 <Form>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Driver ID</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="driverID"
+                      value={driverForm.driverID}
+                      onChange={handleInputChange}
+                      disabled={isEditMode}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>Branch</Form.Label>
+                    <Form.Select name="branchID" value={driverForm.branchID} onChange={handleInputChange}>
+                      <option value="" disabled hidden>Select Branch</option>
+                      {branches.map((branch) => (
+                        <option key={branch.branchID} value={branch.branchID}>
+                          {branch.city}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+
                   {[
-                    ['driverID', 'Driver ID', 'text'],
-                    ['branchID', 'Branch ID', 'text'],
                     ['driver_name', 'Driver Name', 'text'],
                     ['driver_dob', 'Date of Birth', 'date'],
                     ['phone_number', 'Phone Number', 'text'],
@@ -223,9 +273,11 @@ const DriverPage = () => {
                         name={name}
                         value={driverForm[name]}
                         onChange={handleInputChange}
-                        disabled={isEditMode && name === 'driverID'}
                         placeholder={name === 'driver_dob' ? 'YYYY-MM-DD' : ''}
                       />
+                      {name === 'phone_number' && phoneError && (
+                        <Form.Text className="text-danger fw-semibold">{phoneError}</Form.Text>
+                      )}
                     </Form.Group>
                   ))}
 
@@ -234,10 +286,11 @@ const DriverPage = () => {
                       style={{ backgroundColor: '#CADCB5', border: 'none', color: 'black' }}
                       className="px-4 fw-semibold"
                       onClick={isEditMode ? handleUpdateDriver : handleAddDriver}
+                      type="button"
                     >
                       {isEditMode ? 'Update Driver' : 'Add Driver'}
                     </Button>
-                    <Button variant="secondary" className="px-4 fw-semibold" onClick={resetForm}>
+                    <Button variant="secondary" className="px-4 fw-semibold" onClick={resetForm} type="button">
                       Reset
                     </Button>
                   </div>
@@ -252,16 +305,27 @@ const DriverPage = () => {
         <div
           className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
           style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 2000 }}
+          onClick={() => setSelectedDriver(null)}
         >
-          <div className="bg-light rounded shadow p-4" style={{ width: '360px', position: 'relative' }}>
+          <div
+            className="bg-light rounded shadow p-4"
+            style={{ width: '360px', position: 'relative' }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               className="position-absolute top-0 end-0 btn btn-sm btn-link text-dark"
               onClick={() => setSelectedDriver(null)}
+              aria-label="Close"
             >
               ✖
             </button>
             <div className="text-center mb-3">
-              <img src={branchImg} alt="Branch" className="rounded-circle mb-2" style={{ width: '80px', height: '80px' }} />
+              <img
+                src={branchImg}
+                alt="Branch"
+                className="rounded-circle mb-2"
+                style={{ width: '80px', height: '80px' }}
+              />
               <div className="text-danger fw-semibold">Driver ID : {selectedDriver.driverID}</div>
               <div className="text-danger fw-semibold">Branch ID : {selectedDriver.branchID}</div>
             </div>

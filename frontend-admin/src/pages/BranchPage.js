@@ -8,16 +8,16 @@ const BranchPage = () => {
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newBranch, setNewBranch] = useState({
-    branchID: '',
     road_name: '',
     city: '',
     province: '',
     phone_number: '',
   });
+  const [editBranchID, setEditBranchID] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
+  const [phoneError, setPhoneError] = useState('');
 
-  // Fungsi fetchBranches agar bisa dipanggil ulang
   const fetchBranches = async () => {
     try {
       const response = await fetch(`${BACK_END_URL}/api/branch/`);
@@ -47,6 +47,16 @@ const BranchPage = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewBranch({ ...newBranch, [name]: value });
+
+    if (name === 'phone_number') {
+      if (value === '') {
+        setPhoneError('Phone number is required.');
+      } else if (!/^\d+$/.test(value)) {
+        setPhoneError('Phone number must contain only digits.');
+      } else {
+        setPhoneError('');
+      }
+    }
   };
 
   const showAlert = (type, message) => {
@@ -54,12 +64,24 @@ const BranchPage = () => {
     setTimeout(() => setAlert({ show: false, type: '', message: '' }), 3000);
   };
 
-  const handleAddBranch = async () => {
-    const { branchID, road_name, city, province, phone_number } = newBranch;
-    if (!branchID || !road_name || !city || !province || !phone_number) {
+  const validateForm = () => {
+    const { road_name, city, province, phone_number } = newBranch;
+    if (!road_name || !city || !province || !phone_number) {
       showAlert('danger', 'Please fill in all fields.');
-      return;
+      return false;
     }
+
+    if (!/^\d+$/.test(phone_number)) {
+      setPhoneError('Phone number must contain only digits.');
+      return false;
+    }
+
+    setPhoneError('');
+    return true;
+  };
+
+  const handleAddBranch = async () => {
+    if (!validateForm()) return;
 
     try {
       const response = await fetch(`${BACK_END_URL}/api/branch/`, {
@@ -72,7 +94,7 @@ const BranchPage = () => {
       await response.json();
       showAlert('success', '✅ Branch successfully added.');
       resetForm();
-      fetchBranches(); // Refresh data setelah tambah
+      fetchBranches();
     } catch (error) {
       console.error('❌ Error adding branch:', error);
       showAlert('danger', '❌ Failed to add branch.');
@@ -80,20 +102,18 @@ const BranchPage = () => {
   };
 
   const handleEditBranch = (branch) => {
-    setNewBranch(branch);
+    const { branchID, ...branchData } = branch;
+    setNewBranch(branchData);
+    setEditBranchID(branchID);
     setIsEditMode(true);
     setShowAddForm(true);
   };
 
   const handleUpdateBranch = async () => {
-    const { branchID, road_name, city, province, phone_number } = newBranch;
-    if (!branchID || !road_name || !city || !province || !phone_number) {
-      showAlert('danger', 'Please fill in all fields.');
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
-      const response = await fetch(`${BACK_END_URL}/api/branch/${branchID}`, {
+      const response = await fetch(`${BACK_END_URL}/api/branch/${editBranchID}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newBranch),
@@ -103,7 +123,7 @@ const BranchPage = () => {
       await response.json();
       showAlert('success', '✏️ Branch successfully updated.');
       resetForm();
-      fetchBranches(); // Refresh data setelah edit
+      fetchBranches();
     } catch (error) {
       console.error('❌ Error updating branch:', error);
       showAlert('danger', '❌ Failed to update branch.');
@@ -127,12 +147,13 @@ const BranchPage = () => {
 
   const resetForm = () => {
     setNewBranch({
-      branchID: '',
       road_name: '',
       city: '',
       province: '',
       phone_number: '',
     });
+    setEditBranchID(null);
+    setPhoneError('');
     setIsEditMode(false);
     setShowAddForm(false);
   };
@@ -224,17 +245,6 @@ const BranchPage = () => {
                 </h5>
                 <Form>
                   <Form.Group className="mb-3">
-                    <Form.Label>Branch ID</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="branchID"
-                      value={newBranch.branchID}
-                      onChange={handleInputChange}
-                      disabled={isEditMode}
-                    />
-                  </Form.Group>
-
-                  <Form.Group className="mb-3">
                     <Form.Label>Road Name</Form.Label>
                     <Form.Control
                       type="text"
@@ -264,7 +274,7 @@ const BranchPage = () => {
                     />
                   </Form.Group>
 
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-2">
                     <Form.Label>Phone Number</Form.Label>
                     <Form.Control
                       type="text"
@@ -272,6 +282,11 @@ const BranchPage = () => {
                       value={newBranch.phone_number}
                       onChange={handleInputChange}
                     />
+                    {phoneError && (
+                      <Form.Text className="text-danger fw-semibold">
+                        {phoneError}
+                      </Form.Text>
+                    )}
                   </Form.Group>
 
                   <div className="d-flex justify-content-center gap-3 mt-4">
