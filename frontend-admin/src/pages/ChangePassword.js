@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Form, Button, Card, Row, Col, Alert } from 'react-bootstrap';
+import { Container, Form, Button, Card, Row, Col, Alert, InputGroup } from 'react-bootstrap';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
 import { BACK_END_URL } from '../utils/const';
 
@@ -8,6 +9,13 @@ const ChangePassword = () => {
     oldPassword: '',
     newPassword: '',
     confirmPassword: '',
+  });
+
+  // state untuk toggle visibility password
+  const [showPassword, setShowPassword] = useState({
+    oldPassword: false,
+    newPassword: false,
+    confirmPassword: false,
   });
 
   const [alert, setAlert] = useState({ message: '', variant: '' });
@@ -23,6 +31,14 @@ const ChangePassword = () => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // fungsi toggle visibility password per field
+  const toggleShowPassword = (field) => {
+    setShowPassword(prev => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -30,17 +46,16 @@ const ChangePassword = () => {
     const token = localStorage.getItem('token');
 
     if (!oldPassword || !newPassword || !confirmPassword) {
-      return setAlert({ message: 'Semua kolom harus diisi.', variant: 'danger' });
+      return setAlert({ message: 'All fields are required.', variant: 'danger' });
     }
     if (newPassword !== confirmPassword) {
-      return setAlert({ message: 'Password baru dan konfirmasi tidak cocok.', variant: 'danger' });
+      return setAlert({ message: 'New password and confirmation do not match.', variant: 'danger' });
     }
     if (!token) {
-      return setAlert({ message: 'Anda harus login terlebih dahulu.', variant: 'danger' });
+      return setAlert({ message: 'You must be logged in.', variant: 'danger' });
     }
 
     try {
-      // Hanya kirim password saja, email diambil dari token backend
       const res = await axios.put(
         `${BACK_END_URL}/api/admin/change-password`,
         { oldPassword, newPassword, confirmPassword },
@@ -70,50 +85,78 @@ const ChangePassword = () => {
           <Card className="shadow-lg border-0">
             <Card.Body>
               <Form onSubmit={handleSubmit}>
+
+                {/* Old Password */}
                 <Form.Group className="mb-3" controlId="oldPassword">
                   <Form.Label>Old Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="oldPassword"
-                    value={form.oldPassword}
-                    onChange={handleChange}
-                    placeholder="Enter old password"
-                  />
+                  <InputGroup>
+                    <Form.Control
+                      type={showPassword.oldPassword ? 'text' : 'password'}
+                      name="oldPassword"
+                      value={form.oldPassword}
+                      onChange={handleChange}
+                      placeholder="Enter old password"
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() => toggleShowPassword('oldPassword')}
+                      tabIndex={-1}
+                    >
+                      {showPassword.oldPassword ? <FaEyeSlash /> : <FaEye />}
+                    </Button>
+                  </InputGroup>
                 </Form.Group>
 
+                {/* New Password */}
                 <Form.Group className="mb-3" controlId="newPassword">
                   <Form.Label>New Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="newPassword"
-                    value={form.newPassword}
-                    onChange={handleChange}
-                    placeholder="Enter new password"
-                  />
+                  <InputGroup>
+                    <Form.Control
+                      type={showPassword.newPassword ? 'text' : 'password'}
+                      name="newPassword"
+                      value={form.newPassword}
+                      onChange={handleChange}
+                      placeholder="Enter new password"
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() => toggleShowPassword('newPassword')}
+                      tabIndex={-1}
+                    >
+                      {showPassword.newPassword ? <FaEyeSlash /> : <FaEye />}
+                    </Button>
+                  </InputGroup>
                 </Form.Group>
 
+                {/* Confirm Password */}
                 <Form.Group className="mb-4" controlId="confirmPassword">
                   <Form.Label>Confirm New Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="confirmPassword"
-                    value={form.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="Confirm new password"
-                  />
+                  <InputGroup>
+                    <Form.Control
+                      type={showPassword.confirmPassword ? 'text' : 'password'}
+                      name="confirmPassword"
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      placeholder="Confirm new password"
+                    />
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() => toggleShowPassword('confirmPassword')}
+                      tabIndex={-1}
+                    >
+                      {showPassword.confirmPassword ? <FaEyeSlash /> : <FaEye />}
+                    </Button>
+                  </InputGroup>
                 </Form.Group>
 
                 <div className="d-flex justify-content-center gap-3 mt-4">
-                  <Button variant="success" type="submit" className="px-4 fw-semibold">
+                 <Button
+                 type="submit"
+                 className="px-4 fw-semibold"
+                 style={{ backgroundColor: '#CADCB5', border: 'none', color: '#000' }}
+                 >
                     Change Password
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    className="px-4 fw-semibold"
-                    onClick={() => setForm({ oldPassword: '', newPassword: '', confirmPassword: '' })}
-                  >
-                    Cancel
-                  </Button>
+                    </Button>
                 </div>
               </Form>
             </Card.Body>
