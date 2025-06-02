@@ -15,7 +15,6 @@ const DriverPage = () => {
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
   const [phoneError, setPhoneError] = useState('');
   const [driverForm, setDriverForm] = useState({
-    driverID: '',
     branchID: '',
     driver_name: '',
     driver_dob: '',
@@ -26,7 +25,6 @@ const DriverPage = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
-
   const [searchKeyword, setSearchKeyword] = useState('');
 
   const fetchDrivers = async (page = 1) => {
@@ -50,7 +48,6 @@ const DriverPage = () => {
     }
   };
 
-
   const fetchBranches = async () => {
     try {
       const res = await fetch(`${BACK_END_URL}/api/branch/`);
@@ -67,7 +64,6 @@ const DriverPage = () => {
     fetchDrivers(1);
     fetchBranches();
   }, []);
-
 
   const showAlert = (type, message) => {
     setAlert({ show: true, type, message });
@@ -87,7 +83,6 @@ const DriverPage = () => {
 
   const resetForm = () => {
     setDriverForm({
-      driverID: '',
       branchID: '',
       driver_name: '',
       driver_dob: '',
@@ -129,7 +124,6 @@ const DriverPage = () => {
     setPhoneError('');
     setIsEditMode(true);
     setShowForm(true);
-    // setSelectedDriver(driver); // ❌ Jangan panggil ini saat edit, karena akan munculkan detail popup
   };
 
   const handleUpdateDriver = async () => {
@@ -146,13 +140,12 @@ const DriverPage = () => {
       const updated = await res.json();
       showAlert('success', '✏️ Driver updated successfully.');
       resetForm();
-      fetchDrivers(); // ✅ Refresh list driver setelah update berhasil
+      fetchDrivers();
     } catch (err) {
       console.error('❌ Update error:', err);
       showAlert('danger', '❌ Failed to update driver.');
     }
   };
-
 
   const handleDeleteDriver = async (id) => {
     try {
@@ -282,7 +275,6 @@ const DriverPage = () => {
                 ))
             )}
           </tbody>
-
         </table>
       )}
 
@@ -306,7 +298,7 @@ const DriverPage = () => {
             const prevPage = currentPage - 1;
             if (prevPage >= 1) {
               fetchDrivers(prevPage);
-              setCurrentPage(prevPage);  // update state currentPage biar UI sinkron
+              setCurrentPage(prevPage);
             }
           }}
           disabled={currentPage <= 1}
@@ -320,7 +312,7 @@ const DriverPage = () => {
             const nextPage = currentPage + 1;
             if (nextPage <= lastPage) {
               fetchDrivers(nextPage);
-              setCurrentPage(nextPage);  // update state currentPage
+              setCurrentPage(nextPage);
             }
           }}
           disabled={currentPage >= lastPage}
@@ -328,7 +320,6 @@ const DriverPage = () => {
           Next Page
         </button>
       </div>
-
 
       {showForm && (
         <Row className="justify-content-center">
@@ -339,17 +330,6 @@ const DriverPage = () => {
                   {isEditMode ? 'Edit Driver' : 'Add New Driver'}
                 </h5>
                 <Form>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Driver ID</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="driverID"
-                      value={driverForm.driverID}
-                      onChange={handleInputChange}
-                      disabled={isEditMode}
-                    />
-                  </Form.Group>
-
                   <Form.Group className="mb-3">
                     <Form.Label>Branch</Form.Label>
                     <Form.Select name="branchID" value={driverForm.branchID} onChange={handleInputChange}>
