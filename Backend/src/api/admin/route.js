@@ -5,6 +5,6 @@ const authenticateToken = require('./authMiddleware');
 const router = express.Router();
 
 router.post('/login', loginAdmin);
-router.post('/change-password', authenticateToken, changePassword);
+router.put('/change-password', authenticateToken, changePassword);
 
 module.exports = router;

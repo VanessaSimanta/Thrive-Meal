@@ -7,6 +7,7 @@ import EditMenu from './EditMenu';
 import ViewOrders from './ViewOrders';
 import DriverPage from './DriverPage';
 import BranchPage from './BranchPage';
+import ChangePassword from './ChangePassword';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -222,6 +223,7 @@ const AdminDashboard = () => {
             )}
             {activeView === "edit-menu" && <EditMenu />}
             {activeView === "view-orders" && <ViewOrders />}
+            {activeView === "change-password" && <ChangePassword />}
           </div>
         </div>
       </div>
