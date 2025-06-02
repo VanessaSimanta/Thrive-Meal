@@ -39,9 +39,9 @@ function MenuPage() {
         <div className="menu-grid">
           <div className="category-button" onClick={() => setPackageId(1)}>Weight Loss Program</div>
           <div className="category-button" onClick={() => setPackageId(2)}>Weight Maintenance Program</div>
-          <div className="category-button" onClick={() => setPackageId(3)}>Gain Muscle Program</div>
+          <div className="category-button" onClick={() => setPackageId(5)}>Gain Muscle Program</div>
           <div className="category-button" onClick={() => setPackageId(4)}>Gluten Free Program</div>
-          <div className="category-button" onClick={() => setPackageId(5)}>Diabet Cholesterol Program</div>
+          <div className="category-button" onClick={() => setPackageId(3)}>Diabet Cholesterol Program</div>
           <div className="category-button" onClick={() => setPackageId(6)}>Vegetarian Program</div>
         </div>
 
