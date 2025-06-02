@@ -19,7 +19,7 @@ const loginAdmin = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: admin.id, email: admin.email },
+      { adminId: admin.adminId, email: admin.email },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '1d' }
     );
@@ -33,7 +33,8 @@ const loginAdmin = async (req, res) => {
 
 
 const changePassword = async (req, res) => {
-  const { email, oldPassword, newPassword, confirmPassword } = req.body;
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const email = req.user.email; // ambil email dari token hasil decode
 
   try {
     if (newPassword !== confirmPassword) {
@@ -58,6 +59,7 @@ const changePassword = async (req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 module.exports = {
   loginAdmin,

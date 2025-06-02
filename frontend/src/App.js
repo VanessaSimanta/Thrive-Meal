@@ -9,6 +9,9 @@ import logoImage from './public/images/logo.png';
 import foodImage1 from './public/images/food1.jpg';
 import foodImage2 from './public/images/food2.jpg';
 import foodImage3 from './public/images/food3.jpg';
+import foodImage4 from './public/images/gluten.jpg';
+import foodImage5 from './public/images/diabet.jpg';
+import foodImage6 from './public/images/vege.jpg';
 import calorieIcon from './public/icons/calorie.jpg';
 import dietPlanIcon from './public/icons/dietplan.jpg';
 import happyIcon from './public/icons/happy.jpg';
@@ -97,25 +100,40 @@ function HomePage() {
       </div>
 
       <section className="programs">
-        <h2>Our Diet Programs</h2>
-        <div className="cards">
-          <div className="card" onClick={() => goToMenu(7)}>
-            <img src={foodImage1} alt="Weight Loss" />
-            <h3>Weight Loss Program</h3>
-            <p>Menurunkan berat badan dengan asupan bergizi dan porsi yang sesuai.</p>
-          </div>
-          <div className="card" onClick={() => goToMenu(8)}>
-            <img src={foodImage2} alt="Balanced Wellness" />
-            <h3>Balanced Wellness</h3>
-            <p>Menu seimbang untuk menjaga energi dan kesehatan sepanjang hari.</p>
-          </div>
-          <div className="card" onClick={() => goToMenu(9)}>
-            <img src={foodImage3} alt="Muscle Gain" />
-            <h3>Muscle Gain</h3>
-            <p>Meningkatkan massa otot dengan porsi protein dan karbohidrat yang cukup.</p>
-          </div>
-        </div>
-      </section>
+  <h2>Our Diet Programs</h2>
+  <div className="cards">
+    <div className="card" onClick={() => goToMenu(7)}>
+      <img src={foodImage1} alt="Weight Loss" />
+      <h3>Weight Loss Program</h3>
+      <p>Menurunkan berat badan dengan asupan bergizi dan porsi yang sesuai.</p>
+    </div>
+    <div className="card" onClick={() => goToMenu(8)}>
+      <img src={foodImage2} alt="Balanced Wellness" />
+      <h3>Balanced Wellness</h3>
+      <p>Menu seimbang untuk menjaga energi dan kesehatan sepanjang hari.</p>
+    </div>
+    <div className="card" onClick={() => goToMenu(9)}>
+      <img src={foodImage3} alt="Muscle Gain" />
+      <h3>Muscle Gain</h3>
+      <p>Meningkatkan massa otot dengan porsi protein dan karbohidrat yang cukup.</p>
+    </div>
+    <div className="card" onClick={() => goToMenu(10)}>
+      <img src={foodImage4} alt="Gluten Free" />
+      <h3>Gluten Free Program</h3>
+      <p>Menu bebas gluten untuk mendukung pencernaan yang lebih baik dan menghindari alergi.</p>
+    </div>
+    <div className="card" onClick={() => goToMenu(11)}>
+      <img src={foodImage5} alt="Diabet & Cholesterol" />
+      <h3>Diabet & Cholesterol Program</h3>
+      <p>Kontrol gula darah dan kolesterol melalui menu rendah gula dan lemak jenuh.</p>
+    </div>
+    <div className="card" onClick={() => goToMenu(12)}>
+      <img src={foodImage6} alt="Vegetarian Program" />
+      <h3>Vegetarian Program</h3>
+      <p>Menu berbasis tumbuhan kaya nutrisi tanpa produk hewani.</p>
+    </div>
+  </div>
+</section>
 
       <section className="why-thrive">
         <h2>Kenapa Harus Thrive Meal?</h2>

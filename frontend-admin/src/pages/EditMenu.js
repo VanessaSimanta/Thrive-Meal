@@ -3,7 +3,6 @@ import axios from 'axios';
 import {
   Container, Form, Button, Table, Row, Col, Card
 } from 'react-bootstrap';
-import { PlusLg } from 'react-bootstrap-icons'; 
 import { BACK_END_URL }  from '../utils/const';
 
 const EditMenu = () => {
@@ -23,12 +22,14 @@ const EditMenu = () => {
     picture: null,
   });
 
+  // Ambil paket dari backend
   useEffect(() => {
     axios.get(`${BACK_END_URL}/api/package`)
       .then(res => setPackages(res.data))
       .catch(err => console.error(err));
   }, []);
 
+  // Ambil menu saat selectedPackage berubah
   useEffect(() => {
     if (selectedPackage) {
       axios.get(`${BACK_END_URL}/api/menu/${selectedPackage}`)
@@ -47,6 +48,18 @@ const EditMenu = () => {
       });
     }
   }, [selectedPackage]);
+
+  // Auto hide alert setelah 3 detik
+  useEffect(() => {
+    if (alertMessage) {
+      const timer = setTimeout(() => {
+        setAlertMessage('');
+        setAlertVariant('');
+      }, 3000);
+
+      return () => clearTimeout(timer); // clear timer jika komponen unmount atau alertMessage berubah
+    }
+  }, [alertMessage]);
 
   const handleEdit = (menu) => setEditData({ ...menu });
 
@@ -140,6 +153,7 @@ const EditMenu = () => {
   return (
     <Container className="py-5">
       <h3 className="fw-bold mb-5 text-center text-black" style={{ textShadow: '3px 3px 1px rgba(0,0,0,0.2)', fontSize: '50px', letterSpacing: '6px' }}>EDIT MENU</h3>
+      
       {alertMessage && (
         <div className={`alert alert-${alertVariant} text-center`} role="alert">
           {alertMessage}
@@ -340,7 +354,7 @@ const EditMenu = () => {
                         </Form.Select>
                       </Form.Group>
 
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-4">
                         <Form.Label>Picture</Form.Label>
                         <Form.Control
                           type="file"
@@ -348,30 +362,10 @@ const EditMenu = () => {
                         />
                       </Form.Group>
 
-                     <div className="d-flex justify-content-center gap-3 mt-4">
-                    <Button 
-                        style={{ backgroundColor: '#CADCB5', border: 'none', color: 'black' }} 
-                        className="px-4 fw-semibold" 
-                        onClick={handleAddMenu}
-                    >
-                        Add Menu
-                    </Button>
-                    <Button 
-                        style={{ backgroundColor: '#CADCB5', border: 'none', color: 'black' }}
-                        className="px-4 fw-semibold" 
-                        onClick={() =>
-                        setNewMenuData({
-                            name: '',
-                            type: 'Breakfast',
-                            detail: '',
-                            packageType: selectedPackage,
-                            picture: null,
-                        })
-                        }
-                    >
-                        Reset
-                    </Button>
-                    </div>
+                      <div className="d-flex justify-content-center gap-3 mt-4">
+                        <Button style={{ backgroundColor: '#CADCB5', border: 'none', color: '#000' }} className="px-4 fw-semibold" onClick={handleAddMenu}>Add</Button>
+                        <Button style={{ backgroundColor: '#CADCB5', border: 'none', color: '#000' }} className="px-4 fw-semibold" onClick={() => setShowAddForm(false)}>Cancel</Button>
+                      </div>
                     </Form>
                   </Card.Body>
                 </Card>

@@ -4,8 +4,19 @@ const getAllBranches = async () => {
   return await db('branch').select('*');
 };
 
-const getBranchById = async (branchID) => {
-  return await db('branch').where({ branchID }).first();
+const getBranch = async (limit, offset) => {
+  const data = await db('branch')
+    .select('*')
+    .limit(limit)
+    .offset(offset);
+
+  const [{ count }] = await db('branch')
+    .count('branchID as count'); 
+
+  return {
+    data,
+    total: parseInt(count),
+  };
 };
 
 const createBranch = async (branchData) => {
@@ -22,7 +33,7 @@ const deleteBranch = async (branchID) => {
 
 module.exports = {
   getAllBranches,
-  getBranchById,
+  getBranch,
   createBranch,
   updateBranch,
   deleteBranch

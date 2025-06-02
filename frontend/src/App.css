@@ -45,13 +45,14 @@ body {
 .navbar ul {
   list-style: none;
   display: flex;
-  gap: 30px;
+  gap: 10px;
   margin: 0;
   padding: 0;
 }
 
 .navbar ul li {
   padding: 10px;
+  margin-right: 1rem;
 }
 
 .navbar ul li a {
@@ -309,15 +310,18 @@ body {
 .cards {
   display: flex;
   justify-content: center;
-  gap: 2.5rem;
   flex-wrap: wrap;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
   animation: fadeInUp 1s ease-out forwards;
   opacity: 0;
 }
 
 .card {
   background: #ffffff;
-  width: 360px;
+  flex: 1 1 calc(33.333% - 2rem); /* 3 per row with gap */
+  max-width: 360px;
   padding: 1.8rem;
   border-radius: 22px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -326,6 +330,7 @@ body {
   overflow: hidden;
   cursor: pointer;
 }
+
 
 .card::before {
   content: '';
@@ -505,13 +510,13 @@ body {
 
 /* MENU section */
 .menu-page {
-  padding: 3rem 2rem 2rem; /* kurangi padding bawah sedikit */
+  padding: 3rem 2rem 2rem; 
   background-color: #fffbf0;
   font-family: 'Poppins', sans-serif;
   overflow-x: hidden;
 }
 
-/* Perbaikan banner */
+
 .menu-banner {
   position: relative;
   width: 100%;
@@ -520,7 +525,7 @@ body {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  /* Hilangkan margin negatif */
+
   margin: 0;
   display: flex;
   justify-content: center;
@@ -531,7 +536,7 @@ body {
   box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
 }
 
-/* Animasi overlay yang halus */
+
 .menu-banner::before {
   content: '';
   position: absolute;
@@ -777,7 +782,6 @@ body {
 }
 
 
-
 /* Footer Section */
 .footer {
   background-color: #283618;
@@ -863,4 +867,103 @@ body {
   .why-thrive h2 {
     font-size: 20px;
   }
+}
+
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: column;
+    background-color: #283618;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    display: none;
+    padding: 0;
+    z-index: 99;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .hero-text h1 {
+    font-size: 26px;
+  }
+
+  .hero {
+    padding: 30px 20px;
+  }
+
+  .cta {
+    font-size: 14px;
+    padding: 10px 24px;
+  }
+}
+
+/* Menu Title */
+@media (max-width: 768px) {
+  .menu-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Menu Categories Grid */
+@media (max-width: 768px) {
+  .menu-categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-categories {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.img-thumbnail {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 40px 10px;
+    font-size: 14px;
+  }
+
+  .footer-links {
+    font-size: 12px;
+  }
+
+  .footer .social-icons a img {
+    width: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+
+html {
+  scroll-behavior: smooth;
 }

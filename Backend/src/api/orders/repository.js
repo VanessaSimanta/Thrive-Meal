@@ -1,14 +1,25 @@
 const db = require('../../core/db');
 
-// Get all orders
-const getAllOrders = async () => {
+// Get  orders
+const getAllOrders = async (limit, offset, sort = 'desc') => {
   try {
-    const orders = await db('orders').select('*');
-    return orders;
+    const orders = await db('orders')
+      .select('*')
+      .orderBy('orderId', sort)
+      .limit(limit)
+      .offset(offset);
+
+    const [{ count }] = await db('orders').count('* as count');
+
+    return {
+      orders,
+      total: parseInt(count),
+    };
   } catch (error) {
     throw new Error('Failed to get orders: ' + error.message);
   }
 };
+
 
 // Get order by ID
 const getOrderById = async (orderId) => {
@@ -132,6 +143,15 @@ const assignDriver = async (orderId, driverID) => {
   }
 }
 
+const assignAdmin = async (orderId, adminId) => {
+  const updatedOrder = await db('orders')
+    .where({ orderId })
+    .update({ adminId })
+    .returning('*'); // PostgreSQL only
+
+  return updatedOrder[0];
+};
+
 module.exports = {
   getAllOrders,
   getOrderById,
@@ -141,5 +161,6 @@ module.exports = {
   createOrderInDb,
   createCustomerInDb,
   assignBranch,
-  assignDriver
+  assignDriver,
+  assignAdmin
 };

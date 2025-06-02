@@ -1,4 +1,5 @@
-const { getAllBranches, getBranchById, createBranch, updateBranch, deleteBranch } = require('./repository');
+const { getAllBranches, getBranch, createBranch, updateBranch, deleteBranch } = require('./repository');
+const { errorResponder, errorTypes } = require('../../core/errors');
 
 const getBranches = async (req, res) => {
   try {
@@ -10,17 +11,25 @@ const getBranches = async (req, res) => {
   }
 };
 
-const getBranch = async (req, res) => {
-  const { branchID } = req.params;
+const getBranchCtrl = async (req, res) => {
   try {
-    const branch = await getBranchById(branchID);
-    if (!branch) {
-      return res.status(404).json({ message: 'Branch not found' });
-    }
-    return res.status(200).json(branch);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const offset = (page - 1) * limit;
+
+    const { data, total } = await getBranch(limit, offset);
+    const lastPage = Math.ceil(total / limit);
+
+    res.status(200).json({
+      data,
+      currentPage: page,
+      lastPage,
+      totalPages: lastPage,
+      totalData: total,
+    });
   } catch (error) {
-    console.error('Error fetching branch:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
   }
 };
 
@@ -66,7 +75,7 @@ const deleteBranchInfo = async (req, res) => {
 
 module.exports = {
   getBranches,
-  getBranch,
+  getBranchCtrl,
   createNewBranch,
   updateBranchInfo,
   deleteBranchInfo

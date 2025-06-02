@@ -4,8 +4,19 @@ const getAllDrivers = async () => {
   return await db('driver').select('*');
 };
 
-const getDriverById = async (driverID) => {
-  return await db('driver').where({ driverID }).first();
+const getDriver = async (limit, offset) => {
+ const data = await db('driver')
+    .select('*')
+    .limit(limit)
+    .offset(offset);
+
+  const [{ count }] = await db('driver')
+    .count('driverID as count'); 
+
+  return {
+    data,
+    total: parseInt(count),
+  };
 };
 
 const createDriver = async (driverData) => {
@@ -22,7 +33,7 @@ const deleteDriver = async (driverID) => {
 
 module.exports = {
   getAllDrivers,
-  getDriverById,
+  getDriver,
   createDriver,
   updateDriver,
   deleteDriver
