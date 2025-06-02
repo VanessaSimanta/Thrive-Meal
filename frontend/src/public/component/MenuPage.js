@@ -2,18 +2,20 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { BACK_END_URL } from '../../utils/const';
+import FormOrder from './FormOrder';
 
 function MenuPage() {
   const { packageId: paramId } = useParams();
   const [menuItems, setMenuItems] = useState([]);
   const [packageId, setPackageId] = useState(paramId ? parseInt(paramId) : undefined);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false); 
 
   useEffect(() => {
     if (packageId !== undefined) {
       setLoading(true);
       axios
-        .get(`${BACK_END_URL}/api/menu/${packageId}`)
+        .get(`${BACK_END_URL}/api/menu/${packageId}`) 
         .then((response) => {
           setMenuItems(Array.isArray(response.data) ? response.data : []);
           setLoading(false);
@@ -60,10 +62,13 @@ function MenuPage() {
 
         {packageId !== undefined && menuItems.length > 0 && (
           <div className="order-now-button mt-4">
-            <button>Order Now</button>
+            <button onClick={() => setShowModal(true)}>Order Now</button>
           </div>
         )}
       </div>
+
+      {/* ⬇️ Tambahkan ini */}
+      <FormOrder show={showModal} handleClose={() => setShowModal(false)} />
     </div>
   );
 }
