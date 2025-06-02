@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BACK_END_URL } from '../utils/const';
 import { Button, Form, Card, Col, Row, Alert } from 'react-bootstrap';
 import branchImg from '../images/branch.jpg';
+import { InputGroup } from 'react-bootstrap';
+import { FaSearch, FaTimes } from 'react-icons/fa';
 
 const DriverPage = () => {
   const [drivers, setDrivers] = useState([]);
@@ -24,6 +26,8 @@ const DriverPage = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
+
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   const fetchDrivers = async (page = 1) => {
     try {
@@ -170,7 +174,46 @@ const DriverPage = () => {
   return (
     <div style={{ padding: '2rem', fontFamily: 'Poppins, sans-serif' }}>
       <h3 className="fw-semibold mb-4">Driver List</h3>
+      {/* Search Bar */}
+      <div className="d-flex mb-4 px-3">
+        <InputGroup className="w-100" style={{ maxWidth: '500px' }}>
+          {/* Search Icon */}
+          <InputGroup.Text style={{ backgroundColor: '#E7F1DB', border: '1px solid #ced4da' }}>
+            <FaSearch color="#748E57" />
+          </InputGroup.Text>
 
+          {/* Input Field */}
+          <Form.Control
+            type="text"
+            placeholder="Search by name or phone number..."
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            style={{
+              borderLeft: 'none',
+              padding: '10px 15px',
+              borderTopRightRadius: '0',
+              borderBottomRightRadius: '0',
+            }}
+          />
+
+          {/* Clear Button */}
+          {searchKeyword && (
+            <Button
+              variant="outline-secondary"
+              onClick={() => setSearchKeyword('')}
+              style={{
+                borderLeft: 'none',
+                borderTopLeftRadius: '0',
+                borderBottomLeftRadius: '0',
+                backgroundColor: '#ffffff',
+                borderColor: '#ced4da',
+              }}
+            >
+              <FaTimes color="#C1282E" />
+            </Button>
+          )}
+        </InputGroup>
+      </div>
       {alert.show && (
         <Alert variant={alert.type} className="text-center fw-semibold">
           {alert.message}
@@ -191,36 +234,55 @@ const DriverPage = () => {
             </tr>
           </thead>
           <tbody>
-            {drivers.map((d, idx) => (
-              <tr key={idx}>
-                <td className="text-center">
-                  <button
-                    className="btn btn-link p-0 text-decoration-none text-primary"
-                    onClick={() => setSelectedDriver(d)}
-                  >
-                    {d.driverID}
-                  </button>
-                </td>
-                <td className="text-center">{d.driver_name}</td>
-                <td className="text-center">{d.road_name}</td>
-                <td className="text-center">
-                  <div className="d-flex gap-2 justify-content-center">
-                    <Button
-                      variant="warning"
-                      size="sm"
-                      className="text-white"
-                      onClick={() => handleEditDriver(d)}
-                    >
-                      Edit
-                    </Button>
-                    <Button variant="danger" size="sm" onClick={() => handleDeleteDriver(d.driverID)}>
-                      Delete
-                    </Button>
-                  </div>
+            {drivers.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="text-center py-4 text-gray-400">
+                  No drivers found.
                 </td>
               </tr>
-            ))}
+            ) : (
+              drivers
+                .filter((d) =>
+                  d.driver_name
+                    ?.toLowerCase()
+                    .includes(searchKeyword.toLowerCase().trim())
+                )
+                .map((d, idx) => (
+                  <tr key={idx}>
+                    <td className="text-center">
+                      <button
+                        className="btn btn-link p-0 text-decoration-none text-primary"
+                        onClick={() => setSelectedDriver(d)}
+                      >
+                        {d.driverID}
+                      </button>
+                    </td>
+                    <td className="text-center">{d.driver_name}</td>
+                    <td className="text-center">{d.road_name}</td>
+                    <td className="text-center">
+                      <div className="d-flex gap-2 justify-content-center">
+                        <Button
+                          variant="warning"
+                          size="sm"
+                          className="text-white"
+                          onClick={() => handleEditDriver(d)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => handleDeleteDriver(d.driverID)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+            )}
           </tbody>
+
         </table>
       )}
 
