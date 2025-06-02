@@ -185,7 +185,7 @@ const DriverPage = () => {
           {/* Input Field */}
           <Form.Control
             type="text"
-            placeholder="Search by name or phone number..."
+            placeholder="Search by name..."
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
             style={{
