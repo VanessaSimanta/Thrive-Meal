@@ -14,7 +14,7 @@
   const getDriverCtrl = async (req, res) => {
     try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 2;
+    const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
     const { data, total } = await getDriver(limit, offset);
