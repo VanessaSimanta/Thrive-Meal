@@ -288,6 +288,7 @@ const ViewOrders = () => {
               <th className="px-4 py-3 border">Order ID</th>
               <th className="px-4 py-3 border">Customer Name</th>
               <th className="px-4 py-3 border">Phone</th>
+              <th className="px-4 py-3 border">Email</th>
               <th className="px-4 py-3 border">Road Name</th>
               <th className="px-4 py-3 border">Urban Village</th>
               <th className="px-4 py-3 border">District</th>
@@ -326,6 +327,7 @@ const ViewOrders = () => {
                       <td className="px-4 py-2 border">{order.orderId}</td>
                       <td className="px-4 py-2 border">{order.customer?.customer_name || '-'}</td>
                       <td className="px-4 py-2 border">{order.customer?.phone_number || '-'}</td>
+                      <td className="px-4 py-2 border">{order.customer?.customer_email || '-'}</td>
                       <td className="px-4 py-2 border">{order.customer?.road_name || '-'}</td>
                       <td className="px-4 py-2 border">{order.customer?.urban_village || '-'}</td>
                       <td className="px-4 py-2 border">{order.customer?.district || '-'}</td>
