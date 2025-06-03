@@ -137,7 +137,7 @@ const updatePaymentCtrl = async (req, res) => {
 
     const html = `
       <h2>Pembayaran Anda Berhasil</h2>
-      <p>Terima kasih telah memesan. Berikut rincian order Anda:</p>
+      <p>Terima kasih telah memesan di Thrive Meal. Berikut rincian order Anda:</p>
       <ul>
         <li><strong>ID Transaksi:</strong> ${transactionId}</li>
         <li><strong>Paket:</strong> ${package_type}</li>
