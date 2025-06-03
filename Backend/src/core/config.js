@@ -22,4 +22,6 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     name: process.env.DB_NAME || process.env.DB_DATABASE,
   },
+  emailUser: process.env.EMAIL_SENDER,
+  emailPass: process.env.EMAIL_PASSWORD,
 };

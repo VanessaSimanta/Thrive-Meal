@@ -60,6 +60,7 @@ const createOrderInDb = async ({
 const createCustomerInDb = async ({
   fullName,
   phoneNumber,
+  email,
   roadName,          // ganti address -> roadName
   urbanVillage,
   province,
@@ -73,6 +74,7 @@ const createCustomerInDb = async ({
     .insert({
       customer_name: fullName,
       phone_number: phoneNumber,
+      customer_email: email,
       road_name: roadName,
       urban_village: urbanVillage,
       province,

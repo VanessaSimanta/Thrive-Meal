@@ -4,6 +4,7 @@ const { MIDTRANS_APP_URL, MIDTRANS_SERVER_KEY, PENDING_PAYMENT } = require('../.
 const { errorResponder, errorTypes } = require('../../core/errors');
 const fetch = require('node-fetch');
 const { get } = require('../driver/route.js');
+const { sendEmail } = require('../../utils/mailer.js');
 
 const getNanoid = async () => {
   const { nanoid } = await import('nanoid');
@@ -123,19 +124,38 @@ const updatePaymentCtrl = async (req, res) => {
     }
 
     // Ambil data transaksi untuk dapat orderId
-    const trx = await cekPaymentId(transactionId);
-    if (!trx) {
+    const trxArr = await cekPaymentId(transactionId);
+    if (!trxArr || trxArr.length === 0) {
       return res.status(404).json({ message: 'Transaction data not found' });
     }
+    const trx = trxArr[0];  
 
     await updateOrderPayment(trx.orderId, trx.transactionId);
 
-    return res.status(200).json({ message: 'Payment status updated successfully' });
+    // === Kirim Email Setelah Pembayaran ===
+    const { customer_email, package_type, period_type, gross_amount } = trx;
+
+    const html = `
+      <h2>Pembayaran Anda Berhasil</h2>
+      <p>Terima kasih telah memesan. Berikut rincian order Anda:</p>
+      <ul>
+        <li><strong>ID Transaksi:</strong> ${transactionId}</li>
+        <li><strong>Paket:</strong> ${package_type}</li>
+        <li><strong>Periode:</strong> ${period_type}</li>
+        <li><strong>Total:</strong> Rp ${gross_amount.toLocaleString('id-ID')}</li>
+      </ul>
+      <p>Salam,<br>Tim Layanan</p>
+    `;
+
+    await sendEmail(customer_email, 'Pembayaran Berhasil - Rincian Pesanan', html);
+
+    return res.status(200).json({ message: 'Payment status updated and email sent.' });
   } catch (error) {
     console.error('Error updating payment status:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 const handleCallback = async (req, res) => {
   const { order_id, transaction_status } = req.body;

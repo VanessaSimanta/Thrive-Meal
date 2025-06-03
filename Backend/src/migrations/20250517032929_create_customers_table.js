@@ -15,6 +15,7 @@ exports.up = function (knex) {
       table.string('address_notes', 300);
       table.string('phone_number', 100).notNullable();
       table.string('allergy_notes', 300);
+      table.string('customer_email', 255).notNullable();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.timestamp('updatedAt').defaultTo(knex.fn.now());
     });

@@ -90,6 +90,7 @@ const createFullOrderCtrl = async (req, res) => {
     const {
       fullName,
       phoneNumber,
+      email, 
       roadName,         // sesuaikan dengan migration
       urbanVillage,
       province,
@@ -103,7 +104,7 @@ const createFullOrderCtrl = async (req, res) => {
     } = req.body;
 
     // Validasi input wajib
-    if (!fullName || !phoneNumber || !roadName || !packageId || !periodId) {
+    if (!fullName || !phoneNumber || !email || !roadName || !packageId || !periodId) {
       throw errorResponder(errorTypes.INVALID_PAYLOAD, 'Required fields are missing');
     }
 
@@ -111,6 +112,7 @@ const createFullOrderCtrl = async (req, res) => {
     const customer = await createCustomerInDb({
       fullName,
       phoneNumber,
+      email,
       roadName,
       urbanVillage,
       province,

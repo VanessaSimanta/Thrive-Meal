@@ -71,9 +71,26 @@ const createTransactionItems = async ({
 };
 
 const cekPaymentId = async (transactionId) => {
-  const payment = await db('transactions').where({ transactionId }).first();
-  return payment;
-}
+ const result = await db ('transactions as t')
+  .select(
+    't.transactionId',
+    't.orderId',
+    't.gross_amount',
+    'c.customer_email',
+    'p.package_type',
+    'pr.period_type'
+  )
+  .innerJoin('orders as o', 't.orderId', 'o.orderId')
+  .innerJoin('customers as c', 't.customerId', 'c.customerId')
+  .innerJoin('package as p', 'o.packageId', 'p.packageId')
+  .innerJoin('period as pr', 'o.periodId', 'pr.periodId')
+  .where('t.transactionId', transactionId)
+  .limit(1);
+
+
+  return result;
+};
+
 
 const updatePaymentStatus = async (transactionId) => {
   const updated = await db('transactions')

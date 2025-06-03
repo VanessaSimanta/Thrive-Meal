@@ -9,7 +9,7 @@ function FormOrder({ show, handleClose }) {
   const { snapPay } = useSnap();
 
   const [formData, setFormData] = useState({
-    name: '', phone: '', address: '', urbanVillage: '', province: '',
+    name: '', phone: '', email: '', address: '', urbanVillage: '', province: '',
     city: '', district: '', zip: '', addressNote: '', allergyNote: '',
     package: '', subscription: ''
   });
@@ -50,11 +50,11 @@ function FormOrder({ show, handleClose }) {
 
   const handleSubmit = async () => {
     const {
-      name, phone, address, urbanVillage, province,
+      name, phone, email, address, urbanVillage, province,
       city, district, zip, addressNote, allergyNote, package: pack, subscription,
     } = formData;
 
-    if (!name || !phone || !address || !urbanVillage ||
+    if (!name || !phone || !email || !address || !urbanVillage ||
         !province || !city || !district || !zip || !pack || !subscription) {
       setError('Please complete all required fields before submitting the form');
       return;
@@ -68,6 +68,7 @@ function FormOrder({ show, handleClose }) {
     const dataToSend = {
       fullName: name,
       phoneNumber: phone,
+      email: email,
       roadName: address,
       urbanVillage,
       province,
@@ -145,7 +146,7 @@ function FormOrder({ show, handleClose }) {
   useEffect(() => {
     if (show) {
       setFormData({
-        name: '', phone: '', address: '', urbanVillage: '', province: '',
+        name: '', phone: '', email:'', address: '', urbanVillage: '', province: '',
         city: '', district: '', zip: '', addressNote: '', allergyNote: '',
         package: '', subscription: ''
       });
@@ -174,6 +175,11 @@ function FormOrder({ show, handleClose }) {
             <Form.Group className="mb-3">
               <Form.Label>Phone Number</Form.Label>
               <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Enter phone number" />
+            </Form.Group>
+
+             <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control type="text" name="email" value={formData.email} onChange={handleChange} placeholder="Enter Email" />
             </Form.Group>
 
             <Form.Group className="mb-3">
