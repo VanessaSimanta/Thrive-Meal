@@ -967,3 +967,21 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+.day-menu-section {
+  margin-bottom: 2rem;
+}
+
+.day-header {
+  text-align: center;
+  font-size: 1.7rem;
+  font-weight: bold;
+  margin: 1rem 0;
+  color: #333;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #eee;
+}
+
+.menu-days-container {
+  margin-top: 2rem;
+}
