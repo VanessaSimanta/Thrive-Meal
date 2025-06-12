@@ -10,11 +10,14 @@ const {
   createFullOrderCtrl,
   assignBranchCtrl,
   assignDriverCtrl,
-  assignAdminCtrl
+  assignAdminCtrl,
+  getOrdersCtrl
 } = require('./controller');
 
 // GET all orders
 router.get('/', getAllOrdersCtrl);
+
+router.get('/orders', getOrdersCtrl);
 
 // GET order by ID
 router.get('/:orderId', getOrderByIdCtrl);

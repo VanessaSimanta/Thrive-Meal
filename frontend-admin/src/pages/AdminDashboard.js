@@ -46,10 +46,12 @@ const AdminDashboard = () => {
 
   const fetchMonthlyOrders = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/orders");
+      const response = await fetch("http://localhost:8000/api/orders/orders");
       const data = await response.json();
 
       const monthlyCount = Array(12).fill(0);
+      console.log("Data received:", data);
+
       data.forEach(order => {
         const date = new Date(order.createdAt);
         const month = date.getMonth();
@@ -64,7 +66,7 @@ const AdminDashboard = () => {
 
   const fetchWeeklyOrders = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/orders");
+      const response = await fetch("http://localhost:8000/api/orders/orders");
       const data = await response.json();
 
       const thisWeek = Array(7).fill(0);

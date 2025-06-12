@@ -9,7 +9,8 @@ const {
   createOrderInDb,
   assignBranch,
   assignDriver,
-  assignAdmin
+  assignAdmin,
+  getOrders
 } = require('./repository');
 
 // Get orders
@@ -36,6 +37,15 @@ const getAllOrdersCtrl = async (req, res) => {
   }
 };
 
+//Get all order without pagination
+const getOrdersCtrl = async (req, res) => {
+  try {
+    const orders = await getOrders();
+    res.status(200).json(orders);
+  } catch (error) {
+    return res.status(404).json(errorResponder(errorTypes.NOT_FOUND));
+  }
+};
 
 
 // Get order by ID
@@ -264,5 +274,6 @@ module.exports = {
   deleteOrderCtrl,
   assignBranchCtrl,
   assignDriverCtrl,
-  assignAdminCtrl
+  assignAdminCtrl,
+  getOrdersCtrl
 };

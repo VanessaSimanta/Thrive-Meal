@@ -20,6 +20,15 @@ const getAllOrders = async (limit, offset, sort = 'desc') => {
   }
 };
 
+const getOrders = async() => {
+  try {
+    const orders = await db('orders').select('*');
+    return orders;
+  } catch (error) {
+    throw new Error('Failed to get orders: ' + error.message);  
+  }
+}
+
 
 // Get order by ID
 const getOrderById = async (orderId) => {
@@ -164,5 +173,6 @@ module.exports = {
   createCustomerInDb,
   assignBranch,
   assignDriver,
-  assignAdmin
+  assignAdmin,
+  getOrders
 };
