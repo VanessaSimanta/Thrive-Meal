@@ -3,20 +3,23 @@ import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
 import Payment from './Payment';
 import useSnap from '../../hooks/useSnap';
 import { BACK_END_URL }  from '../../utils/const';
+import { Spinner } from 'react-bootstrap';
 
 
 function FormOrder({ show, handleClose }) {
   const { snapPay } = useSnap();
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '', phone: '', email: '', address: '', urbanVillage: '', province: '',
     city: '', district: '', zip: '', addressNote: '', allergyNote: '',
-    package: '', subscription: ''
+    package: '', subscription: '', start_date: '',
   });
   const [error, setError] = useState('');
   const [showPayment, setShowPayment] = useState(false);
   const [snapToken, setSnapToken] = useState(null);
   const [transactionId, setTransactionId] = useState(null);
+  
 
 
   const handleChange = (e) => {
@@ -51,11 +54,11 @@ function FormOrder({ show, handleClose }) {
   const handleSubmit = async () => {
     const {
       name, phone, email, address, urbanVillage, province,
-      city, district, zip, addressNote, allergyNote, package: pack, subscription,
+      city, district, zip, addressNote, allergyNote, package: pack, subscription, start_date,
     } = formData;
 
     if (!name || !phone || !email || !address || !urbanVillage ||
-        !province || !city || !district || !zip || !pack || !subscription) {
+        !province || !city || !district || !zip || !pack || !subscription || !start_date) {
       setError('Please complete all required fields before submitting the form');
       return;
     }
@@ -79,6 +82,7 @@ function FormOrder({ show, handleClose }) {
       allergyNotes: allergyNote,
       packageId: mapPackageToId(pack),
       periodId: mapSubscriptionToId(subscription),
+      start_date: start_date,
     };
 
     try {
@@ -148,13 +152,25 @@ function FormOrder({ show, handleClose }) {
       setFormData({
         name: '', phone: '', email:'', address: '', urbanVillage: '', province: '',
         city: '', district: '', zip: '', addressNote: '', allergyNote: '',
-        package: '', subscription: ''
+        package: '', subscription: '', start_date: '',
       });
       setError('');
       setShowPayment(false);
       setSnapToken(null);
     }
   }, [show]);
+
+  //loading page
+ if (loading) {
+    return (
+      <Modal show={true} centered backdrop="static" keyboard={false}>
+        <Modal.Body className="d-flex flex-column align-items-center justify-content-center" style={{ padding: '40px' }}>
+          <Spinner animation="border" variant="success" />
+          <div className="mt-3">Mengirim email konfirmasi pembayaran...</div>
+        </Modal.Body>
+      </Modal>
+    );
+  }
 
   return (
     <>
@@ -237,6 +253,15 @@ function FormOrder({ show, handleClose }) {
                 </Form.Select>
               </Col>
             </Row>
+            <Form.Group className="mb-3">
+              <Form.Label>Start Date</Form.Label>
+              <Form.Control 
+                type="date" 
+                name="start_date" 
+                value={formData.start_date} 
+                onChange={handleChange} 
+              />
+            </Form.Group>
 
             <div className="text-center">
               <Button style={{ backgroundColor: '#748E57', borderRadius: '10px' }} onClick={handleSubmit}>
@@ -247,12 +272,11 @@ function FormOrder({ show, handleClose }) {
         </Modal.Body>
       </Modal>
 
-      {/* Kirim snapToken ke Payment dan snapPay akan dijalankan di sana */}
       <Payment 
         show={showPayment} 
         handleClose={closePaymentModal} 
         snapToken={snapToken} 
-        snapPay={() => snapPay(snapToken, transactionId)}
+        snapPay={() => snapPay(snapToken, transactionId, setLoading)}
       />
     </>
   );

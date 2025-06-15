@@ -12,6 +12,7 @@ exports.up = function(knex) {
       table.integer('branchID');               // FK5 (nullable)
       table.integer('driverID');               // FK6 (nullable)
       table.integer('adminId');                // FK7 (nullable)
+      table.date('start_date').notNullable();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.timestamp('updatedAt').defaultTo(knex.fn.now());
   

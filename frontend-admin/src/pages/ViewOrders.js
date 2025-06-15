@@ -301,7 +301,7 @@ const ViewOrders = () => {
               <th className="px-4 py-3 border">Duration</th>
               <th className="px-4 py-3 border">Payment Status</th>
               <th className="px-4 py-3 border">Payment Amount</th>
-              <th className="px-4 py-3 border">Date</th>
+              <th className="px-4 py-3 border">Start Date</th>
               <th className="px-4 py-3 border">Action</th>
             </tr>
           </thead>
@@ -492,6 +492,7 @@ const ViewOrders = () => {
               }}
             >
               {assignLoading ? 'Assigning...' : 'Assign'}
+
             </Button>
 
             {/* Alert Component moved below the button */}

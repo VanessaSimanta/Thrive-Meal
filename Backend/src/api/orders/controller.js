@@ -111,10 +111,11 @@ const createFullOrderCtrl = async (req, res) => {
       allergyNotes,
       packageId,
       periodId,
+      start_date
     } = req.body;
 
     // Validasi input wajib
-    if (!fullName || !phoneNumber || !email || !roadName || !packageId || !periodId) {
+    if (!fullName || !phoneNumber || !email || !roadName || !packageId || !periodId || !start_date) {
       throw errorResponder(errorTypes.INVALID_PAYLOAD, 'Required fields are missing');
     }
 
@@ -130,7 +131,7 @@ const createFullOrderCtrl = async (req, res) => {
       district,
       zipCode,
       addressNotes,
-      allergyNotes,
+      allergyNotes
     });
 
     const customerId = customer.customerId;  // sesuai migration
@@ -140,6 +141,7 @@ const createFullOrderCtrl = async (req, res) => {
       customerId,
       packageId,
       periodId,
+      start_date
     });
 
     res.status(201).json({

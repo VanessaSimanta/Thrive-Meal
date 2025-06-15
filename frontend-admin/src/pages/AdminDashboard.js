@@ -45,58 +45,60 @@ const AdminDashboard = () => {
   }, [navigate]);
 
   const fetchMonthlyOrders = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/api/orders/orders");
-      const data = await response.json();
+  try {
+    const response = await fetch("http://localhost:8000/api/orders/orders");
+    const data = await response.json();
 
-      const monthlyCount = Array(12).fill(0);
-      console.log("Data received:", data);
+    const monthlyCount = Array(12).fill(0);
+    data.forEach(order => {
+      const date = new Date(order.createdAt);
+      const month = date.getMonth(); 
+      monthlyCount[month]++;
+    });
 
-      data.forEach(order => {
-        const date = new Date(order.createdAt);
-        const month = date.getMonth();
-        monthlyCount[month]++;
-      });
+    console.log("Monthly Count:", monthlyCount); 
 
-      setMonthlyOrders(monthlyCount.slice(0, 5));
-    } catch (error) {
-      console.error("Failed to fetch monthly orders:", error);
-    }
-  };
+    setMonthlyOrders(monthlyCount); 
+  } catch (error) {
+    console.error("Failed to fetch monthly orders:", error);
+  }
+};
 
   const fetchWeeklyOrders = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/api/orders/orders");
-      const data = await response.json();
+  try {
+    const response = await fetch("http://localhost:8000/api/orders/orders");
+    const data = await response.json();
 
-      const thisWeek = Array(7).fill(0);
-      const now = new Date();
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay());
+    const thisWeek = Array(7).fill(0);
+    const now = new Date();
 
-      data.forEach(order => {
-        const orderDate = new Date(order.createdAt);
-        if (orderDate >= startOfWeek) {
-          const dayIndex = orderDate.getDay();
-          thisWeek[dayIndex]++;
-        }
-      });
+    const startOfWeek = new Date(now);
+    startOfWeek.setHours(0, 0, 0, 0);
+    startOfWeek.setDate(now.getDate() - now.getDay()); 
 
-      const result = [{
-        Sun: thisWeek[0],
-        Mon: thisWeek[1],
-        Tue: thisWeek[2],
-        Wed: thisWeek[3],
-        Thu: thisWeek[4],
-        Fri: thisWeek[5],
-        Sat: thisWeek[6],
-      }];
+    data.forEach(order => {
+      const orderDate = new Date(new Date(order.createdAt).toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
+      if (orderDate >= startOfWeek) {
+        const dayIndex = orderDate.getDay();
+        thisWeek[dayIndex]++;
+      }
+    });
 
-      setWeeklyOrders(result);
-    } catch (error) {
-      console.error("Failed to fetch weekly orders:", error);
-    }
-  };
+    const result = [{
+      Sun: thisWeek[0],
+      Mon: thisWeek[1],
+      Tue: thisWeek[2],
+      Wed: thisWeek[3],
+      Thu: thisWeek[4],
+      Fri: thisWeek[5],
+      Sat: thisWeek[6],
+    }];
+
+    setWeeklyOrders(result);
+  } catch (error) {
+    console.error("Failed to fetch weekly orders:", error);
+  }
+};
 
   const handleNavigate = (path) => {
     if (path === "/logout") {
@@ -116,7 +118,7 @@ const AdminDashboard = () => {
   };
 
   const lineData1 = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     datasets: [
       {
         label: 'Order Masuk',

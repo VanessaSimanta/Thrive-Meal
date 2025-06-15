@@ -54,12 +54,14 @@ const createOrderInDb = async ({
   customerId,
   packageId,
   periodId,
+  start_date
 }) => {
   const [newOrder] = await db('orders')
     .insert({
       customerId: customerId,
       packageId: packageId,
       periodId: periodId,
+      start_date: start_date
     })
     .returning('*');
 
