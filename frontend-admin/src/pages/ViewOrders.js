@@ -344,7 +344,7 @@ const ViewOrders = () => {
                           ? `Rp ${parseInt(order.transaction.gross_amount).toLocaleString()}`
                           : '-'}
                       </td>
-                      <td className="px-4 py-2 border">{order.createdAt?.slice(0, 10) || '-'}</td>
+                      <td className="px-4 py-2 border">{order.start_date?.slice(0, 10) || '-'}</td>
                       <td className="px-4 py-2 border text-center">
                         <Button
                           size="sm"
