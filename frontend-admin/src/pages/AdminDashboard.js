@@ -9,6 +9,9 @@ import DriverPage from './DriverPage';
 import BranchPage from './BranchPage';
 import ChangePassword from './ChangePassword';
 import { Line } from 'react-chartjs-2';
+import { BACK_END_URL }  from '../utils/const';
+import axios from 'axios';
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -46,8 +49,9 @@ const AdminDashboard = () => {
 
   const fetchMonthlyOrders = async () => {
   try {
-    const response = await fetch("http://localhost:8000/api/orders/orders");
-    const data = await response.json();
+    
+    const response = await axios.get(`${BACK_END_URL}/api/orders/orders`);
+    const data = response.data;
 
     const monthlyCount = Array(12).fill(0);
     data.forEach(order => {
@@ -66,8 +70,8 @@ const AdminDashboard = () => {
 
   const fetchWeeklyOrders = async () => {
   try {
-    const response = await fetch("http://localhost:8000/api/orders/orders");
-    const data = await response.json();
+    const response = await axios.get(`${BACK_END_URL}/api/orders/orders`);
+    const data = response.data;
 
     const thisWeek = Array(7).fill(0);
     const now = new Date();

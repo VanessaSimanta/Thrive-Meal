@@ -48,12 +48,12 @@ function MenuPage() {
 
       <div style={{ padding: '2rem', fontFamily: 'Poppins, sans-serif' }}>
         <div className="menu-grid">
-          <div className="category-button" onClick={() => setPackageId(25)}>Weight Loss Program</div>
-          <div className="category-button" onClick={() => setPackageId(26)}>Weight Maintenance Program</div>
-          <div className="category-button" onClick={() => setPackageId(27)}>Gain Muscle Program</div>
-          <div className="category-button" onClick={() => setPackageId(28)}>Gluten Free Program</div>
-          <div className="category-button" onClick={() => setPackageId(29)}>Diabet Cholesterol Program</div>
-          <div className="category-button" onClick={() => setPackageId(30)}>Vegetarian Program</div>
+          <div className="category-button" onClick={() => setPackageId(1)}>Weight Loss Program</div>
+          <div className="category-button" onClick={() => setPackageId(2)}>Weight Maintenance Program</div>
+          <div className="category-button" onClick={() => setPackageId(3)}>Gain Muscle Program</div>
+          <div className="category-button" onClick={() => setPackageId(4)}>Gluten Free Program</div>
+          <div className="category-button" onClick={() => setPackageId(5)}>Diabet Cholesterol Program</div>
+          <div className="category-button" onClick={() => setPackageId(6)}>Vegetarian Program</div>
         </div>
 
         {loading && <p>Loading menu...</p>}

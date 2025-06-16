@@ -286,6 +286,8 @@ const ViewOrders = () => {
           <thead className="bg-gray-100 text-xs uppercase">
             <tr>
               <th className="px-4 py-3 border">Order ID</th>
+              <th className="px-4 py-3 border">Branch ID</th>
+              <th className="px-4 py-3 border">Driver ID</th>
               <th className="px-4 py-3 border">Customer Name</th>
               <th className="px-4 py-3 border">Phone</th>
               <th className="px-4 py-3 border">Email</th>
@@ -325,6 +327,8 @@ const ViewOrders = () => {
                   return (
                     <tr key={order.orderId} className="border-b hover:bg-gray-50 transition duration-150">
                       <td className="px-4 py-2 border">{order.orderId}</td>
+                      <td className="px-4 py-2 border">{order.branchID}</td>
+                      <td className="px-4 py-2 border">{order.driverID}</td>
                       <td className="px-4 py-2 border">{order.customer?.customer_name || '-'}</td>
                       <td className="px-4 py-2 border">{order.customer?.phone_number || '-'}</td>
                       <td className="px-4 py-2 border">{order.customer?.customer_email || '-'}</td>
